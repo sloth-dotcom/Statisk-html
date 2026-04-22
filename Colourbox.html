@@ -678,6 +678,98 @@ footer li a:hover { color: var(--ink); }
   footer { grid-template-columns: 1fr 1fr; }
   .nav-links { display: none; }
 }
+
+/* ===== Mobile — tablet (≤ 900px) ===== */
+@media (max-width: 900px) {
+  .nav-inner { padding: 0 18px; height: 58px; gap: 12px; }
+  .logo { font-size: 18px; }
+  .nav-right { gap: 2px; font-size: 13px; }
+  .nav-right a { padding: 6px 9px; }
+  .nav-right .divider-v { display: none; }
+  .btn-primary { padding: 7px 13px; font-size: 13px; }
+
+  .hero { margin-top: 14px; padding: 0 18px; }
+  .hero-frame { aspect-ratio: 4 / 5; min-height: 0; max-height: none; }
+  .hero-content { padding: 28px 22px 20px; inset: 0 0 120px 0; }
+  .hero h1 { font-size: clamp(28px, 7vw, 40px); margin-bottom: 12px; }
+  .hero-kicker { font-size: 10.5px; margin-bottom: 12px; }
+  .hero-kicker::before, .hero-kicker::after { width: 16px; }
+  .hero-sub { font-size: 14.5px; margin-bottom: 16px; max-width: none; }
+  .hero-ctas { flex-direction: column; align-items: stretch; width: 100%; max-width: 280px; }
+  .hero-cta { justify-content: center; padding: 11px 18px; font-size: 14px; }
+
+  .search-wrap { bottom: 24px; width: calc(100% - 32px); }
+  .search { padding: 4px 4px 4px 6px; }
+  .search-select { display: none; }
+  .search-input { padding: 0 10px; font-size: 13.5px; }
+  .search-input::placeholder { font-size: 13px; }
+  .search-visual { display: none; }
+  .search-submit { width: 38px; height: 38px; }
+
+  .promo { margin-top: 16px; padding: 0 18px; gap: 10px; font-size: 13px; text-align: center; }
+  .promo > span:not(.promo-chip) { width: 100%; }
+  .promo-cta { padding: 8px 14px; font-size: 13px; }
+  .promo-chip { font-size: 12px; padding: 7px 11px; }
+
+  .section { padding: 48px 18px 0; }
+  .section.first { padding-top: 28px; }
+  .section.first .section-head { margin-bottom: 18px; }
+  .section-head { flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 24px; }
+  .section-eyebrow { margin-bottom: 12px; font-size: 10.5px; }
+  .section-title { font-size: clamp(26px, 5.5vw, 32px); }
+  .section-link { padding: 8px 12px; font-size: 13px; }
+
+  .cats { gap: 10px; }
+  .cat { padding: 14px; border-radius: 14px; }
+  .cat-name { font-size: 18px; }
+  .cat-count { font-size: 10px; padding: 3px 6px; }
+  .cat-icon { width: 30px; height: 30px; border-radius: 8px; }
+  .cat-arrow { width: 28px; height: 28px; }
+
+  .creators { padding: 56px 18px 0; }
+  .creator-card { padding: 16px; border-radius: 14px; aspect-ratio: 4 / 3; }
+  .creator-name { font-size: 22px; }
+
+  .trending { padding: 48px 18px 0; }
+  .trend-chip { font-size: 12.5px; padding: 8px 12px; }
+
+  footer { margin-top: 72px; padding: 36px 18px; gap: 28px; grid-template-columns: 1fr 1fr; }
+  footer h4 { font-size: 12px; }
+  .foot-brand { grid-column: 1 / -1; }
+  .foot-bottom { padding: 16px 18px 28px; flex-direction: column; gap: 6px; align-items: flex-start; }
+
+  #tweaks { right: 12px; bottom: 12px; width: calc(100vw - 24px); max-width: 320px; }
+}
+
+/* ===== Mobile — phone (≤ 560px) ===== */
+@media (max-width: 560px) {
+  .nav-inner { padding: 0 14px; height: 54px; }
+  .nav-right a:not(.btn-primary):not(:last-child) { display: none; }
+  .nav-right .divider-v { display: none; }
+  .logo { font-size: 17px; gap: 7px; }
+  .logo-mark { width: 20px; height: 20px; }
+
+  .hero { margin-top: 12px; padding: 0 14px; }
+  .hero-frame { aspect-ratio: 3 / 4; border-radius: 16px; }
+  .hero-content { padding: 24px 18px 20px; inset: 0 0 110px 0; }
+  .hero-kicker::before, .hero-kicker::after { display: none; }
+  .hero-credit { font-size: 9.5px; bottom: 10px; right: 12px; }
+
+  .search-wrap { bottom: 20px; width: calc(100% - 24px); }
+
+  .promo { padding: 0 14px; font-size: 12.5px; }
+
+  .section { padding: 40px 14px 0; }
+  .cats { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cat { aspect-ratio: 4 / 4.5; }
+  .cat-name { font-size: 16px; }
+
+  .creators { padding: 48px 14px 0; }
+  .trending { padding: 40px 14px 0; }
+
+  footer { grid-template-columns: 1fr; padding: 28px 14px; }
+  .foot-bottom { padding: 12px 14px 24px; }
+}
 </style>
 </head>
 <body>
@@ -729,7 +821,7 @@ footer li a:hover { color: var(--ink); }
           <span>Alle medier</span>
           <svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l4 4 4-4"/></svg>
         </div>
-        <input class="search-input" id="home-search" placeholder="Søg i 42 millioner filer, uden AI-genereret indhold" />
+        <input class="search-input" id="home-search" placeholder='Skriv hvad du har brug for: "En sommerdag i Danmark"' />
         <button class="search-visual" aria-label="Visuel søgning">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
             <rect x="3" y="3" width="18" height="18" rx="3"/>
@@ -1020,6 +1112,21 @@ if (homeSearch) {
       window.location.href = "search.html?q=" + encodeURIComponent(homeSearch.value.trim());
     }
   });
+}
+
+// Nudging placeholder — cycle through Danish example queries
+const NUDGES = [
+  'Skriv hvad du har brug for: "En sommerdag i Danmark"',
+  'Skriv hvad du har brug for: "Studenter i lastbil"'
+];
+let nudgeIdx = 0;
+if (homeSearch) {
+  setInterval(() => {
+    // Only swap when field is empty and not focused
+    if (document.activeElement === homeSearch || homeSearch.value) return;
+    nudgeIdx = (nudgeIdx + 1) % NUDGES.length;
+    homeSearch.setAttribute("placeholder", NUDGES[nudgeIdx]);
+  }, 3500);
 }
 document.querySelector(".search-submit").addEventListener("click", () => {
   const q = homeSearch.value.trim() || "ceramics studio";
