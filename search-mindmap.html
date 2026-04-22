@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hybrid søgning — interaktiv mindmap</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f3efe8;
+    --surface: #ffffff;
+    --surface-2: #ebe6dd;
+    --surface-3: #e0dacd;
+    --border: #dcd5c6;
+    --border-soft: #e8e2d4;
+    --text: #2b3139;
+    --text-dim: #7b7b85;
+    --text-faint: #a5a5ad;
+
+    --c-understand: #6b8eab;
+    --c-design: #9d8fb0;
+    --c-build: #81a08a;
+    --c-measure: #c9a96e;
+    --c-risk: #c27d6e;
+  }
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 60px;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+    z-index: 10;
+  }
+  .title {
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: var(--text);
+  }
+  .title-dot {
+    width: 8px; height: 8px;
+    background: linear-gradient(135deg, var(--c-understand), var(--c-design));
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .spacer { flex: 1; }
+
+  .search-box {
+    position: relative;
+    width: 260px;
+  }
+  .search-box input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px 8px 34px;
+    border-radius: 8px;
+    font-size: 13px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.15s;
+  }
+  .search-box input:focus { border-color: var(--c-understand); box-shadow: 0 0 0 3px rgba(107,142,171,0.15); }
+  .search-box input::placeholder { color: var(--text-faint); }
+  .search-box svg {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+  }
+
+  .btn-group { display: flex; gap: 4px; }
+  .btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .btn:hover { background: var(--surface-2); color: var(--text); border-color: var(--text-faint); }
+  .btn.icon { padding: 7px 9px; }
+  .btn svg { width: 14px; height: 14px; }
+
+  /* ---------- Canvas ---------- */
+  .canvas-wrap {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+  }
+  svg.canvas {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    display: block;
+  }
+  svg.canvas:active { cursor: grabbing; }
+
+  /* ---------- Node styles (drawn via JS) ---------- */
+  .node { cursor: pointer; }
+  .node rect, .node circle {
+    transition: fill 0.15s, stroke 0.15s, filter 0.15s;
+  }
+  .node:hover rect {
+    filter: brightness(0.98) saturate(1.15);
+  }
+  .node text {
+    fill: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    pointer-events: none;
+    user-select: none;
+  }
+  .node.root rect {
+    fill: url(#rootGrad);
+    stroke: #6b8eab;
+  }
+  .node.root text {
+    font-weight: 700;
+    font-size: 15px;
+    fill: #1a1a1a;
+  }
+  .node.leaf rect { fill: #ffffff; }
+  .node.has-children rect { stroke-width: 2px; fill: #ffffff; }
+  .node.collapsed rect {
+    stroke-dasharray: 4 3;
+  }
+  .node.search-hit rect {
+    stroke: #c9a96e !important;
+    stroke-width: 3px;
+    fill: #fbf4e4 !important;
+  }
+  .node.dimmed {
+    opacity: 0.3;
+  }
+
+  .link {
+    fill: none;
+    stroke-width: 1.25px;
+    opacity: 0.55;
+    transition: opacity 0.15s, stroke-width 0.15s;
+  }
+  .link.highlighted {
+    opacity: 1;
+    stroke-width: 2px;
+  }
+  .link.dimmed { opacity: 0.12; }
+
+  /* ---------- Zoom controls ---------- */
+  .zoom-controls {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(60,50,30,0.06);
+  }
+  .zoom-btn {
+    width: 34px; height: 34px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .zoom-btn:hover { background: var(--surface-2); color: var(--text); }
+
+  /* ---------- Detail panel ---------- */
+  .panel {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    bottom: 0;
+    width: 380px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    padding: 24px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    z-index: 9;
+    box-shadow: -8px 0 24px rgba(60,50,30,0.04);
+  }
+  .panel.open { transform: translateX(0); }
+  .panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .panel-category {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .panel-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.25;
+    color: var(--text);
+  }
+  .panel-close {
+    width: 30px; height: 30px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 8px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .panel-close:hover { background: var(--surface-3); color: var(--text); }
+
+  .breadcrumb {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .breadcrumb span { color: var(--text-dim); font-weight: 500; }
+  .breadcrumb .sep { margin: 0 6px; opacity: 0.5; }
+
+  .panel p {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .panel h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-faint);
+    margin: 20px 0 10px;
+    font-weight: 700;
+  }
+  .panel ul { list-style: none; margin-bottom: 14px; }
+  .panel li {
+    font-size: 13.5px;
+    color: var(--text);
+    padding: 10px 12px;
+    margin-bottom: 4px;
+    background: var(--surface-2);
+    border-radius: 6px;
+    border-left: 3px solid var(--node-color, var(--c-understand));
+    line-height: 1.45;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .panel li:hover { background: var(--surface-3); transform: translateX(2px); }
+
+  /* ---------- Legend ---------- */
+  .legend {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+    z-index: 8;
+    box-shadow: 0 4px 12px rgba(60,50,30,0.06);
+  }
+  .legend-title {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 4px;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* ---------- Hint ---------- */
+  .hint {
+    position: fixed;
+    top: 76px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255,255,255,0.9);
+    border: 1px solid var(--border);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    color: var(--text-dim);
+    z-index: 8;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.3s;
+    box-shadow: 0 4px 12px rgba(60,50,30,0.05);
+  }
+  .hint.hide { opacity: 0; }
+  .hint kbd {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: inherit;
+    color: var(--text);
+    font-size: 11px;
+    margin: 0 2px;
+  }
+
+  @media (max-width: 720px) {
+    .search-box { width: 140px; }
+    .btn span { display: none; }
+    .panel { width: 100%; }
+    .legend { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="title"><span class="title-dot"></span>Hybrid søgning — discovery mindmap</div>
+  <div class="spacer"></div>
+  <div class="search-box">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    <input type="text" id="searchInput" placeholder="Søg i mindmap…">
+  </div>
+  <div class="btn-group">
+    <button class="btn" id="expandAll" title="Fold alt ud"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>Fold ud</span></button>
+    <button class="btn" id="collapseAll" title="Fold alt sammen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg><span>Fold ind</span></button>
+    <button class="btn icon" id="resetView" title="Nulstil visning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3.3-6.96L3 9"/><polyline points="3 3 3 9 9 9"/></svg></button>
+  </div>
+</div>
+
+<div class="hint" id="hint">
+  <kbd>Klik</kbd> fold ud · <kbd>Træk</kbd> flyt · <kbd>Scroll</kbd> zoom
+</div>
+
+<div class="canvas-wrap">
+  <svg class="canvas" id="canvas">
+    <defs>
+      <linearGradient id="rootGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6b8eab"/>
+        <stop offset="100%" stop-color="#9d8fb0"/>
+      </linearGradient>
+    </defs>
+    <g id="viewport"></g>
+  </svg>
+</div>
+
+<div class="zoom-controls">
+  <button class="zoom-btn" id="zoomIn" title="Zoom ind">+</button>
+  <button class="zoom-btn" id="zoomOut" title="Zoom ud">−</button>
+</div>
+
+<div class="legend">
+  <div class="legend-title">Faser</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#6b8eab"></span>Forstå først</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#9d8fb0"></span>Designvalg</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#81a08a"></span>Byg</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#c9a96e"></span>Mål &amp; lær</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#c27d6e"></span>Risici</div>
+</div>
+
+<aside class="panel" id="panel">
+  <div class="panel-header">
+    <div>
+      <div class="panel-category" id="panelCategory"></div>
+      <div class="panel-title" id="panelTitle"></div>
+    </div>
+    <button class="panel-close" id="panelClose">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="breadcrumb" id="panelBreadcrumb"></div>
+  <div id="panelBody"></div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script>
+// ---------- DATA ----------
+const C = {
+  understand: "#6b8eab",
+  design: "#9d8fb0",
+  build: "#81a08a",
+  measure: "#c9a96e",
+  risk: "#c27d6e",
+};
+
+const data = {
+  name: "Hybrid søgning",
+  description: "Den overordnede udfordring: kombinér keyword-søgning med semantisk CLIP-søgning på en måde der både tjener brugerne, fotograferne og forretningen. Denne mindmap samler de ti områder I skal afsøge for at træffe informerede beslutninger.",
+  children: [
+    {
+      name: "1. Brugeradfærd",
+      color: C.understand,
+      category: "Forstå først",
+      description: "Før I vælger fusion-metode og vægte, skal I forstå hvordan brugerne faktisk søger i dag. Keyword- vs. koncept-vægt afhænger direkte af forespørgselsmønstrene i jeres logs.",
+      children: [
+        { name: "Hvem er brugerne?", description: "Designere, bureauer, journalister, privatpersoner — de søger vidt forskelligt. Segmenter logs efter kundetype.", children: [
+          { name: "Designere", description: "Søger ofte på stemning og stil. 'Minimalistisk', 'varm palette'. Stærk caseuse for semantik." },
+          { name: "Bureauer", description: "Kampagne-specifikke søgninger. Kombinerer brand-retning med demografi." },
+          { name: "Journalister", description: "Editorial use. Aktuelle begivenheder, egennavne. Keyword-tungt." },
+          { name: "Privatpersoner", description: "Enkle søgninger, engangskøb. Højere betalingsfriktion." },
+        ]},
+        { name: "Forespørgselsmønstre", description: "Analysér længde, sprog, reformuleringsrate og abandon-rate i jeres søgelog.", children: [
+          { name: "Korte keywords", description: "2-3 ord. Keyword-vægt høj. Eksempler: 'rød bil', 'solnedgang'." },
+          { name: "Fraser & koncepter", description: "5+ ord. Semantisk vægt høj. 'Følelsen af ensomhed i en storby'." },
+          { name: "Egennavne & brands", description: "CLIP er svag her. Keyword-vægt tæt på 100%." },
+          { name: "Stemninger", description: "Abstrakt. Kun semantik kan løse dette. 'Nostalgisk', 'optimistisk'." },
+        ]},
+        { name: "Friktionspunkter", description: "Hvor falder brugerne fra? Reformulering efter 10 sekunder er typisk den bedste proxy for dårlig kvalitet.", children: [
+          { name: "Reformuleringsrate", description: "Procent af søgninger hvor brugeren skriver noget nyt indenfor 30 sekunder." },
+          { name: "Zero-click sessioner", description: "Sessioner uden resultatklik. Stærk indikator for irrelevans." },
+          { name: "Session-længde", description: "Kort session + intet køb = frustration. Lang session + intet køb = browsing." },
+        ]},
+        { name: "Kvalitativ research", description: "Logs fortæller hvad, ikke hvorfor. Suppler med brugerinterviews og usability tests.", children: [
+          { name: "Interviews", description: "10-15 samtaler med top-segmenter dækker 80% af indsigter." },
+          { name: "Skærm-recordings", description: "Se hvordan de faktisk navigerer. Fullstory, Hotjar." },
+          { name: "Tænke-højt tests", description: "Giv dem et konkret job at udføre. Observér forvirring." },
+        ]},
+      ],
+    },
+    {
+      name: "2. Data vi har",
+      color: C.understand,
+      category: "Forstå først",
+      description: "Inventering af data inden modelvalg. Hvad har vi, hvor rent er det, og kan vi træne på det?",
+      children: [
+        { name: "Katalog-profil", description: "Størrelse og karakter af billede-massen.", children: [
+          { name: "Antal billeder", description: "Påvirker valg af vektor-index (HNSW vs. IVF) og RAM-budget." },
+          { name: "Vækstrate", description: "Hvor mange nye billeder per dag? Styrer re-indexering-frekvens." },
+          { name: "Sletninger", description: "Eksklusivitet, rettigheds-udløb, afvisninger. Påvirker synkronisering." },
+        ]},
+        { name: "Tag-hygiejne", description: "Kvaliteten af de keywords fotograferne har leveret.", children: [
+          { name: "Tags per billede", description: "Median vs. gennemsnit. Outliers = stuffing eller underestimering." },
+          { name: "Sprog-fordeling", description: "Dansk, engelsk, mix? Påvirker query-expansion og retrievers." },
+          { name: "Duplikater", description: "'Solnedgang' vs. 'sunset' — skal normaliseres ved index-tid." },
+          { name: "Stuffing-rate", description: "Andel tags med lav CLIP-similarity til billedet." },
+        ]},
+        { name: "Adfærdsdata", description: "Har vi nok til at træne LTR?", children: [
+          { name: "Klikhistorik", description: "Min. 100k søgninger med klik for robust LTR." },
+          { name: "Købshistorik", description: "Endnu stærkere signal end klik. Bør vægtes højere." },
+          { name: "Søgelog", description: "Query, position, klik, time-on-result. Hele kæden." },
+        ]},
+        { name: "Metadata", description: "Dybden afgør hvilke filtre I kan tilbyde.", children: [
+          { name: "EXIF", description: "Kamera, brændvidde, optagelsestidspunkt, GPS." },
+          { name: "Model releases", description: "Commercial vs. editorial klassifikation." },
+          { name: "Kategorier", description: "Manuel taksonomi. Kan CLIP-auto-klassificere." },
+          { name: "Farve-palette", description: "Ekstraheret ved upload. Vigtig filter-dimension." },
+        ]},
+      ],
+    },
+    {
+      name: "3. Søgeteknologi",
+      color: C.design,
+      category: "Designvalg",
+      description: "Den tekniske stack bag hybriden. De fleste valg er reversible — men ikke alle. Vælg det reversible først.",
+      children: [
+        { name: "Retrieval", description: "Hvordan kandidater hentes fra indekserne.", children: [
+          { name: "BM25 / Elastic", description: "Keyword-delen. Velkendt, billig, præcis." },
+          { name: "CLIP vektor-søgning", description: "ANN via HNSW. Qdrant, Weaviate, Vespa, pgvector." },
+          { name: "Routing", description: "Kort query → mere keyword-vægt. Lang query → mere vektor." },
+        ]},
+        { name: "Fusion", description: "Hvordan de to retrievers' output slås sammen.", children: [
+          { name: "RRF baseline", description: "Reciprocal Rank Fusion. k=60. Ingen kalibrering nødvendig." },
+          { name: "Vægtet score", description: "α·keyword + (1-α)·semantisk. Kræver normalisering." },
+          { name: "Learning to Rank", description: "LightGBM/LambdaMART. 10-25% bedre end RRF når der er nok data." },
+        ]},
+        { name: "Query-forståelse", description: "Forarbejdning før retrieval. Kritisk for kvalitet.", children: [
+          { name: "Klassifikation", description: "Præcis vs. konceptuel. Styrer fusion-vægt." },
+          { name: "Udvidelse", description: "Synonymer fra thesaurus eller lille LLM." },
+          { name: "Stavekorrektion", description: "Edit-distance + semantisk nærhed til kendte keywords." },
+          { name: "Sprogdetektion", description: "Dansk query → dansk BM25 + CLIP-engelsk oversat." },
+        ]},
+        { name: "Re-ranking", description: "Forretningslag ovenpå retrieval-resultater.", children: [
+          { name: "MMR diversitet", description: "Undgå at top-20 alle ligner hinanden." },
+          { name: "Recency boost", description: "Friske billeder får mild løft. Kamp mod 'arkiv-dominans'." },
+          { name: "Personalisering", description: "Brancher, tidligere køb, kollektioner." },
+          { name: "Fotograf-fairness", description: "Mild de-duplicering per fotograf i top-20." },
+        ]},
+      ],
+    },
+    {
+      name: "4. Fotograf-dynamik",
+      color: C.design,
+      category: "Designvalg",
+      description: "Den ofte oversete gren. Revenue-split skaber et rationelt incitament til at gaming — det skal I aktivt designe imod, ellers forgifter det hele indekset.",
+      children: [
+        { name: "Incitamenter", description: "Hvad belønner I? Synlighed eller salg? Kvalitet eller kvantitet?", children: [
+          { name: "Revenue split", description: "Procentsats, minimum payout, eksklusivitetspræmie." },
+          { name: "Placerings-bonus", description: "Ekstra udbetaling ved høj position — farligt, fører til stuffing." },
+          { name: "Transparens", description: "Fotografer der ser 'hvorfor' de placerer godt, samarbejder bedre." },
+        ]},
+        { name: "Tag-kvalitet", description: "Hvordan I beskytter indekset mod støj.", children: [
+          { name: "CLIP-validering", description: "Auto-flag tags under similarity-tærskel. Blødt først, hårdt senere." },
+          { name: "Auto-forslag ved upload", description: "BLIP-genererede tags som fotografen godkender/redigerer." },
+          { name: "Peer moderation", description: "Fotografer rapporterer hinandens stuffing." },
+        ]},
+        { name: "Fairness", description: "Er platformen bæredygtig for mange, eller bare de få?", children: [
+          { name: "Gini-koefficient", description: "Mål koncentration af salg. Over 0.7 = usundt." },
+          { name: "Onboarding af nye", description: "Boost nye fotografer i første 30 dage — kontrolleret." },
+          { name: "Long-tail eksponering", description: "Personaliserede rækker kan rehabilitere ikke-top billeder." },
+        ]},
+        { name: "Kommunikation", description: "Fotografen er en partner — ikke en bruger.", children: [
+          { name: "Dashboard", description: "Søgninger der viste deres billeder. Konverteringer. Tag-kvalitet." },
+          { name: "Onboarding-flow", description: "Første uploads sætter hele fotografens bane." },
+          { name: "Guidelines", description: "Tydelige regler, eksempler på godt/dårligt. Transparent moderation." },
+        ]},
+      ],
+    },
+    {
+      name: "5. UI / UX",
+      color: C.design,
+      category: "Designvalg",
+      description: "Brugeren skal ikke vide om de søger keyword eller semantisk. Det vigtigste UX-valg er at skjule kompleksiteten bag ét søgefelt.",
+      children: [
+        { name: "Søgefelt", description: "Ét felt, ingen toggle. Se den interaktive prototype.", children: [
+          { name: "Autosuggest tekst", description: "BM25-udvidelser først, CLIP-koncepter efter." },
+          { name: "Visuelle previews", description: "Thumbnail-rail i dropdown'en. Reducerer reformuleringer." },
+          { name: "Drag & drop", description: "Træk et billede for CLIP image-to-image search." },
+          { name: "Kamera-ikon fallback", description: "For brugere der ikke gætter drag-gesturen." },
+        ]},
+        { name: "Resultatside", description: "Grid-design og interaktive elementer.", children: [
+          { name: "Masonry grid", description: "Varieret aspect ratio. Portræt og landskab side om side." },
+          { name: "Match-badges", description: "Grøn = eksakt, violet = visuelt, gul = koncept." },
+          { name: "Hover-handlinger", description: "'Find lignende' og 'Gem' uden at forurene grid'et." },
+        ]},
+        { name: "Filtre", description: "Chips, sidebar, eller begge? Afhænger af filter-antal.", children: [
+          { name: "Chips vs sidebar", description: "Chips for 5-8 filtre. Sidebar for 15+." },
+          { name: "Hard pre-filter", description: "Filtre skal køre FØR retrieval, ikke efter. Ellers mistes top-K." },
+          { name: "Filter-rækkefølge", description: "Mest brugte først. A/B-test rækkefølgen." },
+        ]},
+        { name: "Tomme states", description: "Hybrid-søgning har lav zero-results rate, men højere 'dårlig kvalitet'-rate.", children: [
+          { name: "Stavekorrektion", description: "'Mente du…' baseret på CLIP-nærhed." },
+          { name: "Koncept-forslag", description: "Hvis ingen eksakte match, foreslå bredere alternativer." },
+          { name: "Kategori-genveje", description: "Giv brugeren en vej ud der ikke er søgefeltet." },
+        ]},
+        { name: "Tilgængelighed", description: "A11y er ikke optional. Skærmlæsere skal kunne navigere.", children: [
+          { name: "Keyboard-nav", description: "Tab gennem resultater, Enter for detaljer, / for søgefokus." },
+          { name: "Screen reader", description: "aria-labels på badges, live regions for resultat-opdateringer." },
+          { name: "Kontrast", description: "WCAG AA minimum. Mørk mode kræver ekstra opmærksomhed på badges." },
+        ]},
+      ],
+    },
+    {
+      name: "6. Forretning",
+      color: C.build,
+      category: "Byg",
+      description: "Uden KPI'er ved I ikke om I forbedrer. Definér metrik-træet før I bygger.",
+      children: [
+        { name: "KPI'er", description: "Nord-stjerne og afledte metrikker.", children: [
+          { name: "Search-to-purchase", description: "Den vigtigste. Primær KPI for hele projektet." },
+          { name: "CTR @ 10", description: "Kvalitet af top-10 resultater." },
+          { name: "Revenue per søgning", description: "Monetær mål. Fanger både konvertering og AOV." },
+          { name: "Zero-results rate", description: "Skal falde med semantik. Direkte målbart." },
+        ]},
+        { name: "Segmenter", description: "Én aggregeret KPI skjuler forskelle.", children: [
+          { name: "B2B vs B2C", description: "B2B konverterer højere, B2C browser mere." },
+          { name: "Abonnement vs engangs", description: "Abonnenter er mindre pris-følsomme." },
+          { name: "Geografi", description: "Dansk vs. international. Sprog-kvalitet varierer." },
+        ]},
+        { name: "Monetisering", description: "Søgekvalitet påvirker hvilken model der fungerer.", children: [
+          { name: "Priser", description: "Dynamic pricing baseret på efterspørgsel?" },
+          { name: "Bundle", description: "Pakker — opsalg via 'find lignende' er et oplagt indgangspunkt." },
+          { name: "Enterprise", description: "API-adgang, custom kollektioner, dedikeret support." },
+        ]},
+        { name: "Fotograf-økonomi", description: "Hvordan pengene fordeles.", children: [
+          { name: "Revenue share", description: "Branchestandard 30-50%. Eksklusivitetspræmie 10-15% ekstra." },
+          { name: "Bonusprogram", description: "Kvartalsvis top-performer bonus. Ikke stuffing-incitament." },
+          { name: "Eksklusivitet", description: "Kun-hos-os belønnes højere. Styrker katalog-unikitet." },
+        ]},
+      ],
+    },
+    {
+      name: "7. Drift & skalering",
+      color: C.build,
+      category: "Byg",
+      description: "Det der er billigt ved 10k billeder kan være ruinerende ved 10M. Planlæg for skala fra dag ét.",
+      children: [
+        { name: "Infrastruktur", description: "Hvor kører søgningen?", children: [
+          { name: "Vector DB", description: "Qdrant, Weaviate, Vespa, pgvector, Pinecone — afvej pris, kontrol, latency." },
+          { name: "GPU vs CPU", description: "Embedding-inferens kræver GPU. Retrieval kan køre på CPU." },
+          { name: "Caching", description: "Top-1000 queries genererer 30%+ af trafik. Cache aggressivt." },
+        ]},
+        { name: "Omkostninger", description: "Kost-drivere man undervurderer.", children: [
+          { name: "Embedding compute", description: "1 GPU-time per 10k billeder ved CLIP ViT-L." },
+          { name: "Storage", description: "Vektorer fylder. 768-dim float32 = 3KB per billede." },
+          { name: "Query-latency", description: "Over 300ms = målbart tab i konvertering. Budget strikt." },
+        ]},
+        { name: "Model-lifecycle", description: "Modellerne bliver ikke stående.", children: [
+          { name: "Versionering", description: "CLIP v1, v2, v3. Hver version = nyt indeks. Ingen genveje." },
+          { name: "Re-indeksering", description: "Vindue på 2-4 timer natligt. Dual-write under migration." },
+          { name: "A/B-pipeline", description: "Hver modelændring gennem A/B. Min. 7 dage, min. 10k sessioner." },
+        ]},
+        { name: "Observability", description: "Hvad du ikke måler, kan du ikke fejle sikkert på.", children: [
+          { name: "Quality metrics", description: "NDCG, MRR per segment. Dagligt dashboard." },
+          { name: "Alarmer", description: "Zero-results rate > X%, latency p95 > Y ms." },
+          { name: "Dashboards", description: "Grafana eller Looker. Delt med produkt og forretning." },
+        ]},
+      ],
+    },
+    {
+      name: "8. Eksterne benchmarks",
+      color: C.measure,
+      category: "Mål & lær",
+      description: "I er ikke de første til at løse dette. Lær af konkurrenterne og forskningen før I opfinder om.",
+      children: [
+        { name: "Konkurrenter", description: "Mystery shopping, teardown af deres UX.", children: [
+          { name: "Shutterstock", description: "AI-search siden 2023. Stærk på koncepter, svag på danske brands." },
+          { name: "Getty", description: "Editorial-fokus. Metadata og tagging er best-in-class." },
+          { name: "Adobe Stock", description: "Integreret med Creative Cloud. Bruger Firefly til generativ fill." },
+          { name: "Unsplash / Pond5", description: "Mere end billeder. Video, audio, templates — overvej bredere tilgang." },
+        ]},
+        { name: "Forskning", description: "State of the art i retrieval og vision-language.", children: [
+          { name: "CLIP-varianter", description: "OpenCLIP, SigLIP, DFN-CLIP — SigLIP generelt bedre på retrieval." },
+          { name: "ALIGN / BLIP / BLIP-2", description: "Alternativer til CLIP for billede-tekst-matching." },
+          { name: "Retrieval-papers", description: "ColBERT, SPLADE — nye hybrid-paradigmer værd at følge." },
+        ]},
+        { name: "Open source stacks", description: "Kan forkorte time-to-value betydeligt.", children: [
+          { name: "Vespa", description: "Yahoos vector+BM25 på én platform. Stejl indlæringskurve." },
+          { name: "Weaviate", description: "Mere developer-friendly. Indbygget hybrid." },
+          { name: "OpenSearch neural", description: "Elastic-kompatibel. Lavere migrationsomkostning." },
+        ]},
+      ],
+    },
+    {
+      name: "9. Juridisk & etisk",
+      color: C.risk,
+      category: "Risici",
+      description: "Det letteste område at glemme og det dyreste at rydde op i bagefter. GDPR, rettigheder og bias skal ind fra start.",
+      children: [
+        { name: "Rettigheder", description: "Kan billedet sælges kommercielt?", children: [
+          { name: "Model release", description: "Genkendelige personer kræver release for commercial use." },
+          { name: "Property release", description: "Private ejendomme, varemærker, kunstværker." },
+          { name: "Editorial vs commercial", description: "Tydelig mærkning. Forskellige regler, forskellige priser." },
+        ]},
+        { name: "GDPR", description: "Søgelog er personoplysninger.", children: [
+          { name: "Søgelog", description: "Hvor længe gemmes? Hvem har adgang? Anonymisering." },
+          { name: "Personaliseringsdata", description: "Samtykke kræves. Opt-out skal være synlig." },
+          { name: "Ret til sletning", description: "Brugerdata skal kunne slettes, inkl. fra trænings-sets." },
+        ]},
+        { name: "Bias", description: "CLIP er trænet på web-data. Det bringer web-bias med.", children: [
+          { name: "Kulturel bias", description: "CLIP er dominant vestligt. Dansk/nordiske kontekster underrepræsenteret." },
+          { name: "Repræsentation", description: "Kønsroller, etnicitet, alder — aktiv måling og intervention." },
+          { name: "Moderation", description: "Manuel review af højrisiko-søgninger og kontroversielle tags." },
+        ]},
+        { name: "Content safety", description: "Sikkerhed omkring indholdet selv.", children: [
+          { name: "NSFW-detektion", description: "Automatisk klassifikation + manuel gate." },
+          { name: "Copyright", description: "Reverse image search kan afsløre ulovligt uploadet indhold." },
+          { name: "Deepfakes", description: "Genkendelige personer genereret af AI. Voksende problem." },
+        ]},
+      ],
+    },
+    {
+      name: "10. Strategiske valg",
+      color: C.risk,
+      category: "Risici",
+      description: "De beslutninger der binder jer i lang tid. Vurdér reversibilitet før I committer.",
+      children: [
+        { name: "Build vs buy", description: "Hvor meget vil I eje selv?", children: [
+          { name: "Algolia / Typesense", description: "Hurtig time-to-market. Dyrere per query. Begrænset kontrol." },
+          { name: "Selvhostet", description: "Elastic + Qdrant + custom glue. Fuld kontrol, højt ops-krav." },
+          { name: "Hybrid", description: "Typesense til keyword, selv-hostet vektor. Balanceret — og kompliceret." },
+        ]},
+        { name: "Roadmap", description: "Prioriter reversible valg først.", children: [
+          { name: "Fase 1: RRF (0-6 uger)", description: "CLIP-indeks ved siden af Elastic, simpel RRF-fusion, CLIP tag-validering." },
+          { name: "Fase 2: Klassifikation (6-14)", description: "Query-klassifikation, vægtet fusion, reverse image search UI." },
+          { name: "Fase 3: LTR (14+)", description: "Learning to Rank, personalisering, hårdt stuffing-filter, dashboard." },
+        ]},
+        { name: "Team", description: "Hvilke roller er kritiske?", children: [
+          { name: "ML-kompetencer", description: "Mindst én senior ML-engineer. Embedding, retrieval, LTR." },
+          { name: "Ops-kompetencer", description: "Vector DB drift er ikke triviel. Dedikeret rolle i år 1." },
+          { name: "Frontend", description: "Search UX er fagområde i sig selv. Ikke en 'normal' UI-task." },
+        ]},
+        { name: "Risikohåndtering", description: "De skjulte farer.", children: [
+          { name: "Feedback-loops", description: "LTR der lærer af egne klik forstærker sine bias. Injektér eksploration." },
+          { name: "Model-drift", description: "CLIP-opgraderinger kræver genopbygning. Planlæg vinduer." },
+          { name: "Migration", description: "Vector DB-skift = downtime-risk. Dual-write strategi nødvendig." },
+        ]},
+      ],
+    },
+  ]
+};
+
+// Assign colors down the tree
+function inheritColors(node, color) {
+  node.color = node.color || color;
+  (node.children || []).forEach(c => inheritColors(c, node.color));
+}
+inheritColors(data, "#6b8eab");
+
+// ---------- STATE ----------
+let root;
+let i = 0;
+const duration = 350;
+const NODE_HEIGHT = 34;
+const NODE_GAP_X = 220;
+const LEVEL_INDENT = 240;
+
+const svg = d3.select("#canvas");
+const viewport = d3.select("#viewport");
+
+const zoom = d3.zoom()
+  .scaleExtent([0.2, 3])
+  .on("zoom", (event) => {
+    viewport.attr("transform", event.transform);
+  });
+svg.call(zoom);
+
+const tree = d3.tree()
+  .nodeSize([NODE_HEIGHT, NODE_GAP_X]);
+
+// Helpers
+function collapse(d) {
+  if (d.children) {
+    d._children = d.children;
+    d._children.forEach(collapse);
+    d.children = null;
+  }
+}
+function expand(d) {
+  if (d._children) {
+    d.children = d._children;
+    d._children = null;
+  }
+  if (d.children) d.children.forEach(expand);
+}
+
+// Init
+root = d3.hierarchy(data, d => d.children);
+root.x0 = 0;
+root.y0 = 0;
+
+// Start with only first level visible
+root.children && root.children.forEach(c => {
+  if (c.children) {
+    c._children = c.children;
+    c.children = null;
+  }
+});
+
+function update(source) {
+  tree(root);
+
+  const nodes = root.descendants();
+  const links = root.links();
+
+  // ---------- Links ----------
+  const link = viewport.selectAll(".link").data(links, d => d.target.id || (d.target.id = ++i));
+
+  const linkEnter = link.enter().insert("path", "g.node")
+    .attr("class", "link")
+    .attr("stroke", d => d.target.data.color || "#6b8eab")
+    .attr("d", () => {
+      const o = { x: source.x0 ?? 0, y: source.y0 ?? 0 };
+      return diagonal({ source: o, target: o });
+    });
+
+  linkEnter.merge(link).transition().duration(duration)
+    .attr("d", diagonal)
+    .attr("stroke", d => d.target.data.color || "#6b8eab");
+
+  link.exit().transition().duration(duration)
+    .attr("d", () => {
+      const o = { x: source.x, y: source.y };
+      return diagonal({ source: o, target: o });
+    })
+    .remove();
+
+  // ---------- Nodes ----------
+  const node = viewport.selectAll("g.node").data(nodes, d => d.id || (d.id = ++i));
+
+  const nodeEnter = node.enter().append("g")
+    .attr("class", d => {
+      const classes = ["node"];
+      if (!d.parent) classes.push("root");
+      if (d._children) classes.push("has-children", "collapsed");
+      else if (d.children) classes.push("has-children");
+      else classes.push("leaf");
+      return classes.join(" ");
+    })
+    .attr("transform", () => `translate(${source.y0 ?? 0},${source.x0 ?? 0})`)
+    .on("click", (event, d) => {
+      event.stopPropagation();
+      // Toggle children
+      if (d.children) {
+        d._children = d.children;
+        d.children = null;
+      } else if (d._children) {
+        d.children = d._children;
+        d._children = null;
+      }
+      update(d);
+      openPanel(d);
+    });
+
+  // Calculate text width approximately
+  const measureText = (text, size = 13) => {
+    const ctx = document.createElement("canvas").getContext("2d");
+    ctx.font = `${size}px -apple-system, "Inter", "Segoe UI", sans-serif`;
+    return ctx.measureText(text).width;
+  };
+
+  nodeEnter.each(function(d) {
+    const isRoot = !d.parent;
+    const w = Math.max(120, measureText(d.data.name, isRoot ? 15 : 13) + 28);
+    const h = isRoot ? 46 : 28;
+    d.rectW = w;
+    d.rectH = h;
+
+    const g = d3.select(this);
+    g.append("rect")
+      .attr("x", -w/2)
+      .attr("y", -h/2)
+      .attr("width", w)
+      .attr("height", h)
+      .attr("rx", isRoot ? 12 : 7)
+      .attr("fill", isRoot ? "url(#rootGrad)" : "#ffffff")
+      .attr("stroke", d.data.color || "#6b8eab")
+      .attr("stroke-width", 1.5);
+
+    // Expand indicator (for nodes with children)
+    if (d._children || d.children) {
+      g.append("circle")
+        .attr("class", "indicator")
+        .attr("cx", w/2 + 2)
+        .attr("cy", 0)
+        .attr("r", 7)
+        .attr("fill", d.data.color || "#6b8eab")
+        .attr("stroke", "#f3efe8")
+        .attr("stroke-width", 2);
+      g.append("text")
+        .attr("class", "indicator-text")
+        .attr("x", w/2 + 2)
+        .attr("y", 0)
+        .attr("dy", "0.32em")
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-size", "11px")
+        .attr("font-weight", "700")
+        .text(d._children ? "+" : "−");
+    }
+
+    g.append("text")
+      .attr("dy", "0.32em")
+      .attr("text-anchor", "middle")
+      .text(d.data.name);
+  });
+
+  const nodeUpdate = nodeEnter.merge(node);
+
+  nodeUpdate.transition().duration(duration)
+    .attr("transform", d => `translate(${d.y},${d.x})`);
+
+  nodeUpdate.attr("class", d => {
+    const classes = ["node"];
+    if (!d.parent) classes.push("root");
+    if (d._children) classes.push("has-children", "collapsed");
+    else if (d.children) classes.push("has-children");
+    else classes.push("leaf");
+    return classes.join(" ");
+  });
+
+  // Update expand indicator
+  nodeUpdate.each(function(d) {
+    const g = d3.select(this);
+    const ind = g.select(".indicator");
+    const indText = g.select(".indicator-text");
+    if (d._children || d.children) {
+      if (ind.empty()) {
+        g.append("circle")
+          .attr("class", "indicator")
+          .attr("cx", d.rectW/2 + 2).attr("cy", 0).attr("r", 7)
+          .attr("fill", d.data.color || "#6b8eab")
+          .attr("stroke", "#f3efe8").attr("stroke-width", 2.5);
+        g.append("text")
+          .attr("class", "indicator-text")
+          .attr("x", d.rectW/2 + 2).attr("y", 0).attr("dy", "0.32em")
+          .attr("text-anchor", "middle").attr("fill", "white")
+          .attr("font-size", "11px").attr("font-weight", "700");
+      }
+      g.select(".indicator-text").text(d._children ? "+" : "−");
+    } else {
+      ind.remove();
+      indText.remove();
+    }
+  });
+
+  node.exit().transition().duration(duration)
+    .attr("transform", () => `translate(${source.y},${source.x})`)
+    .style("opacity", 0)
+    .remove();
+
+  // Save positions for transitions
+  nodes.forEach(d => {
+    d.x0 = d.x;
+    d.y0 = d.y;
+  });
+}
+
+function diagonal({source, target}) {
+  const sx = source.y + (source.rectW ? source.rectW/2 : 0);
+  const tx = target.y - (target.rectW ? target.rectW/2 : 0);
+  const midX = (sx + tx) / 2;
+  return `M${sx},${source.x}
+          C${midX},${source.x}
+           ${midX},${target.x}
+           ${tx},${target.x}`;
+}
+
+// Initial center
+function centerView() {
+  const rect = svg.node().getBoundingClientRect();
+  const initialTransform = d3.zoomIdentity
+    .translate(rect.width / 2 - 200, rect.height / 2)
+    .scale(0.9);
+  svg.transition().duration(400).call(zoom.transform, initialTransform);
+}
+
+update(root);
+centerView();
+
+// ---------- Controls ----------
+document.getElementById("expandAll").addEventListener("click", () => {
+  expand(root);
+  update(root);
+});
+document.getElementById("collapseAll").addEventListener("click", () => {
+  root.children && root.children.forEach(collapse);
+  update(root);
+});
+document.getElementById("resetView").addEventListener("click", centerView);
+document.getElementById("zoomIn").addEventListener("click", () => {
+  svg.transition().duration(200).call(zoom.scaleBy, 1.3);
+});
+document.getElementById("zoomOut").addEventListener("click", () => {
+  svg.transition().duration(200).call(zoom.scaleBy, 1/1.3);
+});
+
+// ---------- Search ----------
+const searchInput = document.getElementById("searchInput");
+searchInput.addEventListener("input", (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  const all = viewport.selectAll("g.node");
+
+  if (!q) {
+    all.classed("search-hit", false).classed("dimmed", false);
+    viewport.selectAll(".link").classed("dimmed", false);
+    return;
+  }
+
+  // Find matching nodes in full hierarchy
+  const matches = new Set();
+  root.each(d => {
+    if (d.data.name.toLowerCase().includes(q) ||
+        (d.data.description && d.data.description.toLowerCase().includes(q))) {
+      matches.add(d);
+      // Also add ancestors so the path expands
+      let a = d.parent;
+      while (a) { matches.add(a); a = a.parent; }
+    }
+  });
+
+  // Expand path to matches
+  matches.forEach(m => {
+    if (m._children) {
+      m.children = m._children;
+      m._children = null;
+    }
+  });
+  update(root);
+
+  // Highlight after update
+  setTimeout(() => {
+    viewport.selectAll("g.node")
+      .classed("search-hit", d => d.data.name.toLowerCase().includes(q) ||
+                                   (d.data.description && d.data.description.toLowerCase().includes(q)))
+      .classed("dimmed", d => !matches.has(d));
+    viewport.selectAll(".link")
+      .classed("dimmed", d => !matches.has(d.target));
+  }, 10);
+});
+
+// ---------- Detail panel ----------
+function openPanel(d) {
+  const panel = document.getElementById("panel");
+  const title = document.getElementById("panelTitle");
+  const category = document.getElementById("panelCategory");
+  const breadcrumb = document.getElementById("panelBreadcrumb");
+  const body = document.getElementById("panelBody");
+
+  title.textContent = d.data.name;
+  category.textContent = d.data.category || (d.parent ? "Undergren" : "Rodnode");
+
+  // Breadcrumb
+  const path = [];
+  let cur = d;
+  while (cur) { path.unshift(cur.data.name); cur = cur.parent; }
+  breadcrumb.innerHTML = path.map((n,i) =>
+    i === path.length - 1 ? `<span>${n}</span>` : n
+  ).join('<span class="sep">›</span>');
+
+  // Body
+  let html = "";
+  if (d.data.description) {
+    html += `<p>${d.data.description}</p>`;
+  }
+  const childList = d.children || d._children;
+  if (childList && childList.length) {
+    html += `<h4>Underpunkter</h4><ul>`;
+    childList.forEach(c => {
+      const name = c.data.name;
+      html += `<li style="--node-color:${c.data.color}" data-id="${c.id}">${name}</li>`;
+    });
+    html += `</ul>`;
+  }
+  body.innerHTML = html;
+
+  // Click-through from subpoint list
+  body.querySelectorAll("li[data-id]").forEach(li => {
+    li.addEventListener("click", () => {
+      const targetId = parseInt(li.dataset.id);
+      const target = findById(root, targetId);
+      if (target) {
+        // Expand parent if needed
+        let p = target.parent;
+        while (p) {
+          if (p._children) { p.children = p._children; p._children = null; }
+          p = p.parent;
+        }
+        update(target);
+        openPanel(target);
+      }
+    });
+  });
+
+  panel.classList.add("open");
+}
+function findById(node, id) {
+  if (node.id === id) return node;
+  const kids = node.children || node._children || [];
+  for (const c of kids) {
+    const r = findById(c, id);
+    if (r) return r;
+  }
+  return null;
+}
+document.getElementById("panelClose").addEventListener("click", () => {
+  document.getElementById("panel").classList.remove("open");
+});
+
+// Hide hint after interaction
+const hint = document.getElementById("hint");
+setTimeout(() => hint.classList.add("hide"), 4000);
+
+// Resize
+window.addEventListener("resize", () => {
+  // Don't auto-recenter on resize, user may have moved
+});
+</script>
+</body>
+</html>
