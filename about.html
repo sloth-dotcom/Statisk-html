@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Om os — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.hero {
+  padding: 80px 0 64px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 56px;
+  align-items: end;
+}
+.hero .eyebrow { margin-bottom: 20px; }
+.hero h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: clamp(48px, 6vw, 88px);
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  margin: 0 0 24px;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.hero .lede {
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  margin: 0;
+  max-width: 480px;
+}
+.hero .side-img {
+  aspect-ratio: 3/4;
+  border-radius: 18px;
+  background: center/cover;
+  overflow: hidden;
+}
+
+/* Cover image */
+.cover {
+  margin: 0 0 88px;
+  border-radius: 22px;
+  overflow: hidden;
+  aspect-ratio: 16/7;
+  background: center/cover;
+  position: relative;
+}
+.cover .caption {
+  position: absolute; bottom: 16px; right: 20px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.85);
+}
+
+/* Section */
+section.block { padding-top: 88px; }
+.block-head { margin-bottom: 40px; max-width: 720px; }
+.block-head .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.block-head .eyebrow::before { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+.block-head h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: clamp(32px, 3.6vw, 44px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0 0 14px;
+  text-wrap: balance;
+}
+.block-head h2 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.block-head p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--ink-2); max-width: 640px; }
+
+/* Two-col prose */
+.prose {
+  column-count: 2; column-gap: 48px;
+  font-size: 16px; line-height: 1.65;
+  color: var(--ink-2);
+  max-width: 1040px;
+}
+.prose p { margin: 0 0 18px; break-inside: avoid-column; }
+.prose p:first-child::first-letter {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  float: left;
+  font-size: 56px;
+  line-height: 0.9;
+  padding: 4px 10px 0 0;
+  color: var(--ink);
+}
+@media (max-width: 860px) { .prose { column-count: 1; } }
+
+/* Timeline */
+.timeline { border-top: 1px solid var(--line); }
+.tl-row {
+  display: grid;
+  grid-template-columns: 180px 160px 1fr;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
+.tl-year {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 36px;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.tl-tag {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+}
+.tl-body {
+  font-size: 15px; color: var(--ink-2);
+  line-height: 1.55;
+  max-width: 640px;
+}
+.tl-body strong { color: var(--ink); font-weight: 500; }
+@media (max-width: 860px) {
+  .tl-row { grid-template-columns: 1fr; gap: 6px; }
+  .tl-year { font-size: 28px; }
+}
+
+/* Values */
+.values {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.val {
+  padding: 28px 26px 32px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.val .n {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.val h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 22px;
+  letter-spacing: -0.02em; line-height: 1.15;
+  margin: 0 0 10px;
+}
+.val p { margin: 0; font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+@media (max-width: 860px) { .values { grid-template-columns: 1fr; } }
+
+/* Team grid */
+.team {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.person .ph {
+  aspect-ratio: 4/5;
+  border-radius: 14px;
+  background: var(--surface-2) center/cover;
+  margin-bottom: 14px;
+  overflow: hidden;
+  position: relative;
+}
+.person .ph::after {
+  content: ""; position: absolute; inset: 0;
+  box-shadow: inset 0 -60px 60px -30px rgba(0,0,0,.4);
+  pointer-events: none;
+}
+.person .n { font-weight: 500; font-size: 15px; }
+.person .r {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.08em;
+  color: var(--muted); text-transform: uppercase;
+  margin-top: 3px;
+}
+@media (max-width: 860px) { .team { grid-template-columns: 1fr 1fr; } }
+
+/* Stats */
+.band {
+  margin: 32px 0 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.band .s { padding: 28px 24px; border-right: 1px solid var(--line); }
+.band .s:last-child { border-right: 0; }
+.band .s .num {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 36px;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.band .s .lbl { font-size: 13px; color: var(--muted); margin-top: 6px; }
+@media (max-width: 860px) {
+  .band { grid-template-columns: 1fr 1fr; }
+  .band .s:nth-child(2) { border-right: 0; }
+  .band .s:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+
+/* CTA */
+.cta-band {
+  margin: 120px 0 0;
+  padding: 64px 48px;
+  border-radius: 22px;
+  background: var(--ink); color: var(--bg);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 40px;
+}
+html[data-theme="dark"] .cta-band { background: var(--surface-2); color: var(--ink); }
+.cta-band h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 36px;
+  letter-spacing: -0.025em; line-height: 1.1;
+  margin: 0; max-width: 580px; text-wrap: balance;
+}
+.cta-band h3 em { font-style: italic; font-weight: 400; opacity: .7; }
+.cta-band .btn { background: var(--bg); color: var(--ink); padding: 14px 22px; border-radius: 999px; font-weight: 500; font-size: 15px; white-space: nowrap; }
+html[data-theme="dark"] .cta-band .btn { background: var(--ink); color: var(--bg); }
+@media (max-width: 860px) { .cta-band { flex-direction: column; align-items: flex-start; padding: 40px 28px; } }
+
+footer.foot { margin-top: 96px; padding: 40px 0; border-top: 1px solid var(--line); }
+.foot-inner {
+  display: flex; justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.04em;
+}
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; gap: 32px; }
+  .hero .side-img { aspect-ratio: 4/3; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg…" />
+      <button class="submit" aria-label="Søg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </div>
+    <div class="nav-right">
+      <a href="boards.html">Tavler</a>
+      <a href="careers.html">Karriere</a>
+      <a href="#">Log ind</a>
+      <a href="#" class="btn-primary">Start gratis</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="breadcrumbs" style="padding-top: 24px;">
+    <a href="Colourbox.html">Hjem</a><span>/</span>
+    <span style="color: var(--ink);">Om os</span>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Om Colourbox · Grundlagt 2003 · Odense, DK</div>
+      <h1>Europas markedsplads for <em>fantastiske stock-billeder, vektorer og videoer.</em></h1>
+      <p class="lede">Vi giver virksomheder mulighed for at fortælle overbevisende historier med virkningsfulde billeder. Grundlagt i Odense i 2003 fejrede vi vores 20-års jubilæum i 2025 — stadig privatejet, stadig drevet af et lille internationalt team, stadig allergiske over for syntetisk fyld.</p>
+    </div>
+    <div class="side-img" style="background-image:url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=75&auto=format')"></div>
+  </section>
+
+  <!-- COVER -->
+  <div class="cover" style="background-image:url('https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=2000&q=80&auto=format')">
+    <div class="caption">Colourbox HK · Hammergyden 75, Odense N, DK</div>
+  </div>
+
+  <!-- STORY -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Historien</div>
+      <h2>Vi havde aldrig som mål at blive <em>det største bibliotek.</em></h2>
+    </div>
+    <div class="prose">
+      <p>Colourbox blev grundlagt i Odense i 2003. Mere end to årtier senere er virksomheden stadig privatejet og stadig drevet af et lille internationalt team — 11 til 50 personer fordelt på mere end ti lande — med kunder og bidragydere i hele Europa og videre ud.</p>
+      <p>Forretningen er ligetil. Vi driver en stock-markedsplads, der forbinder købere med fotografer, videografer og illustratorer, og vi gennemgår hver eneste fil, der kommer i biblioteket — kvalitetskontrol og teknisk kontrol, inden den lægges op. Bidragydere beholder ophavsretten til deres arbejde; de giver os de licensrettigheder, vi skal bruge for at sælge det. Ingen oprettelsesgebyr, ingen eksklusivitetsbinding.</p>
+      <p>I dag betjener platformen over en million månedlige besøgende og mere end 100.000 aktive brugere verden over. Publikummet er internationalt — USA, Indien og Storbritannien står tilsammen for knap halvdelen af trafikken — og bidragydergrundlaget er endnu bredere. Vores andet kontor, i Berlin, blev åbnet for at holde den europæiske kundesupport tæt på brugerne.</p>
+      <p>Vi har set branchen jage skala-for-enhver-pris og syntetisk fyld, og vi har med vilje holdt os langsommere og mere selektive. Det, der før var et industrispørgsmål — <em>hvor henter vi billederne fra?</em> — er blevet et etisk: <em>hvem er personen i billedet, og blev vedkommende betalt?</em> Svaret står på hver eneste filside. Det er produktet.</p>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">I tal · 2026</div>
+      <h2>Tyve-plus år. <em>Stadig uafhængig.</em></h2>
+    </div>
+    <div class="band">
+      <div class="s"><div class="num">1M+</div><div class="lbl">Månedlige besøgende</div></div>
+      <div class="s"><div class="num">100k+</div><div class="lbl">Aktive brugere verden over</div></div>
+      <div class="s"><div class="num">2</div><div class="lbl">Kontorer · Odense og Berlin</div></div>
+      <div class="s"><div class="num">10+</div><div class="lbl">Nationaliteter i teamet</div></div>
+    </div>
+  </section>
+
+  <!-- VALUES -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Det vi går op i</div>
+      <h2>Tre principper <em>vi ikke giver køb på.</em></h2>
+    </div>
+    <div class="values">
+      <div class="val">
+        <div class="n">01 · Kreditering</div>
+        <h3>Hver fil bærer et navn.</h3>
+        <p>Ingen pseudonymer, intet "diverse", ingen anonym samleplade. Købere kan se, hvem der har lavet værket, og hvordan de kan bestille direkte hos skaberen.</p>
+      </div>
+      <div class="val">
+        <div class="n">02 · Ærlighed</div>
+        <h3>Intet syntetisk fyld i hovedbiblioteket.</h3>
+        <p>AI-genereret arbejde ligger i en tydeligt mærket tilvalgspulje. Hovedbiblioteket er verificeret menneskeligt arbejde — med EXIF-data til at bevise det.</p>
+      </div>
+      <div class="val">
+        <div class="n">03 · Ejerskab</div>
+        <h3>Bidragydere beholder broderparten.</h3>
+        <p>Hovedsatsen for honorar er 50–70 % af hver licensindtægt. Den sats du underskriver, er den sats du beholder — i hele kontraktens løbetid.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Milepæle</div>
+      <h2>Det vi byggede, <em>i rækkefølge.</em></h2>
+    </div>
+    <div class="timeline">
+      <div class="tl-row"><div class="tl-year">2003</div><div class="tl-tag">Grundlagt · Odense, DK</div><div class="tl-body"><strong>Colourbox grundlægges i Odense</strong> som en lille stock-billedmarkedsplads for danske kunder. Alt — design, udvikling, review — er in-house fra dag ét.</div></div>
+      <div class="tl-row"><div class="tl-year">2008</div><div class="tl-tag">Kreditering per fil</div><div class="tl-body">Navngivne bidragyderprofiler bliver standard: hver filside viser, hvem der har lavet den, og hvor vedkommende er baseret.</div></div>
+      <div class="tl-row"><div class="tl-year">2012</div><div class="tl-tag">Video og vektorer</div><div class="tl-body">Biblioteket udvides ud over fotografi til stock-video og redigerbar vektorgrafik, hvilket giver bureauer og presseafdelinger et bredere udvalg.</div></div>
+      <div class="tl-row"><div class="tl-year">2016</div><div class="tl-tag">Berlin-kontor</div><div class="tl-body">Et andet kontor åbner i Berlin (Heinrich-Roller-Strasse 16A) for at styrke den europæiske kundesupport og kontakten til bidragydere.</div></div>
+      <div class="tl-row"><div class="tl-year">2023</div><div class="tl-tag">AI-politik</div><div class="tl-body">"Intet syntetisk fyld"-holdningen formaliseres. AI-genereret arbejde flyttes over i en tydeligt mærket tilvalgspulje — adskilt fra hovedbiblioteket.</div></div>
+      <div class="tl-row"><div class="tl-year">2025</div><div class="tl-tag">20 år</div><div class="tl-body">Colourbox fejrer sit 20-års jubilæum. Platformen betjener nu over en million månedlige besøgende og mere end 100.000 aktive brugere verden over.</div></div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Teamet</div>
+      <h2>Et lille hold, <em>ti-plus nationaliteter.</em></h2>
+      <p>Mellem 11 og 50 personer fordelt på Odense og Berlin — design, udvikling, review, salg og kundesupport — og de fleste sender noget i luften, som du kan se i produktet. For presse- og mediehenvendelser, kontakt os via <a href="press.html" style="color:var(--accent)">Presse</a>.</p>
+    </div>
+    <div class="team">
+      <div class="person">
+        <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=75&auto=format')"></div>
+        <div class="n">Odense HK</div><div class="r">Hammergyden 75 · DK</div>
+      </div>
+      <div class="person">
+        <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1587330979470-3595ac045ab0?w=600&q=75&auto=format')"></div>
+        <div class="n">Berlin-kontor</div><div class="r">Heinrich-Roller-Strasse 16A · DE</div>
+      </div>
+      <div class="person">
+        <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=600&q=75&auto=format')"></div>
+        <div class="n">Review og support</div><div class="r">Distribueret · 10+ lande</div>
+      </div>
+      <div class="person">
+        <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=75&auto=format')"></div>
+        <div class="n">Udvikling og design</div><div class="r">In-house, altid</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-band">
+    <h3>Vil du arbejde her, <em>eller sælge dit arbejde her?</em></h3>
+    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+      <a href="careers.html" class="btn">Se ledige stillinger →</a>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 COLOURBOX A/S</span>
+    <span>LAVET UDEN AI-GENERERET INDHOLD</span>
+  </div>
+</footer>
+
+</body>
+</html>

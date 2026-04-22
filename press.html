@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Presse — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.doc-head { padding: 72px 0 56px; }
+.doc-head .eyebrow { margin-bottom: 18px; }
+.doc-head h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: clamp(48px, 5.8vw, 80px);
+  letter-spacing: -0.04em; line-height: 1;
+  margin: 0 0 22px;
+  max-width: 860px; text-wrap: balance;
+}
+.doc-head h1 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.doc-head .lede {
+  font-size: 18px; line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 620px;
+  margin: 0 0 28px;
+}
+.doc-head .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-primary.lg { padding: 14px 22px; font-size: 15px; }
+.btn-ghost {
+  padding: 14px 22px; border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 15px; color: var(--ink);
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-ghost:hover { background: var(--surface-2); }
+
+/* Contact card */
+.contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 48px;
+}
+.contact .cell { padding: 28px 32px; border-right: 1px solid var(--line); }
+.contact .cell:last-child { border-right: 0; }
+.contact .cell .lbl {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.contact .cell h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 22px;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+.contact .cell p { margin: 0 0 12px; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; }
+.contact .cell a {
+  color: var(--accent); font-family: "JetBrains Mono", monospace;
+  font-size: 13px; letter-spacing: 0.02em;
+}
+@media (max-width: 860px) {
+  .contact { grid-template-columns: 1fr; }
+  .contact .cell { border-right: 0; border-bottom: 1px solid var(--line); }
+  .contact .cell:last-child { border-bottom: 0; }
+}
+
+/* Section */
+section.block { padding-top: 96px; }
+.block-head { margin-bottom: 36px; max-width: 720px; }
+.block-head .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.block-head .eyebrow::before { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+.block-head h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 36px; letter-spacing: -0.03em;
+  line-height: 1.05; margin: 0 0 10px;
+  text-wrap: balance;
+}
+.block-head h2 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.block-head p { margin: 0; font-size: 15px; color: var(--ink-2); line-height: 1.55; }
+
+/* Fact sheet */
+.facts {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  font-size: 14px;
+}
+.facts > div {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.facts > div:nth-last-child(-n+2) { border-bottom: 0; }
+.facts > div.k {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.08em;
+  color: var(--muted); text-transform: uppercase;
+  background: var(--surface-2);
+  border-right: 1px solid var(--line);
+}
+.facts > div.v { color: var(--ink); font-size: 15px; }
+.facts > div.v em { font-style: normal; color: var(--muted); font-size: 13px; margin-left: 6px; }
+
+/* Assets grid */
+.assets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.asset {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+  display: flex; flex-direction: column;
+}
+.asset .preview {
+  aspect-ratio: 16/10;
+  display: grid; place-items: center;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.asset .meta { padding: 18px 20px; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.asset h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 16px;
+  margin: 0 0 4px;
+}
+.asset .fmt {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.08em;
+  color: var(--muted); text-transform: uppercase;
+}
+.asset .dl {
+  flex-shrink: 0;
+  padding: 8px 12px; border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 12.5px; color: var(--ink-2);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.asset .dl:hover { border-color: var(--ink); color: var(--ink); }
+
+/* Brand colour swatches inside preview */
+.preview.brand-wordmark {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700; font-size: 42px;
+  letter-spacing: -0.03em; color: var(--ink);
+  display: flex; align-items: center; gap: 12px;
+}
+.preview.brand-wordmark .lm {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: conic-gradient(from 210deg, var(--accent), #f5c518, #e24a7a, var(--accent));
+  position: relative;
+}
+.preview.brand-wordmark .lm::after {
+  content: ""; position: absolute; inset: 8px;
+  border-radius: 5px; background: var(--surface-2);
+}
+.preview.brand-mark { display: grid; place-items: center; }
+.preview.brand-mark .lm {
+  width: 72px; height: 72px; border-radius: 18px;
+  background: conic-gradient(from 210deg, var(--accent), #f5c518, #e24a7a, var(--accent));
+  position: relative;
+}
+.preview.brand-mark .lm::after {
+  content: ""; position: absolute; inset: 14px;
+  border-radius: 8px; background: var(--surface-2);
+}
+.preview.brand-invert { background: var(--ink); color: var(--bg); }
+.preview.brand-invert .lm::after { background: var(--ink); }
+
+/* Colour swatches */
+.swatches {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.sw { padding: 24px 20px 22px; border-right: 1px solid var(--line); }
+.sw:last-child { border-right: 0; }
+.sw .chip {
+  height: 64px; border-radius: 10px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(0,0,0,.05);
+}
+.sw .n { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+.sw .hex {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11.5px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+@media (max-width: 860px) { .swatches { grid-template-columns: 1fr 1fr; } .sw { border-right: 0; border-bottom: 1px solid var(--line); } }
+
+/* Coverage list */
+.coverage {
+  border-top: 1px solid var(--line);
+}
+.cov-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 160px;
+  gap: 24px;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: baseline;
+}
+.cov-date {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11.5px; letter-spacing: 0.04em;
+  color: var(--muted); text-transform: uppercase;
+}
+.cov-body .pub {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.cov-body h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 19px;
+  letter-spacing: -0.015em; line-height: 1.25;
+  margin: 0;
+  max-width: 640px;
+}
+.cov-body h3 a:hover { color: var(--accent); }
+.cov-link {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.06em;
+  color: var(--muted); text-transform: uppercase;
+  text-align: right;
+}
+.cov-link:hover { color: var(--ink); }
+@media (max-width: 860px) {
+  .cov-row { grid-template-columns: 1fr; gap: 8px; }
+  .cov-link { text-align: left; }
+}
+
+/* Awards */
+.awards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.aw {
+  padding: 26px 24px 28px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.aw .y {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.aw h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 18px;
+  margin: 0 0 6px; line-height: 1.25;
+}
+.aw p { margin: 0; font-size: 13.5px; color: var(--muted); }
+@media (max-width: 860px) { .awards { grid-template-columns: 1fr; } }
+
+footer.foot { margin-top: 96px; padding: 40px 0; border-top: 1px solid var(--line); }
+.foot-inner {
+  display: flex; justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.04em;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg…" />
+      <button class="submit" aria-label="Søg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </div>
+    <div class="nav-right">
+      <a href="about.html">Om os</a>
+      <a href="careers.html">Karriere</a>
+      <a href="#">Log ind</a>
+      <a href="#" class="btn-primary">Start gratis</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="breadcrumbs" style="padding-top: 24px;">
+    <a href="Colourbox.html">Hjem</a><span>/</span>
+    <span style="color: var(--ink);">Presse</span>
+  </div>
+
+  <header class="doc-head">
+    <div class="eyebrow">Pressecenter · For journalister og analytikere</div>
+    <h1>Pressemateriale, <em>samlet ét sted.</em></h1>
+    <p class="lede">Logoer, faktaark, stifterfotografi, seneste omtale, priser. Hotlink det, du har brug for, eller download hele pakken. Citater og interviews leveres inden for 24 timer.</p>
+    <div class="ctas">
+      <a href="#" class="btn-primary lg">Download pressemateriale (28 MB) ↓</a>
+      <a href="#coverage" class="btn-ghost">Seneste omtale →</a>
+    </div>
+
+    <div class="contact">
+      <div class="cell">
+        <div class="lbl">Presseforespørgsler</div>
+        <h3>Helene Borg</h3>
+        <p>Kommunikationschef. Engelsk, dansk, tysk. Svarer inden for 24 timer på hverdage.</p>
+        <a href="mailto:press@colourbox.com">press@colourbox.com</a>
+      </div>
+      <div class="cell">
+        <div class="lbl">Skaber- og bidragyder-historier</div>
+        <h3>Sofie Riis</h3>
+        <p>Kontakt til navngivne bidragydere i mere end 10 lande. Kan formidle portrætter, citater og besøg på stedet.</p>
+        <a href="mailto:stories@colourbox.com">stories@colourbox.com</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- FACT SHEET -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Faktaark</div>
+      <h2>Tallene <em>du ellers skulle spørge om.</em></h2>
+    </div>
+    <div class="facts">
+      <div class="k">Grundlagt</div><div class="v">2003 <em>Odense, Danmark</em></div>
+      <div class="k">Stiftere</div><div class="v">Ikke oplyst</div>
+      <div class="k">Ejerskab</div><div class="v">Privatejet <em>ingen eksterne investorer</em></div>
+      <div class="k">Medarbejdere</div><div class="v">11–50 <em>fordelt på flere lande</em></div>
+      <div class="k">Bidragydere</div><div class="v">Globalt bidragydernetværk <em>10+ lande</em></div>
+      <div class="k">Bibliotekets størrelse</div><div class="v">42,1 mio. filer <em>fotos, video, illustration, vektorer</em></div>
+      <div class="k">Udbetalt til skabere, 2025</div><div class="v">Ikke offentliggjort <em>månedlig afregning</em></div>
+      <div class="k">AI-politik</div><div class="v">Ingen syntetiske fyldstoffer i hovedbiblioteket <em>separat opt-in AI-pulje</em></div>
+      <div class="k">Understøttede sprog</div><div class="v">11 <em>EN, DA, DE, FR, ES, PT, IT, JA, KO, ZH, NL</em></div>
+      <div class="k">Hovedkontor</div><div class="v">Hammergyden 75, 5270 Odense N, DK</div>
+    </div>
+  </section>
+
+  <!-- LOGO ASSETS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Brandaktiver</div>
+      <h2>Logoer, mærker, ordmærker. <em>Lad være med at strække dem.</em></h2>
+      <p>Alle filer er SVG med PNG-fallbacks i 1×/2×/3×. Brug ordmærket, når pladsen tillader det. Hold et frirum svarende til højden af <code>C</code>'et.</p>
+    </div>
+    <div class="assets">
+      <div class="asset">
+        <div class="preview brand-wordmark"><span class="lm"></span>Colourbox</div>
+        <div class="meta">
+          <div><h3>Ordmærke · Lys</h3><div class="fmt">SVG · PNG · EPS</div></div>
+          <a href="#" class="dl">Download ↓</a>
+        </div>
+      </div>
+      <div class="asset">
+        <div class="preview brand-wordmark brand-invert"><span class="lm"></span>Colourbox</div>
+        <div class="meta">
+          <div><h3>Ordmærke · Mørk</h3><div class="fmt">SVG · PNG · EPS</div></div>
+          <a href="#" class="dl">Download ↓</a>
+        </div>
+      </div>
+      <div class="asset">
+        <div class="preview brand-mark"><span class="lm"></span></div>
+        <div class="meta">
+          <div><h3>Kun mærke</h3><div class="fmt">SVG · PNG · ICO</div></div>
+          <a href="#" class="dl">Download ↓</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRAND COLOURS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Brandpalette</div>
+      <h2>Paletten, vi faktisk bruger <em>i produktion.</em></h2>
+    </div>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#3d5afe;"></div><div class="n">Accent / Indigo</div><div class="hex">#3D5AFE</div></div>
+      <div class="sw"><div class="chip" style="background:#17181a;"></div><div class="n">Blæk</div><div class="hex">#17181A</div></div>
+      <div class="sw"><div class="chip" style="background:#fafaf8; border-color:var(--line);"></div><div class="n">Papir</div><div class="hex">#FAFAF8</div></div>
+      <div class="sw"><div class="chip" style="background:#f2f1ec;"></div><div class="n">Overflade</div><div class="hex">#F2F1EC</div></div>
+      <div class="sw"><div class="chip" style="background:#73767c;"></div><div class="n">Dæmpet</div><div class="hex">#73767C</div></div>
+    </div>
+  </section>
+
+  <!-- COVERAGE -->
+  <section class="block" id="coverage">
+    <div class="block-head">
+      <div class="eyebrow">Seneste omtale</div>
+      <h2>Hvad journalister har <em>skrevet om os.</em></h2>
+    </div>
+    <div class="coverage">
+      <div class="cov-row">
+        <div class="cov-date">2026 · 02. apr</div>
+        <div class="cov-body">
+          <div class="pub">The Guardian · Technology</div>
+          <h3><a href="#">Det danske billedbureau, der nægtede at sælge syntetiske billeder — og alligevel tjente flere penge</a></h3>
+        </div>
+        <a href="#" class="cov-link">Læs →</a>
+      </div>
+      <div class="cov-row">
+        <div class="cov-date">2026 · 14. mar</div>
+        <div class="cov-body">
+          <div class="pub">Fast Company</div>
+          <h3><a href="#">Inde i Colourbox: hvordan et fynsk team afregner store summer om året til navngivne skabere</a></h3>
+        </div>
+        <a href="#" class="cov-link">Læs →</a>
+      </div>
+      <div class="cov-row">
+        <div class="cov-date">2026 · 28. feb</div>
+        <div class="cov-body">
+          <div class="pub">Wired</div>
+          <h3><a href="#">I en tid med generativt alt er markedspladsen for navngivne skabere en stille modvægt</a></h3>
+        </div>
+        <a href="#" class="cov-link">Læs →</a>
+      </div>
+      <div class="cov-row">
+        <div class="cov-date">2026 · 21. jan</div>
+        <div class="cov-body">
+          <div class="pub">Politiken · Kultur</div>
+          <h3><a href="#">Fynsk billedbureau runder 23 år — og holder fast i mennesker fremfor maskiner</a></h3>
+        </div>
+        <a href="#" class="cov-link">Læs →</a>
+      </div>
+      <div class="cov-row">
+        <div class="cov-date">2025 · 09. dec</div>
+        <div class="cov-body">
+          <div class="pub">TechCrunch</div>
+          <h3><a href="#">Colourbox runder 42 mio. filer, alle skabt af mennesker — og afviser endnu en runde investorpres</a></h3>
+        </div>
+        <a href="#" class="cov-link">Læs →</a>
+      </div>
+      <div class="cov-row">
+        <div class="cov-date">2025 · 17. okt</div>
+        <div class="cov-body">
+          <div class="pub">It's Nice That</div>
+          <h3><a href="#">Hvorfor "signeret af et rigtigt menneske" blev det eneste, købere stadig stoler på</a></h3>
+        </div>
+        <a href="#" class="cov-link">Læs →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- AWARDS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Anerkendelse</div>
+      <h2>Hvad branchen <em>sagde om det.</em></h2>
+    </div>
+    <div class="awards">
+      <div class="aw">
+        <div class="y">2025</div>
+        <h3>Nordic Tech Award</h3>
+        <p>Årets bootstrappede virksomhed, København.</p>
+      </div>
+      <div class="aw">
+        <div class="y">2025</div>
+        <h3>Lucie Award</h3>
+        <p>Årets billedbureau, International Photography Awards.</p>
+      </div>
+      <div class="aw">
+        <div class="y">2024</div>
+        <h3>Fast Company</h3>
+        <p>Mest innovative virksomhed — medie- og fotografisektoren.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 COLOURBOX A/S</span>
+    <span>LAVET UDEN AI-GENERERET INDHOLD</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Kassen — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.checkout-wrap {
+  max-width: 1100px; margin: 0 auto;
+  padding: 40px 28px 80px;
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 48px;
+}
+
+.stepper {
+  display: flex; gap: 0; align-items: center;
+  margin-bottom: 28px;
+}
+.step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+.step-num {
+  width: 24px; height: 24px; border-radius: 999px;
+  background: var(--surface-2); color: var(--muted);
+  display: grid; place-items: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+}
+.step.on { color: var(--ink); }
+.step.on .step-num { background: var(--ink); color: var(--bg); }
+.step.done .step-num { background: var(--accent); color: var(--accent-ink); }
+.step.done { color: var(--ink-2); }
+.step-line { width: 40px; height: 1px; background: var(--line); margin: 0 16px; }
+
+h1.ch-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 32px;
+  letter-spacing: -0.025em; line-height: 1.1;
+  margin: 0 0 6px;
+}
+.ch-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+}
+.card h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 15px; font-weight: 600;
+  letter-spacing: -0.01em; margin: 0 0 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card h2 .mono-lbl {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+  font-weight: 400;
+}
+
+/* Licence picker */
+.lic-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.lic-opt {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: border-color .15s;
+}
+.lic-opt:hover { border-color: var(--ink-2); }
+.lic-opt.active {
+  border-color: var(--ink);
+  background: var(--surface-2);
+}
+.lic-opt .h { display: flex; justify-content: space-between; align-items: center; }
+.lic-opt .name { font-weight: 500; font-size: 14px; }
+.lic-opt .radio {
+  width: 16px; height: 16px; border-radius: 999px;
+  border: 1.5px solid var(--line);
+}
+.lic-opt.active .radio { border-color: var(--accent); }
+.lic-opt.active .radio::after {
+  content: ""; display: block; width: 8px; height: 8px;
+  background: var(--accent); border-radius: 999px;
+  margin: 2.5px; }
+.lic-opt .desc { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.lic-opt .price { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--ink-2); }
+
+/* Size picker */
+.size-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.size-opt {
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px; cursor: pointer;
+  text-align: left;
+  transition: border-color .15s;
+}
+.size-opt.active { border-color: var(--ink); background: var(--surface-2); }
+.size-opt .sz { font-weight: 500; font-size: 13px; margin-bottom: 2px; }
+.size-opt .dims { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--muted); }
+
+/* Payment */
+.pay-methods { display: flex; gap: 8px; margin-bottom: 16px; }
+.pay-method {
+  flex: 1;
+  border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px; display: flex; flex-direction: column; gap: 4px; align-items: center;
+  cursor: pointer; font-size: 12px; color: var(--muted);
+}
+.pay-method.active { border-color: var(--ink); color: var(--ink); background: var(--surface-2); }
+.pay-method .ico {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600; font-size: 13px;
+  letter-spacing: -0.01em;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.field label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.field input {
+  padding: 11px 14px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: var(--bg); color: var(--ink);
+  font: 14px "Inter", sans-serif; outline: 0;
+}
+.field input:focus { border-color: var(--ink); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+/* Legal checkbox */
+.legal {
+  display: flex; gap: 10px; padding: 14px;
+  background: var(--surface-2); border-radius: 10px;
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.5;
+}
+.legal input { margin-top: 2px; }
+.legal a { color: var(--accent); }
+
+/* Summary sticky */
+.summary {
+  position: sticky; top: 84px;
+  align-self: start;
+  border: 1px solid var(--line); border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.summary-preview {
+  position: relative;
+  aspect-ratio: 4/3;
+  background: var(--surface-2);
+}
+.summary-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.summary-preview .badge {
+  position: absolute; top: 12px; left: 12px;
+  background: rgba(0,0,0,.6); color: #fff;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px; border-radius: 4px;
+  backdrop-filter: blur(8px);
+}
+.summary-body { padding: 20px; }
+.summary-body h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 16px; font-weight: 500;
+  line-height: 1.35; margin: 0 0 4px;
+}
+.summary-body .by { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+.summary-rows { border-top: 1px solid var(--line); padding-top: 14px; }
+.srow {
+  display: flex; justify-content: space-between;
+  font-size: 13.5px; color: var(--ink-2);
+  padding: 4px 0;
+}
+.srow.total {
+  border-top: 1px solid var(--line);
+  margin-top: 10px; padding-top: 14px;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 20px; font-weight: 500;
+  color: var(--ink);
+}
+.srow.credit { color: #2a8450; }
+html[data-theme="dark"] .srow.credit { color: #6fd79a; }
+
+.cta {
+  width: 100%;
+  background: var(--accent); color: var(--accent-ink);
+  padding: 16px; border-radius: 12px;
+  font-weight: 500; font-size: 15px;
+  margin-top: 16px;
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+}
+.cta:hover { filter: brightness(1.05); }
+
+.split-note {
+  margin-top: 14px;
+  font-size: 11.5px; color: var(--muted);
+  display: flex; align-items: flex-start; gap: 8px;
+  line-height: 1.5;
+}
+.split-note svg { flex-shrink: 0; margin-top: 1px; color: var(--accent); }
+
+@media (max-width: 900px) {
+  .checkout-wrap { grid-template-columns: 1fr; }
+  .summary { position: static; }
+  .size-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg…" />
+      <button class="submit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </div>
+    <div class="nav-right">
+      <a href="boards.html">Tavler</a>
+      <a href="#" class="btn-primary">L. Mendoza</a>
+    </div>
+  </div>
+</nav>
+
+<div class="checkout-wrap">
+  <div>
+    <div class="stepper">
+      <div class="step done"><span class="step-num">1</span>Kurv</div>
+      <div class="step-line"></div>
+      <div class="step on"><span class="step-num">2</span>Licens og betaling</div>
+      <div class="step-line"></div>
+      <div class="step"><span class="step-num">3</span>Download</div>
+    </div>
+
+    <h1 class="ch-title">Licens og kassen.</h1>
+    <p class="ch-sub">Én fil. Vælg hvordan du vil bruge den, og hvordan du vil betale — 48 % af beløbet går direkte til skaberen.</p>
+
+    <!-- Licence -->
+    <div class="card">
+      <h2>Licenstype <span class="mono-lbl">Trin 2.1</span></h2>
+      <div class="lic-grid">
+        <div class="lic-opt active" data-lic="standard" data-price="49">
+          <div class="h"><span class="name">Standard</span><span class="radio"></span></div>
+          <div class="desc">Marketing, web, sociale medier, præsentationer. Op til 500K visninger.</div>
+          <div class="price">€49 · mest populær</div>
+        </div>
+        <div class="lic-opt" data-lic="extended" data-price="189">
+          <div class="h"><span class="name">Udvidet</span><span class="radio"></span></div>
+          <div class="desc">Videresalgsvarer, ubegrænsede oplag, apps og broadcast.</div>
+          <div class="price">€189</div>
+        </div>
+        <div class="lic-opt" data-lic="editorial" data-price="29">
+          <div class="h"><span class="name">Redaktionel</span><span class="radio"></span></div>
+          <div class="desc">Nyheder, journalistik, ikke-kommercielle udgivelser.</div>
+          <div class="price">€29</div>
+        </div>
+        <div class="lic-opt" data-lic="custom" data-price="0">
+          <div class="h"><span class="name">Tilpasset</span><span class="radio"></span></div>
+          <div class="desc">Eksklusive rettigheder eller brug ud over Udvidet — vi sender et tilbud.</div>
+          <div class="price">Anmod om tilbud</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Size -->
+    <div class="card">
+      <h2>Filstørrelse <span class="mono-lbl">Trin 2.2</span></h2>
+      <div class="size-grid">
+        <div class="size-opt"><div class="sz">Lille</div><div class="dims">800 × 1067 · 0,9 MB</div></div>
+        <div class="size-opt"><div class="sz">Mellem</div><div class="dims">2400 × 3200 · 4,1 MB</div></div>
+        <div class="size-opt active"><div class="sz">Stor</div><div class="dims">6000 × 8000 · 14 MB</div></div>
+        <div class="size-opt"><div class="sz">Original</div><div class="dims">RAW · 87 MB</div></div>
+      </div>
+    </div>
+
+    <!-- Payment -->
+    <div class="card">
+      <h2>Betaling <span class="mono-lbl">Trin 2.3</span></h2>
+      <div class="pay-methods">
+        <div class="pay-method active"><div class="ico">Kort</div>Visa · Mastercard · Amex</div>
+        <div class="pay-method"><div class="ico">PayPal</div>Sikker omdirigering</div>
+        <div class="pay-method"><div class="ico">SEPA</div>EU-bankoverførsel</div>
+        <div class="pay-method"><div class="ico">Kreditter</div>4 tilbage</div>
+      </div>
+
+      <div class="field">
+        <label>Kortnummer</label>
+        <input value="4242 4242 4242 4242" />
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Udløb</label>
+          <input value="08 / 28" />
+        </div>
+        <div class="field">
+          <label>CVC</label>
+          <input value="•••" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Kortholders navn</label>
+        <input value="Mira Sørensen" />
+      </div>
+    </div>
+
+    <!-- Billing -->
+    <div class="card">
+      <h2>Fakturering og moms <span class="mono-lbl">Trin 2.4</span></h2>
+      <div class="field-row">
+        <div class="field">
+          <label>Land</label>
+          <input value="Danmark" />
+        </div>
+        <div class="field">
+          <label>CVR-nummer (valgfrit)</label>
+          <input placeholder="DK12345678" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Firma / fakturanavn</label>
+        <input value="Studio Nordlys ApS" />
+      </div>
+
+      <div class="legal">
+        <input type="checkbox" id="accept" checked />
+        <label for="accept">Jeg accepterer <a href="#">standardlicensen</a> og bekræfter, at dette køb giver verdensomspændende, tidsubegrænsede, ikke-eksklusive rettigheder til de ovennævnte anvendelser.</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <aside class="summary">
+    <div class="summary-preview">
+      <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&q=75&auto=format" alt="" />
+      <span class="badge">CB-241-A0412</span>
+    </div>
+    <div class="summary-body">
+      <h3>Pottemager drejer en skål på drejeskiven i morgenlys.</h3>
+      <div class="by">Af Lucía Mendoza · Dokumentar</div>
+
+      <div class="summary-rows">
+        <div class="srow"><span>Licens (<span id="lic-name">Standard</span>)</span><span id="lic-price">€49,00</span></div>
+        <div class="srow"><span>Filstørrelse (Stor)</span><span>Inkluderet</span></div>
+        <div class="srow"><span>Moms (25 %)</span><span id="vat">€12,25</span></div>
+        <div class="srow credit"><span>Studio-kreditter anvendt</span><span>−€10,00</span></div>
+        <div class="srow total"><span>Total</span><span id="total">€51,25</span></div>
+      </div>
+
+      <button class="cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        Betal og download
+      </button>
+
+      <div class="split-note">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4v6c0 5-4 9-9 10-5-1-9-5-9-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <span>€23,52 går til Lucía · €27,73 dækker platform og moms</span>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<script>
+function update() {
+  const lic = document.querySelector(".lic-opt.active");
+  const p = parseFloat(lic.dataset.price) || 0;
+  const name = lic.querySelector(".name").textContent;
+  document.getElementById("lic-name").textContent = name;
+  document.getElementById("lic-price").textContent = "€" + p.toFixed(2);
+  const vat = p * 0.25;
+  document.getElementById("vat").textContent = "€" + vat.toFixed(2);
+  document.getElementById("total").textContent = "€" + (p + vat - 10).toFixed(2);
+}
+
+document.querySelectorAll(".lic-opt").forEach(el => el.addEventListener("click", () => {
+  document.querySelectorAll(".lic-opt").forEach(o => o.classList.remove("active"));
+  el.classList.add("active");
+  update();
+}));
+document.querySelectorAll(".size-opt").forEach(el => el.addEventListener("click", () => {
+  document.querySelectorAll(".size-opt").forEach(o => o.classList.remove("active"));
+  el.classList.add("active");
+}));
+document.querySelectorAll(".pay-method").forEach(el => el.addEventListener("click", () => {
+  document.querySelectorAll(".pay-method").forEach(o => o.classList.remove("active"));
+  el.classList.add("active");
+}));
+update();
+</script>
+</body>
+</html>

@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Karriere — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.hero {
+  padding: 80px 0 64px;
+}
+.hero .eyebrow { margin-bottom: 20px; }
+.hero h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: clamp(52px, 6.4vw, 96px);
+  letter-spacing: -0.04em;
+  line-height: 0.98;
+  margin: 0 0 24px;
+  max-width: 1100px;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.hero .lede {
+  font-size: 19px; line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 620px;
+  margin: 0 0 32px;
+}
+.hero .meta {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.08em;
+  color: var(--muted); text-transform: uppercase;
+}
+.hero .meta .dot { width: 4px; height: 4px; background: var(--accent); border-radius: 50%; display: inline-block; margin-right: 8px; vertical-align: middle; }
+
+/* Culture strip — 3 photos */
+.culture {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 16px;
+  margin: 0 0 16px;
+}
+.culture .ph {
+  aspect-ratio: 4/5;
+  border-radius: 18px;
+  background: var(--surface-2) center/cover;
+  position: relative;
+  overflow: hidden;
+}
+.culture .ph.wide { aspect-ratio: 16/11; grid-row: span 2; }
+.culture .tag {
+  position: absolute; left: 16px; bottom: 16px;
+  padding: 6px 10px;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+  border-radius: 999px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.08em;
+  color: #fff; text-transform: uppercase;
+}
+@media (max-width: 860px) { .culture { grid-template-columns: 1fr 1fr; } .culture .ph.wide { grid-row: auto; aspect-ratio: 4/3; } }
+
+/* Section */
+section.block { padding-top: 96px; }
+.block-head { margin-bottom: 36px; max-width: 720px; }
+.block-head .eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.block-head .eyebrow::before { content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+.block-head h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 40px;
+  letter-spacing: -0.03em; line-height: 1.05;
+  margin: 0 0 10px; text-wrap: balance;
+}
+.block-head h2 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.block-head p { margin: 0; font-size: 16px; color: var(--ink-2); line-height: 1.55; }
+
+/* How we work */
+.how {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.how-card {
+  padding: 28px 28px 30px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  display: flex; gap: 24px;
+}
+.how-card .ic {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  color: var(--accent);
+}
+.how-card h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 20px;
+  letter-spacing: -0.015em; line-height: 1.2;
+  margin: 0 0 8px;
+}
+.how-card p { margin: 0; font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+@media (max-width: 860px) { .how { grid-template-columns: 1fr; } }
+
+/* Perks */
+.perks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.perk {
+  padding: 22px 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.perk .ic {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  background: var(--surface-2);
+  display: grid; place-items: center;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+.perk h4 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 15px;
+  margin: 0 0 6px;
+}
+.perk p { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+@media (max-width: 860px) { .perks { grid-template-columns: 1fr 1fr; } }
+
+/* Roles filter bar */
+.roles-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  padding: 14px 0 24px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 4px;
+}
+.roles-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.roles-filters .chip {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--ink-2); cursor: pointer;
+  background: var(--bg);
+}
+.roles-filters .chip:hover { border-color: var(--ink); color: var(--ink); }
+.roles-filters .chip.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.roles-count {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.08em;
+  color: var(--muted); text-transform: uppercase;
+}
+
+/* Roles list */
+.roles { border-top: 1px solid var(--line); }
+.role {
+  display: grid;
+  grid-template-columns: 1.6fr 160px 160px 120px 40px;
+  gap: 20px;
+  padding: 22px 4px 22px 0;
+  border-bottom: 1px solid var(--line);
+  align-items: center;
+  cursor: pointer;
+  transition: padding .15s ease;
+}
+.role:hover { padding-left: 16px; background: linear-gradient(90deg, var(--surface-2), transparent 60%); }
+.role .rtitle {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 20px;
+  letter-spacing: -0.015em;
+}
+.role .rtitle .team {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  font-weight: 400;
+  margin-top: 4px;
+}
+.role .rcell {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px; letter-spacing: 0.04em;
+  color: var(--ink-2);
+}
+.role .rcell.type { color: var(--ink); }
+.role .arrow {
+  width: 32px; height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  display: grid; place-items: center;
+  color: var(--muted);
+  justify-self: end;
+  transition: all .15s ease;
+}
+.role:hover .arrow { border-color: var(--ink); color: var(--ink); transform: translate(3px, -3px); }
+@media (max-width: 900px) {
+  .role { grid-template-columns: 1fr; gap: 6px; padding: 18px 0; }
+  .role .arrow { display: none; }
+}
+
+/* Testimonial */
+.tm {
+  margin: 0;
+  padding: 40px 44px 44px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 40px;
+  align-items: end;
+}
+.tm blockquote {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 400; font-size: 26px;
+  letter-spacing: -0.015em; line-height: 1.3;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.tm blockquote em { font-style: italic; color: var(--muted); }
+.tm .who { display: flex; align-items: center; gap: 14px; }
+.tm .av { width: 48px; height: 48px; border-radius: 999px; background: center/cover; flex-shrink: 0; }
+.tm .n { font-weight: 500; font-size: 14px; }
+.tm .r { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 3px; }
+@media (max-width: 860px) { .tm { grid-template-columns: 1fr; padding: 28px; } }
+
+/* CTA */
+.cta-band {
+  margin: 120px 0 0;
+  padding: 64px 48px;
+  border-radius: 22px;
+  background: var(--ink); color: var(--bg);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 40px;
+}
+html[data-theme="dark"] .cta-band { background: var(--surface-2); color: var(--ink); }
+.cta-band h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 36px;
+  letter-spacing: -0.025em; line-height: 1.1;
+  margin: 0; max-width: 580px; text-wrap: balance;
+}
+.cta-band h3 em { font-style: italic; font-weight: 400; opacity: .7; }
+.cta-band .btn { background: var(--bg); color: var(--ink); padding: 14px 22px; border-radius: 999px; font-weight: 500; font-size: 15px; white-space: nowrap; }
+html[data-theme="dark"] .cta-band .btn { background: var(--ink); color: var(--bg); }
+@media (max-width: 860px) { .cta-band { flex-direction: column; align-items: flex-start; padding: 40px 28px; } }
+
+footer.foot { margin-top: 96px; padding: 40px 0; border-top: 1px solid var(--line); }
+.foot-inner {
+  display: flex; justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; color: var(--muted); letter-spacing: 0.04em;
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg ledige stillinger…" />
+      <button class="submit" aria-label="Søg"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </div>
+    <div class="nav-right">
+      <a href="about.html">Om os</a>
+      <a href="blog.html">Blog</a>
+      <a href="#">Log ind</a>
+      <a href="#" class="btn-primary">Start gratis</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="breadcrumbs" style="padding-top: 24px;">
+    <a href="Colourbox.html">Hjem</a><span>/</span>
+    <span style="color: var(--ink);">Karriere</span>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow">Bliv en del af os · 14 ledige stillinger</div>
+    <h1>Byg markedspladsen <em>for dem, der har lavet billederne.</em></h1>
+    <p class="lede">Vi er en 11–50 personers, rentabelt bootstrappet virksomhed i Odense. Ingen VC-overhæng, ingen kvartalsteater, ingen tvungne sprints. Langsigtet tænkning er styresystemet.</p>
+    <div class="meta">
+      <span><span class="dot"></span>11–50 mennesker</span>
+      <span><span class="dot"></span>10+ lande</span>
+      <span><span class="dot"></span>2 dage på kontor + remote fredag</span>
+      <span><span class="dot"></span>Bootstrappet siden 2003</span>
+    </div>
+  </section>
+
+  <!-- CULTURE -->
+  <div class="culture">
+    <div class="ph wide" style="background-image:url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=75&auto=format')">
+      <div class="tag">HQ · Odense</div>
+    </div>
+    <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&q=75&auto=format')">
+      <div class="tag">Bidragydermøde · Oaxaca</div>
+    </div>
+    <div class="ph" style="background-image:url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=75&auto=format')">
+      <div class="tag">Engineering-offsite · Skagen</div>
+    </div>
+  </div>
+
+  <!-- HOW WE WORK -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Sådan arbejder vi</div>
+      <h2>Roligt. <em>Men ikke langsomt.</em></h2>
+      <p>Vi leverer. Vi leverer bare ikke på bekostning af de mennesker, der laver arbejdet. Sådan ser det ud i praksis.</p>
+    </div>
+    <div class="how">
+      <div class="how-card">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></div>
+        <div>
+          <h3>Fokuseret arbejde, ikke performanceteater</h3>
+          <p>Mødefrie onsdage. Async som udgangspunkt. Slack er slået fra i weekenden — ikke som politik, men som refleks. Vi måler resultater, ikke hvor fyldt kalenderen er.</p>
+        </div>
+      </div>
+      <div class="how-card">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18M12 3v18"/></svg></div>
+        <div>
+          <h3>Flad struktur, høj autonomi</h3>
+          <p>Seks teams, to niveauer mellem en medarbejder og direktøren. Du får tillid til at træffe beslutninger på dit område; til gengæld forventer vi, at du skriver det ned, så andre også kan.</p>
+        </div>
+      </div>
+      <div class="how-card">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l8-16 8 16M8 14h8"/></svg></div>
+        <div>
+          <h3>Langsigtet frem for kvartalsvis</h3>
+          <p>Ingen investorer at stille tilfreds. Vi kan — og gør — sige "denne feature er rigtig, men ikke endnu", og mene det. Det ældste aktive projekt har været i gang i tre år.</p>
+        </div>
+      </div>
+      <div class="how-card">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 20V10"/></svg></div>
+        <div>
+          <h3>Skriv først, mød derefter</h3>
+          <p>Beslutninger lever i dokumenter. Møder findes for at afklare — ikke for at opdatere. De fleste forslag går fra udkast til leverance uden et eneste synkront møde.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERKS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Hvad du får</div>
+      <h2>De kedelige ting, <em>gjort ordentligt.</em></h2>
+    </div>
+    <div class="perks">
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9a3 3 0 000 6h6a3 3 0 010 6H6"/></svg></div><h4>Løn over markedet</h4><p>Benchmarket til 75. percentil i dansk tech. Transparente bånd; ingen forhandlingsspil.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h7"/><path d="M16 17l2 2 4-4"/></svg></div><h4>30 feriedage</h4><p>Lovpligtige 25 plus fem ekstra. Vi mener det — hvis du ikke holder dem, spørger din leder hvorfor.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></div><h4>Uddannelsesbudget på €3.000</h4><p>Bøger, kurser, konferencer, sabbatår. Ingen godkendelsesflow, ingen bilagsjagt.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4.5L6 21l1.5-7.5L2 9h7z"/></svg></div><h4>Overskudsdeling</h4><p>10 % af årets overskud fordeles ligeligt mellem alle medarbejdere. Udbetales i december, ikke ved en likviditetsbegivenhed.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 22a8 8 0 0116 0"/></svg></div><h4>6 måneders barselsorlov</h4><p>Fuld løn. Alle forældre, alle konstellationer, ingen regel om første år i stillingen.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l-2 0M19 12l2 0M12 5V3M12 21v-2M6 6L4.5 4.5M19.5 19.5L18 18M6 18l-1.5 1.5M19.5 4.5L18 6"/><circle cx="12" cy="12" r="4"/></svg></div><h4>Hjemmekontor-budget</h4><p>€2.500 ved start, €500 årligt i genopfriskning. Din stol, din skærm, dit tastatur — dit valg.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h4>Årligt sundhedstjek</h4><p>Privatklinik i Danmark; refusion til remote-kolleger i deres eget land.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div><h4>Pendler / frokost</h4><p>DSB-kort fuldt dækket. Dagligt frokosttilskud på €12; kok-drevet kantine, når du er på kontoret.</p></div>
+      <div class="perk"><div class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg></div><h4>Årlig bidragyderrejse</h4><p>Hver medarbejder besøger et af vores bidragyderes studier hvert år. Vi betaler.</p></div>
+    </div>
+  </section>
+
+  <!-- OPEN ROLES -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Ledige stillinger</div>
+      <h2>14 ledige stillinger. <em>Ærlige beskrivelser.</em></h2>
+      <p>Vi slår én stilling op pr. åbning og genåbner den først, når den er besat. Ingen evige tragte, intet talentpipeline-teater.</p>
+    </div>
+
+    <div class="roles-head">
+      <div class="roles-filters">
+        <button class="chip active" data-team="all">Alle teams</button>
+        <button class="chip" data-team="eng">Engineering</button>
+        <button class="chip" data-team="design">Design</button>
+        <button class="chip" data-team="ops">Drift</button>
+        <button class="chip" data-team="review">Gennemgang</button>
+        <button class="chip" data-team="support">Support</button>
+      </div>
+      <div class="roles-count"><span id="roles-count">14</span> ledige · opdateres dagligt</div>
+    </div>
+
+    <div class="roles" id="roles">
+      <a class="role" data-team="eng">
+        <div class="rtitle">Senior backend-engineer, søgning<span class="team">Engineering</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Odense / Remote EU</div>
+        <div class="rcell">DKK 720–900k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="eng">
+        <div class="rtitle">Staff engineer, billedinfrastruktur<span class="team">Engineering</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Odense</div>
+        <div class="rcell">DKK 850k–1,05M</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="eng">
+        <div class="rtitle">Frontend-engineer, bidragyder-studie<span class="team">Engineering</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Odense / Remote EU</div>
+        <div class="rcell">DKK 640–780k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="eng">
+        <div class="rtitle">Site reliability engineer<span class="team">Engineering</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Remote EU</div>
+        <div class="rcell">DKK 680–820k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="design">
+        <div class="rtitle">Senior produktdesigner, køber<span class="team">Design</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Odense</div>
+        <div class="rcell">DKK 700–860k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="design">
+        <div class="rtitle">Branddesigner<span class="team">Design</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Odense / Remote EU</div>
+        <div class="rcell">DKK 560–700k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="ops">
+        <div class="rtitle">Økonomichef<span class="team">Drift</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Odense</div>
+        <div class="rcell">DKK 900k–1,1M</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="ops">
+        <div class="rtitle">Partnerskabschef, enterprise<span class="team">Drift</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">London / Odense</div>
+        <div class="rcell">£75–95k + provision</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="review">
+        <div class="rtitle">Senior gennemgangsansvarlig, fotografi<span class="team">Gennemgang</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Remote EU</div>
+        <div class="rcell">€58–72k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="review">
+        <div class="rtitle">Gennemgangsansvarlig, video<span class="team">Gennemgang</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Remote EU</div>
+        <div class="rcell">€48–60k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="review">
+        <div class="rtitle">Gennemgangsansvarlig, illustration og vektorer<span class="team">Gennemgang</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Remote EU</div>
+        <div class="rcell">€48–60k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="support">
+        <div class="rtitle">Supportspecialist — tysk/engelsk<span class="team">Support</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Berlin / Remote EU</div>
+        <div class="rcell">€52–64k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="support">
+        <div class="rtitle">Supportspecialist — japansk<span class="team">Support</span></div>
+        <div class="rcell type">Deltid</div>
+        <div class="rcell">Tokyo / Remote</div>
+        <div class="rcell">¥6,2–7,8M</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+      <a class="role" data-team="ops">
+        <div class="rtitle">People &amp; culture-leder<span class="team">Drift</span></div>
+        <div class="rcell type">Fuldtid</div>
+        <div class="rcell">Odense</div>
+        <div class="rcell">DKK 720–880k</div>
+        <div class="arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL -->
+  <section class="block">
+    <figure class="tm">
+      <blockquote>"Jeg kom fra en VC-støttet virksomhed, hvor hvert kvartal var en sprint for bestyrelsen. Hos Colourbox er roadmappet tre år langt. Jeg bygger ting, der <em>stadig findes</em> i år fire. Det viser sig at betyde noget for mig."</blockquote>
+      <div class="who">
+        <div class="av" style="background-image:url('https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=200&q=75&auto=format')"></div>
+        <div>
+          <div class="n">Mikkel Rask</div>
+          <div class="r">Engineering-chef · Ansat siden 2019</div>
+        </div>
+      </div>
+    </figure>
+  </section>
+
+  <!-- CTA -->
+  <div class="cta-band">
+    <h3>Kan du ikke finde din stilling? <em>Vi ansætter talent, ikke titler.</em></h3>
+    <a href="mailto:careers@colourbox.com" class="btn">careers@colourbox.com →</a>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 COLOURBOX A/S</span>
+    <span>LAVET UDEN AI-GENERERET INDHOLD</span>
+  </div>
+</footer>
+
+<script>
+const roles = document.querySelectorAll("#roles .role");
+const count = document.getElementById("roles-count");
+document.querySelectorAll(".roles-filters .chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".roles-filters .chip").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const team = btn.dataset.team;
+    let visible = 0;
+    roles.forEach(r => {
+      const show = team === "all" || r.dataset.team === team;
+      r.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+    count.textContent = visible;
+  });
+});
+</script>
+
+</body>
+</html>

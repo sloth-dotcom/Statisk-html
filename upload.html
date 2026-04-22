@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Bidrag — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.app {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: calc(100vh - 64px);
+}
+
+/* Sidebar */
+.side-nav {
+  border-right: 1px solid var(--line);
+  padding: 24px 16px;
+  background: var(--surface);
+}
+.side-nav .who {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px; border-radius: 10px;
+  background: var(--surface-2);
+  margin-bottom: 20px;
+}
+.who .av { width: 32px; height: 32px; border-radius: 999px; background: center/cover; }
+.who .n { font-size: 13px; font-weight: 500; }
+.who .r { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.side-nav h4 {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  padding: 16px 10px 8px; margin: 0;
+  font-weight: 500;
+}
+.side-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px;
+  font-size: 13.5px; color: var(--ink-2);
+}
+.side-link:hover { background: var(--surface-2); color: var(--ink); }
+.side-link.on { background: var(--ink); color: var(--bg); font-weight: 500; }
+.side-link .ct {
+  margin-left: auto;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  opacity: .7;
+}
+
+/* Main */
+.main { padding: 28px 36px 80px; overflow: hidden; }
+
+.dash-head {
+  display: flex; justify-content: space-between; align-items: end;
+  padding-bottom: 24px; margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.dash-head h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 32px;
+  letter-spacing: -0.025em; line-height: 1.1;
+  margin: 0 0 4px;
+}
+.dash-head h1 em { font-style: italic; color: var(--muted); font-weight: 400; }
+.dash-head .sub { color: var(--muted); font-size: 13.5px; }
+
+.btn-upload {
+  background: var(--accent); color: var(--accent-ink);
+  padding: 12px 20px; border-radius: 999px;
+  font-weight: 500; font-size: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+
+/* Stats band */
+.band {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 14px; padding: 18px;
+}
+.stat-card .k {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+}
+.stat-card .v {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 28px; font-weight: 500; letter-spacing: -0.02em;
+}
+.stat-card .d {
+  font-size: 12px; color: #2a8450;
+  font-family: "JetBrains Mono", monospace;
+  margin-top: 4px;
+}
+.stat-card .d.neg { color: #b54a3a; }
+html[data-theme="dark"] .stat-card .d { color: #6fd79a; }
+html[data-theme="dark"] .stat-card .d.neg { color: #e88a7a; }
+
+/* Earnings chart */
+.chart-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 14px; padding: 22px;
+  margin-bottom: 28px;
+}
+.chart-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 18px;
+}
+.chart-head h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 16px; font-weight: 600;
+  letter-spacing: -0.01em; margin: 0;
+}
+.chart-head .range {
+  display: flex; gap: 0; background: var(--surface-2); border-radius: 999px; padding: 3px;
+}
+.chart-head .range button {
+  padding: 6px 12px; border-radius: 999px;
+  font-size: 11.5px; color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.06em; text-transform: uppercase;
+}
+.chart-head .range button.on { background: var(--surface); color: var(--ink); }
+
+.chart {
+  height: 180px; position: relative;
+  display: flex; align-items: end; gap: 6px;
+  padding: 0 4px;
+}
+.bar {
+  flex: 1;
+  background: linear-gradient(180deg, var(--accent), color-mix(in oklch, var(--accent) 60%, transparent));
+  border-radius: 4px 4px 0 0;
+  opacity: .85;
+  position: relative;
+  min-height: 8px;
+  transition: opacity .2s;
+}
+.bar:hover { opacity: 1; }
+.bar.now { background: var(--ink); opacity: 1; }
+.bar-labels { display: flex; gap: 6px; margin-top: 8px; padding: 0 4px; }
+.bar-labels span {
+  flex: 1; text-align: center;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* Submissions table */
+.queue-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 14px; overflow: hidden;
+}
+.queue-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+}
+.queue-head h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 16px; font-weight: 600;
+  letter-spacing: -0.01em; margin: 0;
+}
+.queue-tabs { display: flex; gap: 4px; }
+.qt {
+  padding: 6px 12px; border-radius: 999px;
+  font-size: 12.5px; color: var(--muted);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.qt.on { background: var(--surface-2); color: var(--ink); }
+.qt .ct { font-family: "JetBrains Mono", monospace; font-size: 10.5px; }
+
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: 13.5px;
+}
+th, td {
+  text-align: left;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+th {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  font-weight: 500;
+}
+tr:last-child td { border-bottom: 0; }
+tr:hover td { background: var(--surface-2); }
+
+.file-cell { display: flex; align-items: center; gap: 12px; }
+.thumb {
+  width: 52px; height: 52px; border-radius: 8px;
+  background: var(--surface-2) center/cover;
+  flex-shrink: 0;
+}
+.file-meta .title { font-weight: 500; color: var(--ink); }
+.file-meta .cap { color: var(--muted); font-size: 12px; }
+
+.status {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.st-dot { width: 6px; height: 6px; border-radius: 50%; }
+.status.live { background: color-mix(in oklch, #2a8450 15%, transparent); color: #2a8450; }
+.status.live .st-dot { background: #2a8450; }
+.status.review { background: color-mix(in oklch, #d8a83e 18%, transparent); color: #b88a20; }
+.status.review .st-dot { background: #d8a83e; }
+.status.draft { background: var(--surface-2); color: var(--muted); }
+.status.draft .st-dot { background: var(--muted); }
+.status.reject { background: color-mix(in oklch, #b54a3a 15%, transparent); color: #b54a3a; }
+.status.reject .st-dot { background: #b54a3a; }
+
+.bar-progress {
+  height: 4px; background: var(--surface-2); border-radius: 999px;
+  width: 100px; overflow: hidden;
+}
+.bar-progress .fill { height: 100%; background: var(--accent); border-radius: 999px; }
+
+.mono-val { font-family: "JetBrains Mono", monospace; font-size: 12px; color: var(--ink-2); }
+.mono-val.pos { color: #2a8450; }
+html[data-theme="dark"] .mono-val.pos { color: #6fd79a; }
+
+.row-actions { display: flex; gap: 4px; justify-content: flex-end; }
+.row-actions button {
+  width: 28px; height: 28px; border-radius: 999px;
+  background: var(--surface-2); color: var(--muted);
+  display: grid; place-items: center;
+}
+.row-actions button:hover { background: var(--ink); color: var(--bg); }
+
+@media (max-width: 1000px) {
+  .app { grid-template-columns: 1fr; }
+  .side-nav { display: none; }
+  .band { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg i dine uploads…" />
+      <button class="submit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </div>
+    <div class="nav-right">
+      <a href="boards.html">Tavler</a>
+      <a href="creator.html">Min profil</a>
+      <a href="#" class="btn-primary">L. Mendoza</a>
+    </div>
+  </div>
+</nav>
+
+<div class="app">
+  <aside class="side-nav">
+    <div class="who">
+      <div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=70&auto=format')"></div>
+      <div>
+        <div class="n">Lucía Mendoza</div>
+        <div class="r">Skaber · Nr. 041</div>
+      </div>
+    </div>
+
+    <h4>Studie</h4>
+    <a class="side-link on">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a class="side-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m-5-5l5 5 5-5M4 21h16"/></svg>
+      Upload <span class="ct">3</span>
+    </a>
+    <a class="side-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/></svg>
+      Mit bibliotek <span class="ct">1,240</span>
+    </a>
+    <a class="side-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+      Under gennemsyn <span class="ct">7</span>
+    </a>
+
+    <h4>Performance</h4>
+    <a class="side-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/></svg>
+      Analyse
+    </a>
+    <a class="side-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Udbetalinger
+    </a>
+    <a class="side-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h16"/></svg>
+      Licenser
+    </a>
+
+    <h4>Indstillinger</h4>
+    <a class="side-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.2-1.7l2-1.6-2-3.4-2.3.9a7 7 0 00-2.9-1.7L13 2h-4l-.6 2.5a7 7 0 00-2.9 1.7l-2.3-.9-2 3.4 2 1.6A7 7 0 003 12c0 .6.1 1.2.2 1.7l-2 1.6 2 3.4 2.3-.9a7 7 0 002.9 1.7L9 22h4l.6-2.5a7 7 0 002.9-1.7l2.3.9 2-3.4-2-1.6c.1-.5.2-1.1.2-1.7z"/></svg>
+      Konto
+    </a>
+  </aside>
+
+  <div class="main">
+    <div class="dash-head">
+      <div>
+        <h1>Studie <em>— velkommen tilbage, Lucía.</em></h1>
+        <div class="sub">3 filer uploadet i dag · næste udbetaling om 6 dage · €1,428 afventer</div>
+      </div>
+      <button class="btn-upload">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m-5-5l5 5 5-5M4 21h16"/></svg>
+        Upload filer
+      </button>
+    </div>
+
+    <div class="band">
+      <div class="stat-card">
+        <div class="k">Indtjening · April</div>
+        <div class="v">€1,428</div>
+        <div class="d">↑ +12.4% vs marts</div>
+      </div>
+      <div class="stat-card">
+        <div class="k">Downloads · 30 dage</div>
+        <div class="v">4,213</div>
+        <div class="d">↑ +8.1%</div>
+      </div>
+      <div class="stat-card">
+        <div class="k">Accept-rate</div>
+        <div class="v">96%</div>
+        <div class="d">↑ +2 pt</div>
+      </div>
+      <div class="stat-card">
+        <div class="k">Afventer gennemsyn</div>
+        <div class="v">7</div>
+        <div class="d neg">⏱ Gns. 36t</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-head">
+        <h3>Månedlig indtjening</h3>
+        <div class="range">
+          <button>6M</button>
+          <button class="on">12M</button>
+          <button>Hele tiden</button>
+        </div>
+      </div>
+      <div class="chart" id="chart"></div>
+      <div class="bar-labels">
+        <span>Maj</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span>
+        <span>Okt</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span>
+        <span>Mar</span><span>Apr</span>
+      </div>
+    </div>
+
+    <div class="queue-card">
+      <div class="queue-head">
+        <h3>Seneste indsendelser</h3>
+        <div class="queue-tabs">
+          <button class="qt on">Alle <span class="ct">24</span></button>
+          <button class="qt">Under gennemsyn <span class="ct">7</span></button>
+          <button class="qt">Live <span class="ct">14</span></button>
+          <button class="qt">Kladder <span class="ct">2</span></button>
+          <button class="qt">Afvist <span class="ct">1</span></button>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Fil</th>
+            <th>Status</th>
+            <th>Indsendt</th>
+            <th>Visninger</th>
+            <th>Downloads</th>
+            <th>Indtjening</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+// Chart bars (earnings heights normalized)
+const VALUES = [480, 620, 810, 920, 740, 1040, 1180, 1320, 1410, 1260, 1271, 1428];
+const max = Math.max(...VALUES);
+const chart = document.getElementById("chart");
+VALUES.forEach((v, i) => {
+  const b = document.createElement("div");
+  b.className = "bar" + (i === VALUES.length - 1 ? " now" : "");
+  b.style.height = (v / max * 100) + "%";
+  b.title = "€" + v;
+  chart.appendChild(b);
+});
+
+// Rows
+const ROWS = [
+  { img: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=200&q=70&auto=format",
+    title: "Pottemager tilskærer en skål, morgenlys",
+    cap: "Foto · 6000 × 8000 · CB-241-A0412",
+    status: "live", sLabel: "Live",
+    submitted: "for 2 dage siden", views: "1,284", dl: "312", earn: "+€612" },
+  { img: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=200&q=70&auto=format",
+    title: "Markedssælger arrangerer mangoer",
+    cap: "Foto · 5400 × 3600 · CB-241-A0418",
+    status: "review", sLabel: "Under gennemsyn",
+    submitted: "for 8t siden", views: "—", dl: "—", earn: "—", progress: 70 },
+  { img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=200&q=70&auto=format",
+    title: "Drejeskive-sekvens · 12s",
+    cap: "Video · 3840 × 2160 · CB-241-V0119",
+    status: "live", sLabel: "Live",
+    submitted: "for 5 dage siden", views: "642", dl: "88", earn: "+€284" },
+  { img: "https://images.unsplash.com/photo-1521334884684-d80222895322?w=200&q=70&auto=format",
+    title: "Væverens hænder ved væven",
+    cap: "Foto · 7200 × 4800 · CB-241-A0420",
+    status: "review", sLabel: "Under gennemsyn",
+    submitted: "for 1 dag siden", views: "—", dl: "—", earn: "—", progress: 45 },
+  { img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=200&q=70&auto=format",
+    title: "Værkstedsindgang ved daggry",
+    cap: "Foto · 6000 × 4000 · CB-241-A0415",
+    status: "draft", sLabel: "Kladde",
+    submitted: "Gemt for 3 dage siden", views: "—", dl: "—", earn: "—" },
+  { img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=200&q=70&auto=format",
+    title: "Ovnglød, set ovenfra",
+    cap: "Foto · 5400 × 5400 · CB-241-A0409",
+    status: "reject", sLabel: "Revider",
+    submitted: "for 3 dage siden · Mangler release", views: "—", dl: "—", earn: "—" },
+];
+
+const rows = document.getElementById("rows");
+ROWS.forEach(r => {
+  const tr = document.createElement("tr");
+  const progress = r.progress ? `<div class="bar-progress" title="${r.progress}% gennemgået"><div class="fill" style="width:${r.progress}%"></div></div>` : "";
+  tr.innerHTML = `
+    <td>
+      <div class="file-cell">
+        <div class="thumb" style="background-image:url('${r.img}')"></div>
+        <div class="file-meta">
+          <div class="title">${r.title}</div>
+          <div class="cap">${r.cap}</div>
+        </div>
+      </div>
+    </td>
+    <td>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <span class="status ${r.status}"><span class="st-dot"></span>${r.sLabel}</span>
+        ${progress}
+      </div>
+    </td>
+    <td class="mono-val">${r.submitted}</td>
+    <td class="mono-val">${r.views}</td>
+    <td class="mono-val">${r.dl}</td>
+    <td class="mono-val ${r.earn.startsWith('+') ? 'pos' : ''}">${r.earn}</td>
+    <td>
+      <div class="row-actions">
+        <button title="Rediger"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4l10-10-4-4L4 16v4z"/></svg></button>
+        <button title="Mere"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></button>
+      </div>
+    </td>
+  `;
+  rows.appendChild(tr);
+});
+</script>
+</body>
+</html>

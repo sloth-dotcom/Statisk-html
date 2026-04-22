@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Søg — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #fafaf8; --surface: #ffffff; --surface-2: #f2f1ec;
+  --ink: #17181a; --ink-2: #3a3c40; --muted: #73767c; --line: #e4e3dd;
+  --accent: #3d5afe; --accent-ink: #fff; --max: 1440px;
+}
+html[data-theme="dark"] {
+  --bg: #0d0e10; --surface: #141518; --surface-2: #1c1e22;
+  --ink: #f3f2ee; --ink-2: #c9c8c3; --muted: #86888d; --line: #25272c;
+  --accent: #7c8dff; --accent-ink: #0d0e10;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg); color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+/* Nav (same as home, condensed) */
+.nav { position: sticky; top: 0; z-index: 40; background: var(--bg); border-bottom: 1px solid var(--line); }
+.nav-inner { max-width: var(--max); margin: 0 auto; padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 20px; }
+.logo { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.03em; display: flex; align-items: center; gap: 9px; }
+.logo-mark { width: 22px; height: 22px; border-radius: 6px; background: conic-gradient(from 210deg, var(--accent), #f5c518, #e24a7a, var(--accent)); position: relative; }
+.logo-mark::after { content: ""; position: absolute; inset: 5px; border-radius: 3px; background: var(--bg); }
+
+/* Nav search — inline */
+.nav-search {
+  flex: 1; max-width: 760px;
+  display: flex; align-items: center;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 4px 4px 6px;
+}
+.nav-search:focus-within { border-color: var(--ink); }
+.nav-select { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-right: 1px solid var(--line); font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.nav-select svg { width: 10px; height: 10px; opacity: .6; }
+.nav-search input { flex: 1; border: 0; outline: 0; background: transparent; padding: 0 14px; font: 14px "Inter", sans-serif; color: var(--ink); }
+.nav-search input::placeholder { color: var(--muted); }
+.nav-search .submit {
+  width: 34px; height: 34px; border-radius: 999px; background: var(--accent);
+  color: var(--accent-ink); display: grid; place-items: center;
+}
+
+.nav-right { display: flex; align-items: center; gap: 4px; font-size: 14px; }
+.nav-right a { padding: 8px 12px; border-radius: 8px; color: var(--ink-2); }
+.nav-right a:hover { background: var(--surface-2); color: var(--ink); }
+.btn-primary { background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 999px; font-weight: 500; font-size: 14px; }
+
+/* Layout */
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+
+/* Header */
+.results-head {
+  padding: 28px 0 20px;
+  display: flex; align-items: end; justify-content: space-between;
+  gap: 24px;
+}
+.results-head h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 34px;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0 0 6px;
+}
+.results-head h1 em { font-style: italic; color: var(--muted); font-weight: 400; }
+.results-meta { font-size: 13.5px; color: var(--muted); }
+.results-meta b { color: var(--ink); font-weight: 600; }
+
+.breadcrumbs {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 8px;
+}
+.breadcrumbs a:hover { color: var(--ink); }
+.breadcrumbs span { margin: 0 8px; opacity: .5; }
+
+/* Toolbar */
+.toolbar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 13px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--ink-2);
+  background: var(--bg);
+}
+.chip:hover { border-color: var(--ink); color: var(--ink); }
+.chip.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip svg { width: 12px; height: 12px; opacity: .7; }
+.toolbar .spacer { flex: 1; }
+.sort {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--ink-2);
+}
+.sort select {
+  font: inherit; padding: 7px 28px 7px 12px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--bg) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6' fill='none' stroke='%2373767c' stroke-width='1.5'><path d='M1 1l4 4 4-4'/></svg>") no-repeat right 12px center / 8px;
+  color: var(--ink);
+  -webkit-appearance: none; appearance: none;
+}
+
+/* Main layout */
+.main {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 32px;
+  padding: 24px 0 80px;
+}
+
+/* Sidebar */
+.side h4 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--ink); font-weight: 600;
+  margin: 22px 0 10px;
+}
+.side h4:first-child { margin-top: 0; }
+.side ul { list-style: none; margin: 0; padding: 0; }
+.side li {
+  padding: 6px 0;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  display: flex; justify-content: space-between;
+  cursor: pointer;
+}
+.side li:hover { color: var(--ink); }
+.side li.on { color: var(--ink); font-weight: 500; }
+.side li.on::before {
+  content: "✓"; margin-right: 6px; color: var(--accent);
+}
+.side li .count { color: var(--muted); font-family: "JetBrains Mono", monospace; font-size: 11px; }
+
+.color-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px; }
+.color-sw { aspect-ratio: 1; border-radius: 6px; cursor: pointer; border: 1.5px solid transparent; }
+.color-sw:hover { border-color: var(--ink); }
+
+/* Masonry-ish results */
+.grid {
+  column-count: 3;
+  column-gap: 12px;
+}
+@media (min-width: 1200px) { .grid { column-count: 4; } }
+.card {
+  break-inside: avoid;
+  margin-bottom: 12px;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface-2);
+  display: block;
+  cursor: pointer;
+}
+.card img {
+  width: 100%;
+  display: block;
+  transition: transform .6s ease;
+}
+.card:hover img { transform: scale(1.03); }
+.card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.7) 100%);
+  opacity: 0;
+  transition: opacity .2s;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 14px;
+  color: #fff;
+}
+.card:hover .card-overlay { opacity: 1; }
+.card-top {
+  position: absolute; top: 10px; left: 10px; right: 10px;
+  display: flex; justify-content: space-between;
+  opacity: 0; transition: opacity .2s;
+}
+.card:hover .card-top { opacity: 1; }
+.card-badge {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  background: rgba(0,0,0,.6); color: #fff;
+  padding: 3px 7px; border-radius: 4px;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  backdrop-filter: blur(6px);
+}
+.card-actions { display: flex; gap: 6px; }
+.card-action {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,.9); color: #17181a;
+  border-radius: 999px; display: grid; place-items: center;
+  cursor: pointer;
+}
+.card-action:hover { background: #fff; }
+.card-info {
+  font-size: 12px;
+  display: flex; justify-content: space-between; align-items: end;
+}
+.card-creator { font-weight: 500; }
+.card-price { font-family: "JetBrains Mono", monospace; font-size: 11px; opacity: .9; }
+
+/* Similar block header */
+.inline-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin: 40px 0 16px;
+}
+.inline-head h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 20px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; }
+  .side { display: none; }
+  .nav-right a:not(.btn-primary) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <div class="nav-select">
+        <span>Alle medier</span>
+        <svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l4 4 4-4"/></svg>
+      </div>
+      <input id="nav-search-input" placeholder="Søg…" />
+      <button class="submit" id="nav-search-submit" aria-label="Søg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="#">Tavler</a>
+      <a href="#">Log ind</a>
+      <a href="#" class="btn-primary">Start gratis</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="results-head">
+    <div>
+      <div class="breadcrumbs"><a href="Colourbox.html">Hjem</a><span>/</span><a href="#">Fotos</a><span>/</span>Søg</div>
+      <h1>Resultater for <em id="query-display">ceramics studio</em></h1>
+      <div class="results-meta"><b id="count">24.812</b> filer · filtreret til kun menneskelige skabere</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <button class="chip active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M6 12h12M9 18h6"/></svg>
+      Alle filtre
+    </button>
+    <button class="chip active">Fotos</button>
+    <button class="chip">Video</button>
+    <button class="chip">Illustrationer</button>
+    <button class="chip">Vektorer</button>
+    <button class="chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+      Vandret
+    </button>
+    <button class="chip">Redaktionel brug</button>
+    <button class="chip">Fri for AI</button>
+    <div class="spacer"></div>
+    <div class="sort">
+      <span>Sortér:</span>
+      <select>
+        <option>Mest relevant</option>
+        <option>Nyeste</option>
+        <option>Mest downloadede</option>
+        <option>Trender</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="main">
+    <aside class="side">
+      <h4>Orientering</h4>
+      <ul>
+        <li class="on">Alle <span class="count">24,8k</span></li>
+        <li>Vandret <span class="count">14,2k</span></li>
+        <li>Lodret <span class="count">7,9k</span></li>
+        <li>Kvadrat <span class="count">2,7k</span></li>
+      </ul>
+
+      <h4>Personer</h4>
+      <ul>
+        <li>Ingen personer <span class="count">6,1k</span></li>
+        <li class="on">1 person <span class="count">9,8k</span></li>
+        <li>2–3 personer <span class="count">5,4k</span></li>
+        <li>Gruppe <span class="count">3,5k</span></li>
+      </ul>
+
+      <h4>Farve</h4>
+      <div class="color-row">
+        <div class="color-sw" style="background:#d9c5a8"></div>
+        <div class="color-sw" style="background:#8a6b4e"></div>
+        <div class="color-sw" style="background:#4b5a6b"></div>
+        <div class="color-sw" style="background:#a86b7c"></div>
+        <div class="color-sw" style="background:#5d6b2f"></div>
+        <div class="color-sw" style="background:#17181a"></div>
+        <div class="color-sw" style="background:#e8e6df"></div>
+        <div class="color-sw" style="background:#f4d8b8"></div>
+      </div>
+
+      <h4>Stil</h4>
+      <ul>
+        <li>Dokumentar <span class="count">12,4k</span></li>
+        <li>Redaktionel <span class="count">8,1k</span></li>
+        <li>Minimalistisk <span class="count">5,7k</span></li>
+        <li>Uposeret <span class="count">4,2k</span></li>
+      </ul>
+
+      <h4>Licens</h4>
+      <ul>
+        <li class="on">Kommerciel <span class="count">22,1k</span></li>
+        <li>Kun redaktionel <span class="count">2,7k</span></li>
+      </ul>
+    </aside>
+
+    <div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Read query from URL
+const params = new URLSearchParams(window.location.search);
+const q = params.get("q") || "ceramics studio";
+document.getElementById("query-display").textContent = q;
+document.getElementById("nav-search-input").value = q;
+
+// Sample results
+const IMAGES = [
+  { img: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=70&auto=format", creator: "Lucía Mendoza", w: 800, h: 1100, premium: true },
+  { img: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=70&auto=format", creator: "Anders Holm", w: 800, h: 520 },
+  { img: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=600&q=70&auto=format", creator: "Ji-woo Park", w: 800, h: 1000 },
+  { img: "https://images.unsplash.com/photo-1528825871115-3581a5387919?w=600&q=70&auto=format", creator: "María Silva", w: 800, h: 600 },
+  { img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=70&auto=format", creator: "Tom Fischer", w: 800, h: 1200, premium: true },
+  { img: "https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=600&q=70&auto=format", creator: "Ingrid Olsson", w: 800, h: 800 },
+  { img: "https://images.unsplash.com/photo-1617897903246-719242758050?w=600&q=70&auto=format", creator: "Kenji Sato", w: 800, h: 1000 },
+  { img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=70&auto=format", creator: "Eli Brandt", w: 800, h: 550 },
+  { img: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=70&auto=format", creator: "Jonas Winter", w: 800, h: 900 },
+  { img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=70&auto=format", creator: "Chloé Marchand", w: 800, h: 1200 },
+  { img: "https://images.unsplash.com/photo-1521334884684-d80222895322?w=600&q=70&auto=format", creator: "Lucía Mendoza", w: 800, h: 600, premium: true },
+  { img: "https://images.unsplash.com/photo-1604934834460-4f6cf04cfec2?w=600&q=70&auto=format", creator: "Priya Nair", w: 800, h: 1000 },
+  { img: "https://images.unsplash.com/photo-1490818387583-1baba5e638af?w=600&q=70&auto=format", creator: "Ade Okafor", w: 800, h: 520 },
+  { img: "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=600&q=70&auto=format", creator: "Sofia Vasquez", w: 800, h: 800 },
+  { img: "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?w=600&q=70&auto=format", creator: "Nils Berg", w: 800, h: 1100 },
+  { img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=70&auto=format", creator: "Hana Fujita", w: 800, h: 600 },
+  { img: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=70&auto=format", creator: "Diego Morán", w: 800, h: 1000, premium: true },
+  { img: "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?w=600&q=70&auto=format", creator: "Elise Brun", w: 800, h: 900 },
+  { img: "https://images.unsplash.com/photo-1565127803366-1ae37d3024d6?w=600&q=70&auto=format", creator: "Yuki Tanaka", w: 800, h: 700 },
+  { img: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=600&q=70&auto=format", creator: "Mara Espíndola", w: 800, h: 1100 },
+  { img: "https://images.unsplash.com/photo-1508873535684-277a3cbcc4e8?w=600&q=70&auto=format", creator: "Oskar Lindgren", w: 800, h: 600 },
+  { img: "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?w=600&q=70&auto=format", creator: "Noor Haddad", w: 800, h: 1000 },
+  { img: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&q=70&auto=format", creator: "Ivan Sokolov", w: 800, h: 800 },
+  { img: "https://images.unsplash.com/photo-1499955085172-a104c9463ece?w=600&q=70&auto=format", creator: "Arla Jansen", w: 800, h: 1100, premium: true },
+];
+
+const grid = document.getElementById("grid");
+IMAGES.forEach((item, i) => {
+  const id = "asset-" + (i + 1).toString().padStart(3, "0");
+  const a = document.createElement("a");
+  a.className = "card";
+  a.href = "asset.html?id=" + id;
+  a.innerHTML = `
+    <img src="${item.img}" alt="" loading="lazy" />
+    <div class="card-top">
+      ${item.premium ? '<span class="card-badge">PREMIUM</span>' : '<span></span>'}
+      <div class="card-actions">
+        <div class="card-action" title="Tilføj til tavle">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="card-action" title="Download">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m-5-5l5 5 5-5M4 21h16"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="card-overlay">
+      <div class="card-info">
+        <span class="card-creator">${item.creator}</span>
+        <span class="card-price">${item.premium ? "€49" : "€12"}</span>
+      </div>
+    </div>
+  `;
+  grid.appendChild(a);
+});
+
+// Nav search submit
+const navInput = document.getElementById("nav-search-input");
+navInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && navInput.value.trim()) {
+    window.location.href = "search.html?q=" + encodeURIComponent(navInput.value.trim());
+  }
+});
+document.getElementById("nav-search-submit").addEventListener("click", () => {
+  if (navInput.value.trim()) window.location.href = "search.html?q=" + encodeURIComponent(navInput.value.trim());
+});
+
+// Apply stored theme/accent from localStorage if any (set by home tweaks in same session)
+// (Keep simple — just read if present)
+try {
+  const t = localStorage.getItem("cb-theme");
+  if (t) document.documentElement.dataset.theme = t;
+} catch(e){}
+</script>
+</body>
+</html>

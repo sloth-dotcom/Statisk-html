@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Bliv bidragyder — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.hero {
+  padding: 72px 0 48px;
+  max-width: 980px;
+}
+.hero .eyebrow { margin-bottom: 18px; }
+.hero h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: clamp(44px, 5.2vw, 72px);
+  letter-spacing: -0.035em;
+  line-height: 1.03;
+  margin: 0 0 22px;
+  text-wrap: balance;
+}
+.hero h1 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.hero .lede {
+  font-size: 19px; line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 680px;
+  margin: 0 0 32px;
+}
+.hero-ctas { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.btn-primary.lg { padding: 14px 22px; font-size: 15px; }
+.btn-ghost {
+  padding: 14px 22px; border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 15px; color: var(--ink);
+}
+.btn-ghost:hover { background: var(--surface-2); }
+
+/* Stats band */
+.stats {
+  margin: 48px 0 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.stat { padding: 28px 24px; border-right: 1px solid var(--line); }
+.stat:last-child { border-right: 0; }
+.stat .num {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 40px;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.stat .lbl { font-size: 13px; color: var(--muted); margin-top: 6px; }
+
+/* Sections */
+section.block { padding: 88px 0 0; }
+.block-head { margin-bottom: 40px; }
+.block-head .eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.block-head .eyebrow::before {
+  content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+}
+.block-head h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 40px; letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin: 0;
+  max-width: 720px;
+  text-wrap: balance;
+}
+.block-head h2 em { font-style: italic; font-weight: 400; color: var(--muted); }
+
+/* How it works */
+.steps {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.step {
+  padding: 26px 22px 28px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  position: relative;
+}
+.step .n {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.step h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 18px;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+}
+.step p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); }
+
+/* Requirements */
+.req-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.req {
+  padding: 22px 22px 24px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.req .ic {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--surface-2);
+  display: grid; place-items: center;
+  margin-bottom: 14px;
+}
+.req h4 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 16px;
+  margin: 0 0 6px;
+}
+.req p { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+
+/* Testimonials */
+.quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.quote {
+  padding: 26px 24px 28px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  display: flex; flex-direction: column; gap: 22px;
+}
+.quote p {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 400; font-size: 18px;
+  line-height: 1.35; letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--ink);
+}
+.quote .who { display: flex; align-items: center; gap: 12px; }
+.quote .av { width: 38px; height: 38px; border-radius: 999px; background: center/cover; }
+.quote .who .n { font-weight: 500; font-size: 14px; }
+.quote .who .r { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* FAQ */
+.faq { border-top: 1px solid var(--line); }
+.faq details {
+  border-bottom: 1px solid var(--line);
+  padding: 22px 0;
+}
+.faq summary {
+  list-style: none; cursor: pointer;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 18px;
+  letter-spacing: -0.01em;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 20px;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; font-family: "JetBrains Mono", monospace;
+  color: var(--muted); font-size: 20px; transition: transform .2s;
+}
+.faq details[open] summary::after { content: "−"; }
+.faq details p {
+  margin: 12px 0 0; color: var(--ink-2);
+  font-size: 14.5px; line-height: 1.55; max-width: 760px;
+}
+
+/* Final CTA band */
+.cta-band {
+  margin: 120px 0 0;
+  padding: 64px 40px;
+  border-radius: 22px;
+  background: var(--ink);
+  color: var(--bg);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 40px;
+}
+html[data-theme="dark"] .cta-band { background: var(--surface-2); color: var(--ink); }
+.cta-band h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 36px;
+  letter-spacing: -0.025em; line-height: 1.1;
+  margin: 0; max-width: 540px;
+  text-wrap: balance;
+}
+.cta-band h3 em { font-style: italic; font-weight: 400; opacity: .7; }
+.cta-band .btn {
+  background: var(--bg); color: var(--ink);
+  padding: 14px 22px; border-radius: 999px;
+  font-weight: 500; font-size: 15px;
+  white-space: nowrap;
+}
+html[data-theme="dark"] .cta-band .btn { background: var(--ink); color: var(--bg); }
+
+footer.foot { margin-top: 88px; padding: 40px 0; border-top: 1px solid var(--line); }
+.foot-inner {
+  display: flex; justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1000px) {
+  .stats { grid-template-columns: 1fr 1fr; }
+  .stat:nth-child(2) { border-right: 0; }
+  .stat:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .req-grid, .quotes { grid-template-columns: 1fr; }
+  .cta-band { flex-direction: column; align-items: flex-start; padding: 40px 28px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input id="nav-search-input" placeholder="Søg…" />
+      <button class="submit" aria-label="Søg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="boards.html">Tavler</a>
+      <a href="#">Log ind</a>
+      <a href="upload.html" class="btn-primary">Start som bidragyder</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="breadcrumbs" style="padding-top: 24px;">
+    <a href="Colourbox.html">Hjem</a><span>/</span>
+    <span style="color: var(--ink);">Bliv bidragyder</span>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow">For skabere · Åbne ansøgninger</div>
+    <h1>Sælg dit arbejde til folk, der <em>faktisk krediterer det.</em></h1>
+    <p class="lede">Colourbox er en markedsplads med navngivne skabere. Hver fil er signeret, hvert salg kan spores, og hver bidragyder beholder hovedparten af licensgebyret. Ansøg på ti minutter, og få din første portefølje ud på en uge.</p>
+    <div class="hero-ctas">
+      <a href="upload.html" class="btn-primary lg">Ansøg om at bidrage →</a>
+      <a href="standards.html" class="btn-ghost">Læs standarderne</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="num">42,1 mio.</div><div class="lbl">Filer i biblioteket</div></div>
+      <div class="stat"><div class="num">18.400</div><div class="lbl">Aktive bidragydere</div></div>
+      <div class="stat"><div class="num">3.240 €</div><div class="lbl">Gns. månedlig udbetaling</div></div>
+      <div class="stat"><div class="num">48 t</div><div class="lbl">Median gennemgangstid</div></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Sådan fungerer det</div>
+      <h2>Fra ansøgning til første udbetaling, <em>typisk fire uger.</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">01 · Ansøg</div>
+        <h3>Indsend ti filer</h3>
+        <p>Send dit stærkeste porteføljeeksempel. Vi leder efter et synspunkt, ikke volumen. Svar inden for 48 timer.</p>
+      </div>
+      <div class="step">
+        <div class="n">02 · Onboarding</div>
+        <h3>Underskriv kontrakten</h3>
+        <p>Ikke-eksklusiv som standard. Upload dit IBAN, CVR/skatte-ID og skabeloner til modelfrigivelse i bidragyderstudiet.</p>
+      </div>
+      <div class="step">
+        <div class="n">03 · Upload</div>
+        <h3>Send din første batch</h3>
+        <p>Træk og slip op til 500 filer pr. batch. Vores metadata-assistent foreslår tags; du godkender og indsender.</p>
+      </div>
+      <div class="step">
+        <div class="n">04 · Tjen</div>
+        <h3>Få udbetalt hver måned</h3>
+        <p>Honorarer afregnes den 15. SEPA, Wise og PayPal. Fuld oversigt i dashboardet, med kreditering pr. fil.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- REQUIREMENTS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Det vi kigger efter</div>
+      <h2>Fire ting vi tjekker, før <em>vi siger ja.</em></h2>
+    </div>
+    <div class="req-grid">
+      <div class="req">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div>
+        <h4>Originalt arbejde, signeret af dig</h4>
+        <p>Hver fil skal være skabt af den navngivne bidragyder. Ingen sammensatte biblioteker, ingen AI-genererede indsendelser i hovedpuljen.</p>
+      </div>
+      <div class="req">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div>
+        <h4>Frigivelser på plads</h4>
+        <p>Model- og ejendomsfrigivelser skal uploades sammen med kommercielle filer. Skabeloner leveres; digital underskrift via studiet.</p>
+      </div>
+      <div class="req">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16l4-8 4 5 3-3 5 6"/><circle cx="8" cy="7" r="1.5"/></svg></div>
+        <h4>Teknisk minimum</h4>
+        <p>Fotos: 12MP+, TIFF/JPEG. Video: 4K, ProRes eller H.264. Vektorer: redigérbar SVG/AI. Fulde specifikationer i <a href="standards.html" style="color:var(--accent)">standarderne</a>.</p>
+      </div>
+      <div class="req">
+        <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+        <h4>Ærlig metadata</h4>
+        <p>Præcise tags, sandfærdige billedtekster, sted hvor relevant. Søgeord-stuffing og vildledende beskrivelser er grund til fjernelse.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Bidragydere med egne ord</div>
+      <h2>Dem der <em>lever af det her.</em></h2>
+    </div>
+    <div class="quotes">
+      <div class="quote">
+        <p>"Jeg forlod to andre biblioteker til fordel for Colourbox. Gennemgangsteamet kigger faktisk på arbejdet — jeg får noter tilbage, ikke bare godkendt/afvist."</p>
+        <div class="who">
+          <div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=70&auto=format')"></div>
+          <div><div class="n">Lucía Mendoza</div><div class="r">Fotografi · Nr. 041</div></div>
+        </div>
+      </div>
+      <div class="quote">
+        <p>"Månedlige udbetalinger lander den 15. Hver gang. På tre år har jeg haft én henvendelse, besvaret inden for halvfems minutter."</p>
+        <div class="who">
+          <div class="av" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=70&auto=format')"></div>
+          <div><div class="n">Anders Holm</div><div class="r">Video · Nr. 108</div></div>
+        </div>
+      </div>
+      <div class="quote">
+        <p>"Krediteringssiden pr. fil betyder, at købere vender direkte tilbage til mig. Halvdelen af mine nye licenser starter der nu."</p>
+        <div class="who">
+          <div class="av" style="background-image:url('https://images.unsplash.com/photo-1542744095-291d1f67b221?w=120&q=70&auto=format')"></div>
+          <div><div class="n">Ji-woo Park</div><div class="r">Illustration · Nr. 219</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Spørgsmål</div>
+      <h2>Svar, før <em>du spørger.</em></h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Skal jeg være eksklusiv?</summary>
+        <p>Nej. Standardkontrakten er ikke-eksklusiv — du kan sælge det samme arbejde på dit eget site, hos andre biblioteker eller direkte til kunder. Eksklusive bidragydere får en højere honorarsats (se <a href="royalties.html" style="color:var(--accent)">Honorarer</a>).</p>
+      </details>
+      <details>
+        <summary>Hvor lang tid tager gennemgangen?</summary>
+        <p>Medianen er 48 timer for første indsendelser og 24 timer, når du er aktiv. Større batches (100+ filer) kan tage op til fem arbejdsdage. Du kan se live-status i studiet.</p>
+      </details>
+      <details>
+        <summary>Hvilke filformater og opløsninger er påkrævet?</summary>
+        <p>Minimumsværdier varierer pr. medie. Se de fulde <a href="standards.html" style="color:var(--accent)">upload-standarder</a> — specifikationer for foto, video og vektor er beskrevet med eksempler.</p>
+      </details>
+      <details>
+        <summary>Hvordan fungerer udbetalinger?</summary>
+        <p>Honorarer akkumuleres i realtid og afregnes den 15. i den følgende måned. Minimumsudbetaling er 50 € — beløb under dette rulles videre. SEPA, Wise og PayPal understøttes.</p>
+      </details>
+      <details>
+        <summary>Kan jeg indsende AI-genereret arbejde?</summary>
+        <p>Ikke til hovedbiblioteket. Vi driver en separat tilvalgs-AI-pulje med eksplicit mærkning og en lavere honorarfordeling. Se standarderne for, hvad der kvalificerer.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <div class="cta-band">
+    <h3>Klar til at signere dit arbejde? <em>Vi læser hver eneste ansøgning.</em></h3>
+    <a href="upload.html" class="btn">Ansøg nu →</a>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 COLOURBOX A/S</span>
+    <span>LAVET UDEN AI-GENERERET INDHOLD</span>
+  </div>
+</footer>
+
+</body>
+</html>

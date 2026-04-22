@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Lucía Mendoza — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.cover {
+  position: relative;
+  height: 360px;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+}
+.cover img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(.9) brightness(.85); }
+.cover::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.55) 100%);
+}
+.cover-badge {
+  position: absolute; top: 20px; right: 28px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(255,255,255,.9);
+  background: rgba(0,0,0,.4); backdrop-filter: blur(8px);
+  padding: 6px 12px; border-radius: 999px;
+}
+
+.profile-head {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 28px;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 40px; align-items: end;
+  transform: translateY(-60px);
+  margin-bottom: -40px;
+}
+.avatar-block { display: flex; gap: 24px; align-items: end; }
+.avatar {
+  width: 140px; height: 140px; border-radius: 999px;
+  background: var(--surface-2) center/cover;
+  border: 4px solid var(--bg);
+}
+.profile-meta .name {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 40px;
+  letter-spacing: -0.03em; margin: 0 0 4px;
+  color: #fff;
+}
+.profile-meta .sub {
+  font-size: 14px; color: rgba(255,255,255,.85);
+  display: flex; gap: 14px; align-items: center;
+}
+.profile-meta .sub::before {
+  content: ""; width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.6);
+  margin-right: -6px; /* visual spacer handled by gap */
+  display: none;
+}
+
+.profile-actions { display: flex; gap: 8px; padding-bottom: 14px; }
+.btn-follow {
+  background: #fff; color: #17181a;
+  padding: 11px 20px; border-radius: 999px;
+  font-weight: 500; font-size: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-ghost {
+  background: rgba(255,255,255,.15);
+  color: #fff;
+  padding: 11px 18px; border-radius: 999px;
+  font-weight: 500; font-size: 14px;
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover { background: rgba(255,255,255,.25); }
+
+/* Stats */
+.stats {
+  max-width: var(--max); margin: 0 auto;
+  padding: 60px 28px 0;
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr 1fr;
+  gap: 32px;
+  border-top: 1px solid var(--line);
+  margin-top: 60px;
+  padding-top: 36px;
+}
+.bio {
+  font-size: 15px; line-height: 1.6; color: var(--ink-2);
+  max-width: 440px; text-wrap: pretty;
+}
+.stat .label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 6px;
+}
+.stat .val {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 28px; font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.stat .note { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* Tabs */
+.tabs-row {
+  max-width: var(--max); margin: 0 auto;
+  padding: 40px 28px 0;
+  display: flex; gap: 4px;
+  border-bottom: 1px solid var(--line);
+}
+.tab {
+  padding: 14px 18px;
+  font-size: 14px; color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.tab .mono-count {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; color: var(--muted);
+}
+.tab:hover { color: var(--ink); }
+.tab.on { color: var(--ink); border-color: var(--ink); font-weight: 500; }
+.tab.on .mono-count { color: var(--ink-2); }
+
+/* Collections */
+.section-top {
+  max-width: var(--max); margin: 0 auto;
+  padding: 40px 28px 16px;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.section-top h2 { font-family: "Space Grotesk", sans-serif; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin: 0; }
+.section-top h2 em { font-style: italic; color: var(--muted); font-weight: 400; }
+
+.collections {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 28px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+}
+.collection {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 16px;
+  color: #fff;
+  isolation: isolate;
+}
+.collection img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2;
+  transition: transform .5s ease;
+}
+.collection:hover img { transform: scale(1.04); }
+.collection::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.75) 100%);
+}
+.collection .c-name { font-family: "Space Grotesk", sans-serif; font-weight: 500; font-size: 20px; letter-spacing: -0.02em; }
+.collection .c-count { font-size: 12.5px; opacity: 0.85; }
+
+/* Gallery */
+.gallery {
+  max-width: var(--max); margin: 0 auto;
+  padding: 0 28px 80px;
+}
+.grid {
+  column-count: 3; column-gap: 12px;
+}
+@media (min-width: 1200px) { .grid { column-count: 4; } }
+.gitem {
+  break-inside: avoid; margin-bottom: 12px;
+  border-radius: 10px; overflow: hidden;
+  display: block; position: relative;
+}
+.gitem img { width: 100%; display: block; transition: transform .5s ease; }
+.gitem:hover img { transform: scale(1.03); }
+.gitem .overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,.6));
+  opacity: 0; transition: opacity .2s;
+}
+.gitem:hover .overlay { opacity: 1; }
+
+@media (max-width: 900px) {
+  .profile-head { grid-template-columns: 1fr; transform: translateY(-30px); }
+  .stats { grid-template-columns: 1fr 1fr; gap: 20px; }
+  .collections { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg i Lucías værker…" />
+      <button class="submit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </div>
+    <div class="nav-right">
+      <a href="boards.html">Tavler</a>
+      <a href="upload.html">Bidrag</a>
+      <a href="#" class="btn-primary">Log ind</a>
+    </div>
+  </div>
+</nav>
+
+<div class="cover">
+  <img src="https://images.unsplash.com/photo-1528825871115-3581a5387919?w=2000&q=75&auto=format" alt="" />
+  <div class="cover-badge">Colourbox-skaber · Nr. 041</div>
+</div>
+
+<div class="profile-head">
+  <div class="avatar-block">
+    <div class="avatar" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=70&auto=format')"></div>
+    <div class="profile-meta">
+      <h1 class="name">Lucía Mendoza</h1>
+      <div class="sub mono">Dokumentarfotografi · Oaxaca, MX · Siden 2019</div>
+    </div>
+  </div>
+  <div class="profile-actions">
+    <button class="btn-follow">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Følg
+    </button>
+    <button class="btn-ghost">Besked</button>
+    <button class="btn-ghost">Hyr</button>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="bio">
+    Lucía dokumenterer de hverdagslige ritualer i små værksteder i det sydlige Mexico — keramikere, vævere, bagere. Hun fotograferer med en blanding af 35mm og digitalt og skriver release-venlige billedtekster til hver fil.
+  </div>
+  <div class="stat"><div class="label">Filer</div><div class="val">1,240</div><div class="note">På tværs af foto og video</div></div>
+  <div class="stat"><div class="label">Downloads</div><div class="val">184K</div><div class="note">Hele tiden</div></div>
+  <div class="stat"><div class="label">Følgere</div><div class="val">8,421</div><div class="note">+312 denne måned</div></div>
+  <div class="stat"><div class="label">Vurdering</div><div class="val">4.92</div><div class="note">Fra 2,140 anmeldelser</div></div>
+</div>
+
+<div class="tabs-row">
+  <a class="tab on">Galleri <span class="mono-count">1,240</span></a>
+  <a class="tab">Samlinger <span class="mono-count">12</span></a>
+  <a class="tab">Fotos <span class="mono-count">1,108</span></a>
+  <a class="tab">Video <span class="mono-count">132</span></a>
+  <a class="tab">Om</a>
+</div>
+
+<div class="section-top">
+  <h2>Udvalgte samlinger <em>af Lucía</em></h2>
+  <a href="#" class="chip">Se alle 12 →</a>
+</div>
+<div class="collections">
+  <a href="#" class="collection">
+    <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=900&q=70&auto=format" alt=""/>
+    <div class="c-name">Pottemagere fra San Marcos</div>
+    <div class="c-count">48 filer · opdateret for 3 dage siden</div>
+  </a>
+  <a href="#" class="collection">
+    <img src="https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=900&q=70&auto=format" alt=""/>
+    <div class="c-name">Morgenmarkeder</div>
+    <div class="c-count">92 filer · opdateret for 2 uger siden</div>
+  </a>
+  <a href="#" class="collection">
+    <img src="https://images.unsplash.com/photo-1521334884684-d80222895322?w=900&q=70&auto=format" alt=""/>
+    <div class="c-name">Vævere fra Teotitlán</div>
+    <div class="c-count">61 filer · opdateret for 1 måned siden</div>
+  </a>
+</div>
+
+<div class="section-top" style="padding-top:60px;">
+  <h2>Seneste uploads</h2>
+  <a href="search.html?q=lucia+mendoza" class="chip">Åbn i søgning →</a>
+</div>
+
+<div class="gallery">
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const IMGS = [
+  "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1528825871115-3581a5387919?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1521334884684-d80222895322?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1604934834460-4f6cf04cfec2?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1617897903246-719242758050?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1499955085172-a104c9463ece?w=600&q=70&auto=format",
+  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=70&auto=format",
+];
+const grid = document.getElementById("grid");
+IMGS.forEach((src, i) => {
+  const a = document.createElement("a");
+  a.className = "gitem";
+  a.href = "asset.html?id=asset-" + (i+1).toString().padStart(3, "0");
+  a.innerHTML = `<img src="${src}" loading="lazy" alt=""/><div class="overlay"></div>`;
+  grid.appendChild(a);
+});
+</script>
+</body>
+</html>

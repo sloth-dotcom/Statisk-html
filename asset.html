@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Keramikværksted — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #fafaf8; --surface: #ffffff; --surface-2: #f2f1ec;
+  --ink: #17181a; --ink-2: #3a3c40; --muted: #73767c; --line: #e4e3dd;
+  --accent: #3d5afe; --accent-ink: #fff; --max: 1440px;
+}
+html[data-theme="dark"] {
+  --bg: #0d0e10; --surface: #141518; --surface-2: #1c1e22;
+  --ink: #f3f2ee; --ink-2: #c9c8c3; --muted: #86888d; --line: #25272c;
+  --accent: #7c8dff; --accent-ink: #0d0e10;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg); color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.005em;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+.nav { position: sticky; top: 0; z-index: 40; background: var(--bg); border-bottom: 1px solid var(--line); }
+.nav-inner { max-width: var(--max); margin: 0 auto; padding: 0 28px; height: 64px; display: flex; align-items: center; gap: 20px; }
+.logo { font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 20px; letter-spacing: -0.03em; display: flex; align-items: center; gap: 9px; }
+.logo-mark { width: 22px; height: 22px; border-radius: 6px; background: conic-gradient(from 210deg, var(--accent), #f5c518, #e24a7a, var(--accent)); position: relative; }
+.logo-mark::after { content: ""; position: absolute; inset: 5px; border-radius: 3px; background: var(--bg); }
+.nav-search { flex: 1; max-width: 560px; display: flex; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 4px 4px 14px; }
+.nav-search input { flex: 1; border: 0; outline: 0; background: transparent; padding: 8px 14px; font: 14px "Inter", sans-serif; color: var(--ink); }
+.nav-search .submit { width: 34px; height: 34px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; }
+.nav-right { display: flex; align-items: center; gap: 4px; font-size: 14px; margin-left: auto; }
+.nav-right a { padding: 8px 12px; border-radius: 8px; color: var(--ink-2); }
+.btn-primary { background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 999px; font-weight: 500; font-size: 14px; }
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 20px 28px 80px; }
+
+.breadcrumbs {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px;
+}
+.breadcrumbs a:hover { color: var(--ink); }
+.breadcrumbs span { margin: 0 8px; opacity: .5; }
+
+.detail {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 40px;
+}
+
+.preview {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--surface-2);
+}
+.preview img {
+  width: 100%;
+  display: block;
+  max-height: 720px;
+  object-fit: cover;
+}
+.preview-tools {
+  position: absolute; top: 16px; right: 16px;
+  display: flex; gap: 6px;
+}
+.tool-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.9); color: #17181a;
+  border-radius: 999px; display: grid; place-items: center;
+  backdrop-filter: blur(8px);
+}
+.tool-btn:hover { background: #fff; }
+
+.preview-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 14px; font-size: 12.5px; color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  letter-spacing: 0.04em;
+}
+
+/* Side panel */
+.side { position: sticky; top: 80px; align-self: start; }
+.side-id {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 10px;
+}
+.side h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 28px;
+  letter-spacing: -0.025em; line-height: 1.15;
+  margin: 0 0 14px;
+}
+.creator-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+}
+.creator-avatar {
+  width: 40px; height: 40px; border-radius: 999px;
+  background: var(--surface-2) center/cover;
+}
+.creator-details { flex: 1; }
+.creator-details .n { font-weight: 500; font-size: 14px; }
+.creator-details .r { font-size: 12px; color: var(--muted); }
+.follow-btn {
+  padding: 7px 14px; border: 1px solid var(--line); border-radius: 999px;
+  font-size: 12.5px; font-weight: 500;
+}
+.follow-btn:hover { border-color: var(--ink); }
+
+/* Licence card */
+.licence {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 16px; padding: 18px; margin-top: 20px;
+}
+.licence-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 14px;
+}
+.licence-head .label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.licence-head .price {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 26px; font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.size-opts { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.size-opt {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px;
+  border: 1px solid var(--line); border-radius: 10px;
+  cursor: pointer; font-size: 13px; color: var(--ink-2);
+}
+.size-opt.active { border-color: var(--ink); color: var(--ink); background: var(--surface-2); }
+.size-opt .dims { font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); }
+.size-opt .r { display: flex; gap: 10px; align-items: center; font-weight: 500; }
+
+.btn-download {
+  width: 100%;
+  background: var(--accent); color: var(--accent-ink);
+  padding: 14px; border-radius: 12px;
+  font-weight: 500; font-size: 15px;
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+}
+.btn-download:hover { filter: brightness(1.05); }
+.btn-secondary {
+  width: 100%; margin-top: 8px;
+  background: transparent; color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 11px; border-radius: 12px;
+  font-weight: 500; font-size: 14px;
+}
+
+.licence-note {
+  margin-top: 12px;
+  font-size: 12px; color: var(--muted);
+  display: flex; align-items: flex-start; gap: 8px;
+  line-height: 1.5;
+}
+.licence-note svg { flex: 0 0 14px; margin-top: 2px; color: var(--accent); }
+
+/* Info block */
+.info-block {
+  margin-top: 24px;
+}
+.info-block h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;
+  font-weight: 600; margin: 0 0 12px;
+}
+.info-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.info-row .k { color: var(--muted); }
+.info-row .v { color: var(--ink); font-family: "JetBrains Mono", monospace; font-size: 12px; }
+
+.tags {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 10px;
+}
+.tag {
+  padding: 5px 10px;
+  border: 1px solid var(--line); border-radius: 999px;
+  font-size: 12px; color: var(--ink-2);
+}
+.tag:hover { border-color: var(--ink); color: var(--ink); }
+
+/* Similar */
+.similar-head {
+  margin: 60px 0 16px;
+  display: flex; justify-content: space-between; align-items: baseline;
+}
+.similar-head h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 24px; letter-spacing: -0.02em;
+  margin: 0;
+}
+.similar-head h2 em { font-style: italic; color: var(--muted); font-weight: 400; }
+.similar {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
+}
+.sim-card {
+  aspect-ratio: 3/4;
+  border-radius: 10px; overflow: hidden;
+  background: var(--surface-2);
+  cursor: pointer; display: block;
+}
+.sim-card img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .5s ease;
+}
+.sim-card:hover img { transform: scale(1.05); }
+
+@media (max-width: 900px) {
+  .detail { grid-template-columns: 1fr; }
+  .similar { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input id="nav-search-input" placeholder="Søg…" />
+      <button class="submit" id="nav-search-submit" aria-label="Søg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="#">Tavler</a>
+      <a href="#">Log ind</a>
+      <a href="#" class="btn-primary">Start gratis</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="breadcrumbs">
+    <a href="Colourbox.html">Hjem</a><span>/</span>
+    <a href="search.html?q=ceramics+studio">Keramikværksted</a><span>/</span>
+    Fil
+  </div>
+
+  <div class="detail">
+    <div>
+      <div class="preview">
+        <img src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1400&q=80&auto=format" alt="" />
+        <div class="preview-tools">
+          <button class="tool-btn" title="Fuld skærm">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+          </button>
+          <button class="tool-btn" title="Del">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="12" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M8 11l8-4M8 13l8 4"/></svg>
+          </button>
+          <button class="tool-btn" title="Gem i tavle">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="preview-meta">
+        <span id="meta-dims">6000 × 8000 px · RAW</span>
+        <span>Oaxaca, MX · sep. 2025</span>
+      </div>
+
+      <div class="similar-head">
+        <h2>Lignende filer <em>af Lucía</em></h2>
+        <a href="search.html?q=lucia+mendoza" class="follow-btn">Se alle 1.240 →</a>
+      </div>
+      <div class="similar" id="similar"></div>
+    </div>
+
+    <aside class="side">
+      <div class="side-id" id="asset-id">ID · CB-241-A0412</div>
+      <h1>Keramiker trimmer en skål på drejeskiven, morgenlys fra østvinduet.</h1>
+
+      <div class="creator-row">
+        <div class="creator-avatar" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=160&q=70&auto=format')"></div>
+        <div class="creator-details">
+          <a href="creator.html" style="text-decoration:none;color:inherit;"><div class="n">Lucía Mendoza</div></a>
+          <div class="r">Dokumentar · 1.240 filer</div>
+        </div>
+        <a href="creator.html" class="follow-btn">Se</a>
+      </div>
+
+      <div class="licence">
+        <div class="licence-head">
+          <span class="label">Royaltyfri licens</span>
+          <span class="price" id="price">€49</span>
+        </div>
+        <div class="size-opts" id="sizes">
+          <div class="size-opt" data-size="S" data-dims="800 × 1067" data-price="€12">
+            <div class="r">Lille <span class="dims">800 × 1067</span></div>
+            <span>€12</span>
+          </div>
+          <div class="size-opt" data-size="M" data-dims="2400 × 3200" data-price="€29">
+            <div class="r">Mellem <span class="dims">2400 × 3200</span></div>
+            <span>€29</span>
+          </div>
+          <div class="size-opt active" data-size="L" data-dims="6000 × 8000" data-price="€49">
+            <div class="r">Stor <span class="dims">6000 × 8000</span></div>
+            <span>€49</span>
+          </div>
+          <div class="size-opt" data-size="RAW" data-dims="RAW · 87 MB" data-price="€89">
+            <div class="r">Original <span class="dims">RAW · 87 MB</span></div>
+            <span>€89</span>
+          </div>
+        </div>
+        <a href="checkout.html" class="btn-download" style="text-decoration:none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v13m-5-5l5 5 5-5M4 21h16"/></svg>
+          Licensér &amp; download
+        </a>
+        <a href="boards.html" class="btn-secondary" style="text-decoration:none;display:block;text-align:center;">Tilføj til tavle</a>
+        <div class="licence-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 4v6c0 5-4 9-9 10-5-1-9-5-9-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+          <span>Godkendt til kommerciel brug globalt. 48 % af honoraret går direkte til Lucía.</span>
+        </div>
+      </div>
+
+      <div class="info-block">
+        <h3>Detaljer</h3>
+        <div class="info-row"><span class="k">Type</span><span class="v">Fotografi</span></div>
+        <div class="info-row"><span class="k">Format</span><span class="v">JPG, TIFF, RAW</span></div>
+        <div class="info-row"><span class="k">Orientering</span><span class="v">Lodret</span></div>
+        <div class="info-row"><span class="k">Dominerende farver</span>
+          <span class="v" style="display:flex; gap:4px; align-items:center;">
+            <span style="width:12px;height:12px;border-radius:3px;background:#b88a5e"></span>
+            <span style="width:12px;height:12px;border-radius:3px;background:#4a3320"></span>
+            <span style="width:12px;height:12px;border-radius:3px;background:#d9c5a8"></span>
+          </span>
+        </div>
+        <div class="info-row"><span class="k">Udgivet</span><span class="v">12 SEP 2025</span></div>
+        <div class="info-row"><span class="k">Modelaftale</span><span class="v">Arkiveret</span></div>
+      </div>
+
+      <div class="info-block">
+        <h3>Tags</h3>
+        <div class="tags">
+          <a href="search.html?q=ceramics" class="tag">keramik</a>
+          <a href="search.html?q=potter" class="tag">keramiker</a>
+          <a href="search.html?q=workshop" class="tag">værksted</a>
+          <a href="search.html?q=hands" class="tag">hænder</a>
+          <a href="search.html?q=clay" class="tag">ler</a>
+          <a href="search.html?q=morning+light" class="tag">morgenlys</a>
+          <a href="search.html?q=craft" class="tag">håndværk</a>
+          <a href="search.html?q=artisan" class="tag">håndværker</a>
+          <a href="search.html?q=oaxaca" class="tag">Oaxaca</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="similar-head">
+    <h2>Du vil måske også kunne lide</h2>
+    <a href="search.html?q=ceramics+studio" class="follow-btn">Tilbage til resultater →</a>
+  </div>
+  <div class="similar" id="also-like"></div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const assetId = params.get("id") || "asset-001";
+document.getElementById("asset-id").textContent = "ID · CB-" + assetId.toUpperCase().replace("ASSET-", "241-A");
+
+// Size selection
+document.querySelectorAll(".size-opt").forEach(opt => {
+  opt.addEventListener("click", () => {
+    document.querySelectorAll(".size-opt").forEach(o => o.classList.remove("active"));
+    opt.classList.add("active");
+    document.getElementById("price").textContent = opt.dataset.price;
+  });
+});
+
+// Similar grids
+const SIMS = [
+  "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1617897903246-719242758050?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1521334884684-d80222895322?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1604934834460-4f6cf04cfec2?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1587614382346-4ec70e388b28?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=400&q=70&auto=format",
+  "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?w=400&q=70&auto=format"
+];
+function fillSim(id, n, offset=0) {
+  const el = document.getElementById(id);
+  for (let i = 0; i < n; i++) {
+    const a = document.createElement("a");
+    a.className = "sim-card";
+    a.href = "asset.html?id=asset-" + (i + offset + 20).toString().padStart(3, "0");
+    a.innerHTML = `<img src="${SIMS[(i + offset) % SIMS.length]}" alt="" loading="lazy" />`;
+    el.appendChild(a);
+  }
+}
+fillSim("similar", 6, 0);
+fillSim("also-like", 6, 5);
+
+// Nav search
+const navInput = document.getElementById("nav-search-input");
+navInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && navInput.value.trim()) window.location.href = "search.html?q=" + encodeURIComponent(navInput.value.trim());
+});
+document.getElementById("nav-search-submit").addEventListener("click", () => {
+  if (navInput.value.trim()) window.location.href = "search.html?q=" + encodeURIComponent(navInput.value.trim());
+});
+</script>
+</body>
+</html>

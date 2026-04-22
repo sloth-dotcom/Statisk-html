@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Tavler — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.page-head {
+  max-width: var(--max); margin: 0 auto;
+  padding: 40px 28px 20px;
+  display: flex; justify-content: space-between; align-items: end;
+  gap: 32px;
+}
+.page-head h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 40px;
+  letter-spacing: -0.03em; line-height: 1.05;
+  margin: 0 0 6px;
+}
+.page-head h1 em { font-style: italic; color: var(--muted); font-weight: 400; }
+.page-head .sub { color: var(--muted); font-size: 14px; }
+
+.head-actions { display: flex; gap: 8px; align-items: center; }
+.btn-new {
+  background: var(--accent); color: var(--accent-ink);
+  padding: 11px 18px; border-radius: 999px;
+  font-weight: 500; font-size: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+
+.filter-row {
+  max-width: var(--max); margin: 0 auto;
+  padding: 10px 28px 0;
+  display: flex; gap: 8px; align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 20px;
+}
+.view-toggle { display: flex; background: var(--surface-2); border-radius: 999px; padding: 3px; margin-left: auto; }
+.view-toggle button {
+  padding: 6px 12px; border-radius: 999px; font-size: 12.5px; color: var(--muted);
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.view-toggle button.on { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+
+/* Board list */
+.boards {
+  max-width: var(--max); margin: 0 auto;
+  padding: 28px 28px 80px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+}
+.board {
+  display: block; background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px; overflow: hidden;
+  transition: transform .2s ease, border-color .2s ease;
+}
+.board:hover { transform: translateY(-3px); border-color: var(--ink-2); }
+
+.board-cover {
+  display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 2px;
+  aspect-ratio: 3 / 2;
+}
+.board-cover .tile { position: relative; overflow: hidden; background: var(--surface-2); }
+.board-cover .tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.board-cover .tile:first-child { grid-row: span 2; }
+.board-cover .stacked { display: grid; grid-template-rows: 1fr 1fr; gap: 2px; }
+
+.board-body { padding: 16px 18px; }
+.board-head {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.board-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 17px; font-weight: 500;
+  letter-spacing: -0.015em;
+}
+.board-visibility {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.vis-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+}
+.vis-dot.public { background: #2a8450; }
+.vis-dot.team { background: #d8a83e; }
+
+.board-stats {
+  font-size: 12.5px; color: var(--muted);
+  display: flex; gap: 14px;
+}
+.board-stats span strong { color: var(--ink); font-weight: 500; }
+
+.board-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.collabs { display: flex; }
+.collab {
+  width: 26px; height: 26px; border-radius: 999px;
+  border: 2px solid var(--surface);
+  background: var(--surface-2) center/cover;
+  margin-left: -8px;
+}
+.collab:first-child { margin-left: 0; }
+.collab.more {
+  background: var(--surface-2);
+  display: grid; place-items: center;
+  font-size: 10px; font-family: "JetBrains Mono", monospace;
+  color: var(--muted);
+}
+.updated { font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* New board card */
+.board.new {
+  border: 1.5px dashed var(--line);
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  min-height: 340px;
+  flex-direction: column; gap: 10px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.board.new:hover { border-color: var(--ink); color: var(--ink); }
+.board.new .big {
+  width: 40px; height: 40px; border-radius: 999px;
+  border: 1.5px dashed currentColor;
+  display: grid; place-items: center;
+}
+
+@media (max-width: 900px) {
+  .boards { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg…" />
+      <button class="submit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg></button>
+    </div>
+    <div class="nav-right">
+      <a href="upload.html">Bidrag</a>
+      <a href="#" class="btn-primary">M. Sørensen</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-head">
+  <div>
+    <div class="breadcrumbs" style="margin-bottom:12px;"><a href="Colourbox.html">Hjem</a><span>/</span>Tavler</div>
+    <h1>Dine tavler <em>— 14 gemt</em></h1>
+    <div class="sub">Moodboards, godkendte billeder og teamdelt research. Intet her er offentligt, medmindre du vælger det.</div>
+  </div>
+  <div class="head-actions">
+    <button class="chip">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M6 12h12M9 17h6"/></svg>
+      Sortér: Senest opdateret
+    </button>
+    <button class="btn-new">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+      Ny tavle
+    </button>
+  </div>
+</div>
+
+<div class="filter-row">
+  <button class="chip active">Alle</button>
+  <button class="chip">Privat</button>
+  <button class="chip">Delt med team</button>
+  <button class="chip">Offentlig</button>
+  <button class="chip">Arkiveret</button>
+  <div class="view-toggle">
+    <button class="on"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Gitter</button>
+    <button><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Liste</button>
+  </div>
+</div>
+
+<div class="boards" id="boards"></div>
+
+<script>
+const BOARDS = [
+  {
+    name: "Q2 brandkampagne",
+    vis: "team",
+    visLabel: "Team",
+    files: 48,
+    views: "312",
+    updated: "2t siden",
+    covers: [
+      "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=500&q=70&auto=format",
+      "https://images.unsplash.com/photo-1528825871115-3581a5387919?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=300&q=70&auto=format",
+    ],
+    collabs: ["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=70&auto=format",
+              "https://images.unsplash.com/photo-1542744095-291d1f67b221?w=80&q=70&auto=format",
+              "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&q=70&auto=format"]
+  },
+  {
+    name: "Værksted / keramik moodboard",
+    vis: "private",
+    visLabel: "Privat",
+    files: 62,
+    views: "—",
+    updated: "I går",
+    covers: [
+      "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=500&q=70&auto=format",
+      "https://images.unsplash.com/photo-1617897903246-719242758050?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1521334884684-d80222895322?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=300&q=70&auto=format",
+    ],
+    collabs: ["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=70&auto=format"]
+  },
+  {
+    name: "Stiftere — redaktionel shortlist",
+    vis: "team",
+    visLabel: "Team",
+    files: 31,
+    views: "184",
+    updated: "3d siden",
+    covers: [
+      "https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=500&q=70&auto=format",
+      "https://images.unsplash.com/photo-1542744095-291d1f67b221?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=300&q=70&auto=format",
+    ],
+    collabs: ["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=70&auto=format",
+              "https://images.unsplash.com/photo-1542744095-291d1f67b221?w=80&q=70&auto=format"]
+  },
+  {
+    name: "Nordisk lys — referencer",
+    vis: "public",
+    visLabel: "Offentlig",
+    files: 112,
+    views: "2.410",
+    updated: "1u siden",
+    covers: [
+      "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=500&q=70&auto=format",
+      "https://images.unsplash.com/photo-1499955085172-a104c9463ece?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1527525443983-6e60c75fff46?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?w=300&q=70&auto=format",
+    ],
+    collabs: ["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=70&auto=format",
+              "https://images.unsplash.com/photo-1542744095-291d1f67b221?w=80&q=70&auto=format",
+              "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&q=70&auto=format",
+              "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&q=70&auto=format"]
+  },
+  {
+    name: "Produktfotos — Q3 lancering",
+    vis: "private",
+    visLabel: "Privat",
+    files: 24,
+    views: "—",
+    updated: "2u siden",
+    covers: [
+      "https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=500&q=70&auto=format",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=300&q=70&auto=format",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&q=70&auto=format",
+    ],
+    collabs: ["https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=80&q=70&auto=format"]
+  },
+];
+
+const root = document.getElementById("boards");
+
+// "New board" tile first
+const newCard = document.createElement("a");
+newCard.className = "board new";
+newCard.innerHTML = `
+  <div class="big"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+  <div>Opret ny tavle</div>
+  <div style="font-size:11.5px;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;text-transform:uppercase;">⌘ + N</div>
+`;
+root.appendChild(newCard);
+
+BOARDS.forEach(b => {
+  const a = document.createElement("a");
+  a.className = "board";
+  a.href = "#";
+  const collabCount = b.collabs.length;
+  const shown = b.collabs.slice(0, 3);
+  const extra = collabCount > 3 ? `<div class="collab more">+${collabCount - 3}</div>` : "";
+  a.innerHTML = `
+    <div class="board-cover">
+      <div class="tile"><img src="${b.covers[0]}" alt="" loading="lazy"/></div>
+      <div class="stacked">
+        <div class="tile"><img src="${b.covers[1]}" alt="" loading="lazy"/></div>
+        <div class="tile"><img src="${b.covers[2]}" alt="" loading="lazy"/></div>
+      </div>
+      <div class="stacked">
+        <div class="tile"><img src="${b.covers[3]}" alt="" loading="lazy"/></div>
+        <div class="tile" style="background:var(--surface-2);display:grid;place-items:center;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:0.04em;">+${b.files - 4}</span>
+        </div>
+      </div>
+    </div>
+    <div class="board-body">
+      <div class="board-head">
+        <span class="board-name">${b.name}</span>
+        <span class="board-visibility"><span class="vis-dot ${b.vis}"></span>${b.visLabel}</span>
+      </div>
+      <div class="board-stats">
+        <span><strong>${b.files}</strong> filer</span>
+        <span>·</span>
+        <span>${b.views} visninger</span>
+      </div>
+      <div class="board-foot">
+        <div class="collabs">
+          ${shown.map(c => `<div class="collab" style="background-image:url('${c}')"></div>`).join("")}
+          ${extra}
+        </div>
+        <span class="updated">Opdateret ${b.updated}</span>
+      </div>
+    </div>
+  `;
+  root.appendChild(a);
+});
+</script>
+</body>
+</html>

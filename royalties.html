@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Honorarer — Colourbox</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+.doc-head { padding: 72px 0 48px; }
+.doc-head .eyebrow { margin-bottom: 18px; }
+.doc-head h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: clamp(44px, 5.2vw, 72px);
+  letter-spacing: -0.035em;
+  line-height: 1.03;
+  margin: 0 0 20px;
+  max-width: 960px;
+  text-wrap: balance;
+}
+.doc-head h1 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.doc-head .lede {
+  font-size: 18px; line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 700px;
+  margin: 0;
+}
+
+/* Block */
+section.block { padding-top: 72px; }
+.block-head { margin-bottom: 32px; }
+.block-head .eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.block-head .eyebrow::before {
+  content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+}
+.block-head h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 36px; letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin: 0 0 10px;
+  max-width: 720px;
+  text-wrap: balance;
+}
+.block-head h2 em { font-style: italic; font-weight: 400; color: var(--muted); }
+.block-head p { margin: 0; font-size: 15px; color: var(--ink-2); max-width: 640px; line-height: 1.55; }
+
+/* Rate table */
+.rates {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.rates table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.rates th, .rates td {
+  padding: 18px 22px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.rates tbody tr:last-child th, .rates tbody tr:last-child td { border-bottom: 0; }
+.rates thead th {
+  background: var(--surface-2);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  font-weight: 500;
+}
+.rates tbody th {
+  width: 34%;
+  font-weight: 500; color: var(--ink);
+}
+.rates tbody th small {
+  display: block;
+  font-family: "Inter", sans-serif;
+  font-weight: 400; font-size: 13px;
+  color: var(--muted);
+  margin-top: 3px;
+  letter-spacing: 0;
+}
+.rates td {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 22px;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.rates td .unit {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; color: var(--muted);
+  letter-spacing: 0.06em; margin-left: 6px;
+  text-transform: uppercase;
+}
+
+/* Calculator */
+.calc {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.calc-form { padding: 32px; border-right: 1px solid var(--line); }
+.calc-form label {
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  margin: 20px 0 10px;
+}
+.calc-form label:first-child { margin-top: 0; }
+
+.slider-row { display: flex; align-items: center; gap: 16px; }
+.slider-row input[type="range"] {
+  flex: 1;
+  -webkit-appearance: none; appearance: none;
+  height: 4px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  outline: none;
+}
+.slider-row input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 999px;
+  background: var(--accent);
+  cursor: pointer;
+  border: 3px solid var(--surface);
+  box-shadow: 0 2px 6px rgba(0,0,0,.15);
+}
+.slider-row .v {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 22px;
+  min-width: 96px; text-align: right;
+  letter-spacing: -0.015em;
+}
+
+.seg {
+  display: flex; gap: 0;
+  background: var(--surface-2);
+  padding: 3px; border-radius: 999px;
+}
+.seg button {
+  flex: 1; padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px; color: var(--muted);
+  font-weight: 500;
+}
+.seg button.active {
+  background: var(--surface); color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+
+.calc-out { padding: 32px; background: var(--surface-2); display: flex; flex-direction: column; justify-content: space-between; }
+html[data-theme="dark"] .calc-out { background: #101216; }
+.calc-out .eyebrow { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; margin-bottom: 14px; }
+.payout {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 68px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+.payout .c { color: var(--muted); font-size: 32px; font-weight: 400; margin-right: 6px; letter-spacing: -0.02em; }
+.payout-sub { font-size: 14px; color: var(--ink-2); margin-bottom: 24px; }
+.breakdown {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  font-size: 13px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.breakdown .row { display: flex; justify-content: space-between; color: var(--ink-2); }
+.breakdown .row strong { color: var(--ink); font-weight: 500; }
+.breakdown .row.total { color: var(--ink); font-weight: 500; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: 4px; }
+.breakdown .mono { font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: 0.02em; }
+
+/* Payout schedule */
+.schedule { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.sched-card {
+  padding: 26px 24px 28px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.sched-card h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 18px;
+  margin: 0 0 8px;
+}
+.sched-card .big {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 32px; font-weight: 500;
+  letter-spacing: -0.025em;
+  margin: 12px 0 6px;
+  color: var(--ink);
+}
+.sched-card p { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.5; }
+.sched-card ul { margin: 10px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--ink-2); }
+.sched-card ul li { padding: 4px 0; display: flex; justify-content: space-between; font-family: "JetBrains Mono", monospace; font-size: 12px; letter-spacing: 0.02em; }
+.sched-card ul li span:last-child { color: var(--ink); }
+
+/* Top earners */
+.earners {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.earners table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.earners th, .earners td {
+  padding: 14px 20px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.earners tbody tr:last-child td { border-bottom: 0; }
+.earners thead th {
+  background: var(--surface-2);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px; letter-spacing: 0.1em;
+  color: var(--muted); text-transform: uppercase;
+  font-weight: 500;
+}
+.earners td.rank {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px; color: var(--muted);
+  width: 60px; letter-spacing: 0.04em;
+}
+.earners .who { display: flex; align-items: center; gap: 12px; }
+.earners .av { width: 32px; height: 32px; border-radius: 999px; background: center/cover; }
+.earners .n { font-weight: 500; }
+.earners td.amount {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 18px;
+  letter-spacing: -0.015em;
+  text-align: right;
+}
+
+/* FAQ */
+.faq { border-top: 1px solid var(--line); }
+.faq details { border-bottom: 1px solid var(--line); padding: 22px 0; }
+.faq summary {
+  list-style: none; cursor: pointer;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500; font-size: 18px;
+  letter-spacing: -0.01em;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; font-family: "JetBrains Mono", monospace;
+  color: var(--muted); font-size: 20px;
+}
+.faq details[open] summary::after { content: "−"; }
+.faq details p { margin: 12px 0 0; color: var(--ink-2); font-size: 14.5px; line-height: 1.55; max-width: 760px; }
+
+footer.foot { margin-top: 96px; padding: 40px 0; border-top: 1px solid var(--line); }
+.foot-inner {
+  display: flex; justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1000px) {
+  .calc { grid-template-columns: 1fr; }
+  .calc-form { border-right: 0; border-bottom: 1px solid var(--line); }
+  .schedule { grid-template-columns: 1fr; }
+  .payout { font-size: 48px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="Colourbox.html" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-search">
+      <input placeholder="Søg…" />
+      <button class="submit" aria-label="Søg">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.5-4.5"/></svg>
+      </button>
+    </div>
+    <div class="nav-right">
+      <a href="boards.html">Tavler</a>
+      <a href="#">Log ind</a>
+      <a href="upload.html" class="btn-primary">Bidrag</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <div class="breadcrumbs" style="padding-top: 24px;">
+    <a href="Colourbox.html">Hjem</a><span>/</span>
+    <a href="contributor.html">Bidragydere</a><span>/</span>
+    <span style="color: var(--ink);">Honorarer</span>
+  </div>
+
+  <header class="doc-head">
+    <div class="eyebrow">Honorarsatser · 2026</div>
+    <h1>Betalt retfærdigt. <em>Betalt månedligt.</em></h1>
+    <p class="lede">Bidragydere beholder 50–70 % af hver licensindtægt. Ingen skjulte niveauer, ingen udbetalingsgrænser ud over €50, ingen tilbageførsler. Den sats du ser, er den sats du tjener.</p>
+  </header>
+
+  <!-- RATE TABLE -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Hovedsatser</div>
+      <h2>Tre licenstyper, <em>to eksklusivitetsniveauer.</em></h2>
+      <p>Din sats er en procentdel af købers licenspris. Eksklusive bidragydere — filer der kun sælges via Colourbox — tjener en højere andel på alle niveauer.</p>
+    </div>
+
+    <div class="rates">
+      <table>
+        <thead>
+          <tr>
+            <th>Licenstype</th>
+            <th>Ikke-eksklusiv</th>
+            <th>Eksklusiv</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Standardlicens<small>Web, tryk op til 500k eksponeringer, intern brug</small></th>
+            <td>50 %<span class="unit">af salg</span></td>
+            <td>60 %<span class="unit">af salg</span></td>
+          </tr>
+          <tr>
+            <th>Udvidet licens<small>Ubegrænsede gengivelser, videresalgsprodukter, print-on-demand</small></th>
+            <td>55 %<span class="unit">af salg</span></td>
+            <td>65 %<span class="unit">af salg</span></td>
+          </tr>
+          <tr>
+            <th>Redaktionel licens<small>Journalistisk og undervisningsmæssig brug, ingen samtykker påkrævet</small></th>
+            <td>50 %<span class="unit">af salg</span></td>
+            <td>60 %<span class="unit">af salg</span></td>
+          </tr>
+          <tr>
+            <th>Tilpasset / enterprise<small>Forhandlede licenser per aftale — du sætter bunden</small></th>
+            <td>60 %<span class="unit">af salg</span></td>
+            <td>70 %<span class="unit">af salg</span></td>
+          </tr>
+          <tr>
+            <th>AI-pulje (tilvalg)<small>Separat bibliotek, tydelig mærkning, lavere prispunkter</small></th>
+            <td>35 %<span class="unit">af salg</span></td>
+            <td>40 %<span class="unit">af salg</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Estimér din udbetaling</div>
+      <h2>Se hvordan <em>en typisk måned</em> ser ud.</h2>
+      <p>Træk i parametrene, så de passer til din portefølje. Tallene opdateres live — de bruger gennemsnitspriserne for licenser i biblioteket i 2026.</p>
+    </div>
+
+    <div class="calc">
+      <div class="calc-form">
+        <label>Antal filer i portefølje</label>
+        <div class="slider-row">
+          <input type="range" id="files" min="50" max="5000" step="50" value="800" />
+          <div class="v" id="files-v">800</div>
+        </div>
+
+        <label>Solgte licenser per måned (per 100 filer)</label>
+        <div class="slider-row">
+          <input type="range" id="sales" min="1" max="30" step="1" value="7" />
+          <div class="v" id="sales-v">7</div>
+        </div>
+
+        <label>Gennemsnitspris per licens (€)</label>
+        <div class="slider-row">
+          <input type="range" id="price" min="5" max="120" step="1" value="22" />
+          <div class="v" id="price-v">€22</div>
+        </div>
+
+        <label>Kontrakt</label>
+        <div class="seg" id="tier">
+          <button data-tier="non" class="active">Ikke-eksklusiv</button>
+          <button data-tier="exc">Eksklusiv</button>
+        </div>
+
+        <label>Licens-mix</label>
+        <div class="seg" id="mix">
+          <button data-mix="std" class="active">Primært standard</button>
+          <button data-mix="ext">Primært udvidet</button>
+        </div>
+      </div>
+
+      <div class="calc-out">
+        <div>
+          <div class="eyebrow">Estimeret månedlig udbetaling</div>
+          <div class="payout"><span class="c">€</span><span id="payout-num">616</span></div>
+          <div class="payout-sub" id="payout-sub">Baseret på 56 licenser ved €22 i gennemsnit</div>
+        </div>
+        <div class="breakdown">
+          <div class="row"><span>Licenser / måned</span><span class="mono" id="b-sales">56</span></div>
+          <div class="row"><span>Gns. pris</span><span class="mono" id="b-price">€22.00</span></div>
+          <div class="row"><span>Honorarsats</span><span class="mono" id="b-rate">50%</span></div>
+          <div class="row total"><span>Månedlig udbetaling</span><strong class="mono" id="b-total">€616.00</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYOUT SCHEDULE -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Sådan bliver du betalt</div>
+      <h2>Månedlig afregning. <em>Ingen overraskelser.</em></h2>
+    </div>
+
+    <div class="schedule">
+      <div class="sched-card">
+        <h3>Afregningsdag</h3>
+        <div class="big">Den 15.</div>
+        <p>Saldi optjent i måned M afregnes den 15. i måned M+1. Falder den 15. på en weekend eller dansk banklukkedag, køres betalingen den næste bankdag.</p>
+      </div>
+      <div class="sched-card">
+        <h3>Minimum udbetaling</h3>
+        <div class="big">€50</div>
+        <p>Saldi under €50 rulles videre, indtil grænsen er nået. Du kan også holde beløbet på kontoen på ubestemt tid og hæve det på forespørgsel fra studiet.</p>
+      </div>
+      <div class="sched-card">
+        <h3>Metoder og gebyrer</h3>
+        <p>Vælg én eller to aktive betalingsmetoder i studiet. Vi dækker platformsgebyret op til det anførte loft.</p>
+        <ul>
+          <li><span>SEPA</span><span>Gratis</span></li>
+          <li><span>Wise (138 valutaer)</span><span>€0 til €2,40</span></li>
+          <li><span>PayPal</span><span>2,0 % maks. €8</span></li>
+          <li><span>Bankoverførsel (ikke-SEPA)</span><span>€15 fast</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOP EARNERS -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Top-indtjenere · marts 2026</div>
+      <h2>Hvad top 5 <em>tog hjem sidste måned.</em></h2>
+      <p>Anonymiseret hvor det er ønsket. Tal er netto efter platformsgebyrer, før lokal skat.</p>
+    </div>
+
+    <div class="earners">
+      <table>
+        <thead>
+          <tr><th>Placering</th><th>Skaber</th><th>Kategori</th><th>Filer</th><th>Licenser</th><th style="text-align:right;">Udbetaling</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rank">01</td>
+            <td><div class="who"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=120&q=70&auto=format')"></div><div class="n">Lucía Mendoza</div></div></td>
+            <td>Fotografi</td>
+            <td class="mono">1.240</td>
+            <td class="mono">2.814</td>
+            <td class="amount">€41.820</td>
+          </tr>
+          <tr>
+            <td class="rank">02</td>
+            <td><div class="who"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&q=70&auto=format')"></div><div class="n">Anders Holm</div></div></td>
+            <td>Video</td>
+            <td class="mono">312</td>
+            <td class="mono">486</td>
+            <td class="amount">€28.960</td>
+          </tr>
+          <tr>
+            <td class="rank">03</td>
+            <td><div class="who"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1542744095-291d1f67b221?w=120&q=70&auto=format')"></div><div class="n">Ji-woo Park</div></div></td>
+            <td>Illustration</td>
+            <td class="mono">680</td>
+            <td class="mono">1.622</td>
+            <td class="amount">€22.410</td>
+          </tr>
+          <tr>
+            <td class="rank">04</td>
+            <td><div class="who"><div class="av" style="background: var(--surface-2);"></div><div class="n">— Anonym</div></div></td>
+            <td>Fotografi</td>
+            <td class="mono">214</td>
+            <td class="mono">912</td>
+            <td class="amount">€19.080</td>
+          </tr>
+          <tr>
+            <td class="rank">05</td>
+            <td><div class="who"><div class="av" style="background-image:url('https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=120&q=70&auto=format')"></div><div class="n">Mika Tanaka</div></div></td>
+            <td>Vektorer</td>
+            <td class="mono">902</td>
+            <td class="mono">1.340</td>
+            <td class="amount">€16.240</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="block">
+    <div class="block-head">
+      <div class="eyebrow">Skat og de akavede spørgsmål</div>
+      <h2>Svar før <em>din revisor spørger.</em></h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Er mine honorarer skattepligtige? Tilbageholder I skat?</summary>
+        <p>Honorarer er skattepligtige i dit bopælsland. Vi tilbageholder ikke skat for EU-bidragydere (du fakturerer os via omvendt betalingspligt). For bidragydere uden for EU anvender vi eventuel traktatbaseret kildeskat og udsteder årligt en opgørelse svarende til et 1099.</p>
+      </details>
+      <details>
+        <summary>Hvad med moms (VAT)?</summary>
+        <p>EU-momsregistrerede virksomheder: vi anvender omvendt betalingspligt på de månedlige opgørelser — du håndterer VAT lokalt. EU-ikke-registrerede privatpersoner: vi anvender lokal VAT på dine vegne. Uden for EU: ingen VAT.</p>
+      </details>
+      <details>
+        <summary>Sænker I nogensinde satsen, efter jeg har underskrevet?</summary>
+        <p>Nej. Satsen i din kontrakt er satsen i hele kontraktens løbetid. Introducerer vi et bedre niveau, bliver du automatisk flyttet op — aldrig ned.</p>
+      </details>
+      <details>
+        <summary>Hvad sker der, hvis en køber laver en chargeback?</summary>
+        <p>Tilbageførte licenser trækkes fra din saldo i næste afregning. Chargebacks udgør under 0,2 % af transaktionerne i hele biblioteket; vi dækker bedragerigebyrerne.</p>
+      </details>
+      <details>
+        <summary>Kan jeg se hvert enkelt salg per fil?</summary>
+        <p>Ja. Studiet viser historik per fil, per licens og per køber med download-tidsstempler. CSV-eksport på forespørgsel; API-adgang efter aftale.</p>
+      </details>
+    </div>
+  </section>
+</div>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <span>© 2026 COLOURBOX A/S</span>
+    <span>LAVET UDEN AI-GENERERET INDHOLD</span>
+  </div>
+</footer>
+
+<script>
+const tier = { active: "non", rates: { non: { std: 0.50, ext: 0.55 }, exc: { std: 0.60, ext: 0.65 } } };
+const mix = { active: "std" };
+
+const $ = id => document.getElementById(id);
+const fmt = n => n.toLocaleString("en-US", { maximumFractionDigits: 0 });
+const fmt2 = n => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+function recalc() {
+  const files = +$("files").value;
+  const salesPer100 = +$("sales").value;
+  const price = +$("price").value;
+  const rate = tier.rates[tier.active][mix.active];
+
+  const sales = Math.round(files / 100 * salesPer100);
+  const gross = sales * price;
+  const payout = gross * rate;
+
+  $("files-v").textContent = fmt(files);
+  $("sales-v").textContent = salesPer100;
+  $("price-v").textContent = "€" + price;
+
+  $("payout-num").textContent = fmt(payout);
+  $("payout-sub").textContent = `Baseret på ${fmt(sales)} licens${sales===1?"":"er"} ved €${price} i gennemsnit`;
+
+  $("b-sales").textContent = fmt(sales);
+  $("b-price").textContent = "€" + fmt2(price);
+  $("b-rate").textContent = Math.round(rate * 100) + "%";
+  $("b-total").textContent = "€" + fmt2(payout);
+}
+
+["files","sales","price"].forEach(id => $(id).addEventListener("input", recalc));
+
+document.querySelectorAll("#tier button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("#tier button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    tier.active = b.dataset.tier;
+    recalc();
+  });
+});
+document.querySelectorAll("#mix button").forEach(b => {
+  b.addEventListener("click", () => {
+    document.querySelectorAll("#mix button").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    mix.active = b.dataset.mix;
+    recalc();
+  });
+});
+
+recalc();
+</script>
+
+</body>
+</html>

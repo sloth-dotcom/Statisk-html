@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Colourbox — Stock-medier fra rigtige skabere</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-2: #f2f1ec;
+  --ink: #17181a;
+  --ink-2: #3a3c40;
+  --muted: #73767c;
+  --line: #e4e3dd;
+  --accent: #3d5afe;
+  --accent-ink: #ffffff;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --max: 1280px;
+}
+html[data-theme="dark"] {
+  --bg: #0d0e10;
+  --surface: #141518;
+  --surface-2: #1c1e22;
+  --ink: #f3f2ee;
+  --ink-2: #c9c8c3;
+  --muted: #86888d;
+  --line: #25272c;
+  --accent: #7c8dff;
+  --accent-ink: #0d0e10;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  letter-spacing: -0.005em;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+/* ===== Top nav ===== */
+.nav {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 28px;
+  height: 64px;
+  display: flex; align-items: center; gap: 36px;
+}
+.logo {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.03em;
+  display: flex; align-items: center; gap: 9px;
+}
+.logo-mark {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  background:
+    conic-gradient(from 210deg, var(--accent), #f5c518, #e24a7a, var(--accent));
+  position: relative;
+}
+.logo-mark::after {
+  content: "";
+  position: absolute; inset: 5px;
+  border-radius: 3px;
+  background: var(--bg);
+}
+.nav-links {
+  display: flex; gap: 2px;
+  font-size: 14.5px; color: var(--ink-2);
+}
+.nav-links a {
+  padding: 8px 12px; border-radius: 8px;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.nav-links a:hover { background: var(--surface-2); color: var(--ink); }
+.caret {
+  width: 10px; height: 10px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  opacity: .5;
+}
+.nav-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 14.5px;
+}
+.nav-right a { padding: 8px 12px; border-radius: 8px; color: var(--ink-2); }
+.nav-right a:hover { background: var(--surface-2); color: var(--ink); }
+.btn-primary {
+  background: var(--ink);
+  color: var(--bg);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: transform .15s ease;
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.divider-v { width: 1px; height: 22px; background: var(--line); margin: 0 4px; }
+
+/* ===== Hero ===== */
+.hero {
+  max-width: var(--max);
+  margin: 28px auto 0;
+  padding: 0 28px;
+}
+.hero-frame {
+  position: relative;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--surface-2);
+  aspect-ratio: 16 / 8.2;
+  min-height: 460px;
+}
+.hero-frame img.hero-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+.hero-frame::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.15) 30%, rgba(0,0,0,.55) 100%);
+  z-index: 1;
+}
+.hero-credit {
+  position: absolute;
+  bottom: 14px; right: 18px;
+  z-index: 3;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: rgba(255,255,255,.8);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.hero-content {
+  position: absolute; inset: 0 0 120px 0;
+  z-index: 2;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  padding: 60px;
+  text-align: center;
+  color: #17181a;
+}
+.hero-kicker {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(23,24,26,.7);
+  margin-bottom: 22px;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-kicker::before, .hero-kicker::after {
+  content: ""; width: 28px; height: 1px; background: rgba(23,24,26,.3);
+}
+.hero h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  margin: 0 0 20px;
+  max-width: 900px;
+  text-wrap: balance;
+}
+.hero h1 em {
+  font-style: normal;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+  color: rgba(23,24,26,.7);
+}
+.hero-sub {
+  font-size: 17px;
+  line-height: 1.5;
+  color: rgba(23,24,26,.75);
+  max-width: 560px;
+  margin: 0 0 36px;
+  text-wrap: pretty;
+}
+
+/* Search bar — on top of hero */
+.search-wrap {
+  position: absolute;
+  left: 50%;
+  bottom: 44px;
+  transform: translateX(-50%);
+  width: min(820px, calc(100% - 80px));
+  z-index: 3;
+}
+.search {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border-radius: 999px;
+  padding: 6px 6px 6px 8px;
+  box-shadow: 0 20px 60px -20px rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.08);
+  gap: 4px;
+}
+.search-select {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  border-right: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.search-select svg { width: 14px; height: 14px; }
+.search-input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  padding: 0 16px;
+  font: 15px "Inter", sans-serif;
+  color: var(--ink);
+}
+.search-input::placeholder { color: var(--muted); }
+.search-visual {
+  width: 40px; height: 40px;
+  display: grid; place-items: center;
+  border-radius: 999px;
+  color: var(--muted);
+  margin-right: 4px;
+}
+.search-visual:hover { background: var(--surface-2); color: var(--ink); }
+.search-submit {
+  width: 44px; height: 44px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  display: grid; place-items: center;
+}
+
+/* ===== Section ===== */
+.section {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 92px 28px 0;
+}
+.section-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 18px;
+}
+.section-eyebrow::before {
+  content: ""; width: 6px; height: 6px; background: var(--accent); border-radius: 50%;
+}
+.section-head {
+  display: flex; align-items: end; justify-content: space-between;
+  gap: 40px; margin-bottom: 40px;
+}
+.section-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 40px;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0;
+  max-width: 640px;
+  text-wrap: balance;
+}
+.section-title em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--muted);
+}
+.section-link {
+  font-size: 14px; color: var(--ink-2);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.section-link:hover { background: var(--surface-2); }
+
+/* Categories grid */
+.cats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.cat {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  color: #fff;
+  isolation: isolate;
+  transition: transform .25s ease;
+}
+.cat:hover { transform: translateY(-3px); }
+.cat img.cat-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  transition: transform .6s ease;
+}
+.cat:hover img.cat-bg { transform: scale(1.04); }
+.cat::after {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.55) 100%);
+}
+
+.cat-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.cat-count {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  background: rgba(255,255,255,.18);
+  color: rgba(255,255,255,.95);
+  backdrop-filter: blur(6px);
+  padding: 4px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.02em;
+}
+.cat-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(6px);
+  display: grid; place-items: center;
+  color: #fff;
+}
+
+.cat-foot {
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.cat-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.cat-arrow {
+  width: 34px; height: 34px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.18);
+  backdrop-filter: blur(6px);
+  display: grid; place-items: center;
+  color: #fff;
+  transition: transform .2s ease;
+}
+.cat:hover .cat-arrow { transform: translate(3px, -3px); }
+
+/* Promo row under hero */
+.promo {
+  max-width: var(--max);
+  margin: 32px auto 0;
+  padding: 0 28px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 20px;
+  color: var(--ink-2);
+  font-size: 14.5px;
+}
+.promo-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 13.5px;
+}
+.promo-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.promo a.link { color: var(--accent); font-weight: 500; }
+.promo a.link:hover { text-decoration: underline; }
+
+/* Creators strip */
+.creators {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 92px 28px 0;
+}
+.creators-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1fr;
+  gap: 16px;
+}
+.creator-card {
+  position: relative;
+  aspect-ratio: 4 / 3.2;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--surface-2);
+  padding: 22px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  color: #fff;
+  isolation: isolate;
+  transition: transform .25s ease;
+}
+.creator-card:hover { transform: translateY(-3px); }
+.creator-card img.creator-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: -2;
+}
+.creator-card::before {
+  content: "";
+  position: absolute; inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.7) 100%);
+}
+.creator-1, .creator-2, .creator-3 { background: #1c1e22; }
+
+.creator-meta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.creator-name {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+.creator-role {
+  font-size: 13.5px;
+  opacity: 0.8;
+}
+
+/* Trending searches */
+.trending {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 72px 28px 0;
+}
+.trending-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.trending-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; align-items: center; gap: 10px;
+}
+.trending-label::before {
+  content: ""; width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 25%, transparent);
+  animation: pulse 2.2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+.trending-updated {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.trending-row {
+  display: flex; gap: 8px;
+  flex-wrap: wrap;
+}
+.trend-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  transition: all .15s ease;
+}
+.trend-chip:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+  transform: translateY(-1px);
+}
+.trend-rank {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+.trend-chip .trend-delta {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: #2a8450;
+}
+.trend-chip .trend-delta.down { color: #b54a3a; }
+html[data-theme="dark"] .trend-chip .trend-delta { color: #6fd79a; }
+html[data-theme="dark"] .trend-chip .trend-delta.down { color: #e88a7a; }
+
+/* Footer */
+footer {
+  max-width: var(--max);
+  margin: 120px auto 0;
+  padding: 48px 28px;
+  border-top: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1.3fr repeat(4, 1fr);
+  gap: 40px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+footer h4 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+footer ul { list-style: none; margin: 0; padding: 0; }
+footer li { padding: 5px 0; }
+footer li a:hover { color: var(--ink); }
+.foot-brand p {
+  margin: 14px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+  max-width: 280px;
+}
+.foot-bottom {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 20px 28px 40px;
+  display: flex; justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ===== Tweaks ===== */
+#tweaks {
+  position: fixed;
+  right: 20px; bottom: 20px;
+  z-index: 1000;
+  width: 280px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 20px 60px -15px rgba(0,0,0,.25);
+  font-size: 13px;
+  display: none;
+  font-family: "Inter", sans-serif;
+}
+#tweaks.open { display: block; }
+.tweaks-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 14px;
+  color: var(--ink);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.tweak-row { margin-bottom: 14px; }
+.tweak-row label {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.theme-toggle, .cat-count-ctrl {
+  display: flex; gap: 0;
+  background: var(--surface-2);
+  padding: 3px; border-radius: 999px;
+}
+.theme-toggle button, .cat-count-ctrl button {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.theme-toggle button.active, .cat-count-ctrl button.active {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.accent-row { display: flex; gap: 6px; }
+.accent-swatch {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform .1s;
+}
+.accent-swatch.active { border-color: var(--ink); }
+.accent-swatch:hover { transform: scale(1.08); }
+
+@media (max-width: 1000px) {
+  .cats { grid-template-columns: repeat(2, 1fr); }
+  .creators-grid { grid-template-columns: 1fr; }
+  footer { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo"><span class="logo-mark"></span>Colourbox</a>
+    <div class="nav-links">
+      <a href="search.html?q=photos">Fotos <span class="caret"></span></a>
+      <a href="search.html?q=video">Video <span class="caret"></span></a>
+      <a href="search.html?q=illustrations">Illustrationer <span class="caret"></span></a>
+      <a href="search.html?q=vectors">Vektorer <span class="caret"></span></a>
+      <a href="#">Skabere</a>
+      <a href="#">Ressourcer <span class="caret"></span></a>
+    </div>
+    <div class="nav-right">
+      <a href="#">Priser</a>
+      <a href="boards.html">Tavler</a>
+      <a href="upload.html">Bidrag</a>
+      <div class="divider-v"></div>
+      <a href="#">Log ind</a>
+      <a href="#" class="btn-primary">Start gratis</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-frame">
+    <img class="hero-img" src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1800&q=75&auto=format" alt="" loading="eager" />
+    <div class="hero-credit">Nr. 041 · Luícia Mendoza</div>
+    <div class="hero-content" style="color:#fff;">
+      <div class="hero-kicker" style="color:rgba(255,255,255,.8);">Lavet af rigtige skabere</div>
+      <h1>Ærlige billeder fra folk, der <em style="color:rgba(255,255,255,.75);">skaber ting</em> for at leve.</h1>
+      <p class="hero-sub" style="color:rgba(255,255,255,.85);">Ingen syntetiske fyldstoffer. Hvert foto, video og vektor på Colourbox kommer fra en navngiven menneskelig skaber — søgbar, licensérbar og betalt retfærdigt.</p>
+    </div>
+
+    <div class="search-wrap">
+      <div class="search">
+        <div class="search-select">
+          <span>Alle medier</span>
+          <svg viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l4 4 4-4"/></svg>
+        </div>
+        <input class="search-input" id="home-search" placeholder="Søg i 42 millioner filer, uden AI-genereret indhold" />
+        <button class="search-visual" aria-label="Visuel søgning">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="3" width="18" height="18" rx="3"/>
+            <circle cx="9" cy="9" r="2"/>
+            <path d="M21 16l-5-5-9 9"/>
+          </svg>
+        </button>
+        <button class="search-submit" aria-label="Søg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="10.5" cy="10.5" r="6.5"/>
+            <path d="M20 20l-4.5-4.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROMO -->
+<div class="promo">
+  <span>Find visuelt indhold af høj kvalitet til den rette pris.</span>
+  <a href="#" class="link">Se planer og priser →</a>
+  <span class="promo-chip"><span class="dot"></span> Bibliotek uden AI-genereret indhold</span>
+</div>
+
+<!-- CATEGORIES -->
+<section class="section">
+  <div class="section-eyebrow">Gennemse efter medie</div>
+  <div class="section-head">
+    <h2 class="section-title">Fem kategorier, <em>én licens.</em></h2>
+    <a href="#" class="section-link">Se alle kategorier →</a>
+  </div>
+
+  <div class="cats" id="cats">
+    <a href="search.html?q=photos" class="cat" data-cat>
+      <img class="cat-bg" src="https://images.unsplash.com/photo-1502680390469-be75c86b636f?w=600&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="cat-top"><span class="cat-count">28,4M filer</span>
+        <span class="cat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 8"/></svg></span>
+      </div>
+      <div class="cat-foot"><span class="cat-name">Fotos</span>
+        <span class="cat-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </div>
+    </a>
+    <a href="search.html?q=illustrations" class="cat" data-cat>
+      <img class="cat-bg" src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="cat-top"><span class="cat-count">6,2M filer</span>
+        <span class="cat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 19c-4 0-7-3-7-7a7 7 0 0114 0c0 2-1 3-3 3h-2a1 1 0 000 2c0 1-1 2-2 2z"/><circle cx="8" cy="11" r="1" fill="currentColor"/><circle cx="12" cy="8" r="1" fill="currentColor"/><circle cx="16" cy="11" r="1" fill="currentColor"/></svg></span>
+      </div>
+      <div class="cat-foot"><span class="cat-name">Illustrationer</span>
+        <span class="cat-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </div>
+    </a>
+    <a href="search.html?q=vectors" class="cat" data-cat>
+      <img class="cat-bg" src="https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=600&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="cat-top"><span class="cat-count">3,8M filer</span>
+        <span class="cat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="6" height="6"/><rect x="15" y="15" width="6" height="6"/><path d="M9 6h6a3 3 0 013 3v6"/></svg></span>
+      </div>
+      <div class="cat-foot"><span class="cat-name">Vektorer</span>
+        <span class="cat-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </div>
+    </a>
+    <a href="search.html?q=video" class="cat" data-cat>
+      <img class="cat-bg" src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=600&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="cat-top"><span class="cat-count">1,1M filer</span>
+        <span class="cat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="14" height="14" rx="2"/><path d="M17 10l4-2v8l-4-2"/></svg></span>
+      </div>
+      <div class="cat-foot"><span class="cat-name">Video</span>
+        <span class="cat-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </div>
+    </a>
+    <a href="search.html?q=ai" class="cat" data-cat>
+      <img class="cat-bg" src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="cat-top"><span class="cat-count">Kun med tilvalg</span>
+        <span class="cat-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg></span>
+      </div>
+      <div class="cat-foot"><span class="cat-name">AI-genereret</span>
+        <span class="cat-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M9 7h8v8"/></svg></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- CREATORS -->
+<section class="creators">
+  <div class="section-eyebrow">Mød bidragyderne</div>
+  <div class="section-head">
+    <h2 class="section-title">Hver fil signeret af <em>en rigtig person.</em></h2>
+    <a href="#" class="section-link">Gennemse skabere →</a>
+  </div>
+  <div class="creators-grid">
+    <div class="creator-card creator-1">
+      <img class="creator-bg" src="https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="creator-meta"><span>Nr. 041 / Fotografi</span><span>Oaxaca, MX</span></div>
+      <div>
+        <h3 class="creator-name">Lucía Mendoza</h3>
+        <div class="creator-role">Dokumentar · 1.240 filer</div>
+      </div>
+    </div>
+    <div class="creator-card creator-2">
+      <img class="creator-bg" src="https://images.unsplash.com/photo-1533106497176-45ae19e68ba2?w=700&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="creator-meta"><span>Nr. 108 / Video</span><span>København, DK</span></div>
+      <div>
+        <h3 class="creator-name">Anders Holm</h3>
+        <div class="creator-role">Værkstedsfilm · 312 filer</div>
+      </div>
+    </div>
+    <div class="creator-card creator-3">
+      <img class="creator-bg" src="https://images.unsplash.com/photo-1542744095-291d1f67b221?w=700&q=70&auto=format" alt="" loading="lazy"/>
+      <div class="creator-meta"><span>Nr. 219 / Illustration</span><span>Seoul, KR</span></div>
+      <div>
+        <h3 class="creator-name">Ji-woo Park</h3>
+        <div class="creator-role">Redaktionel · 680 filer</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING -->
+<section class="trending">
+  <div class="trending-head">
+    <div class="trending-label">Populære søgninger</div>
+    <div class="trending-updated">Opdateret · live</div>
+  </div>
+  <div class="trending-row">
+    <a href="search.html?q=ceramics+studio" class="trend-chip"><span class="trend-rank">01</span> keramikværksted <span class="trend-delta">+142%</span></a>
+    <a href="search.html?q=nordic+workshop" class="trend-chip"><span class="trend-rank">02</span> nordisk værksted <span class="trend-delta">+88%</span></a>
+    <a href="search.html?q=small+business+owner" class="trend-chip"><span class="trend-rank">03</span> lille virksomhedsejer <span class="trend-delta">+71%</span></a>
+    <a href="search.html?q=overhead+flatlay" class="trend-chip"><span class="trend-rank">04</span> flatlay ovenfra <span class="trend-delta">+54%</span></a>
+    <a href="search.html?q=golden+hour+portrait" class="trend-chip"><span class="trend-rank">05</span> gyldne time portræt <span class="trend-delta">+31%</span></a>
+    <a href="search.html?q=office+team+meeting" class="trend-chip"><span class="trend-rank">06</span> kontormøde <span class="trend-delta down">−19%</span></a>
+    <a href="search.html?q=analog+film+grain" class="trend-chip"><span class="trend-rank">07</span> analog filmkorn <span class="trend-delta">+22%</span></a>
+    <a href="search.html?q=urban+commute" class="trend-chip"><span class="trend-rank">08</span> urban pendling <span class="trend-delta">+18%</span></a>
+    <a href="search.html?q=minimal+product" class="trend-chip"><span class="trend-rank">09</span> minimal produkt <span class="trend-delta">+12%</span></a>
+    <a href="search.html?q=documentary+family" class="trend-chip"><span class="trend-rank">10</span> dokumentar familie <span class="trend-delta">+9%</span></a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-brand">
+    <div class="logo"><span class="logo-mark"></span>Colourbox</div>
+    <p>Stock-medier fra rigtige skabere. Grundlagt i Odense, 2003.</p>
+  </div>
+  <div>
+    <h4>Gennemse</h4>
+    <ul><li><a href="#">Fotos</a></li><li><a href="#">Video</a></li><li><a href="#">Illustrationer</a></li><li><a href="#">Vektorer</a></li></ul>
+  </div>
+  <div>
+    <h4>Til skabere</h4>
+    <ul><li><a href="contributor.html">Bliv bidragyder</a></li><li><a href="standards.html">Upload-standarder</a></li><li><a href="royalties.html">Honorarer</a></li></ul>
+  </div>
+  <div>
+    <h4>Virksomhed</h4>
+    <ul><li><a href="about.html">Om os</a></li><li><a href="press.html">Presse</a></li><li><a href="careers.html">Karriere</a></li><li><a href="blog.html">Blog</a></li></ul>
+  </div>
+  <div>
+    <h4>Juridisk</h4>
+    <ul><li><a href="#">Licens</a></li><li><a href="#">Vilkår</a></li><li><a href="#">Privatliv</a></li></ul>
+  </div>
+</footer>
+<div class="foot-bottom">
+  <span>© 2026 COLOURBOX A/S</span>
+  <span>LAVET UDEN AI-GENERERET INDHOLD</span>
+</div>
+
+<!-- TWEAKS -->
+<div id="tweaks">
+  <div class="tweaks-title">Justeringer</div>
+
+  <div class="tweak-row">
+    <label>Tema</label>
+    <div class="theme-toggle" id="theme-toggle">
+      <button data-theme="light">Lys</button>
+      <button data-theme="dark">Mørk</button>
+    </div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Accentfarve</label>
+    <div class="accent-row" id="accent-row"></div>
+  </div>
+
+  <div class="tweak-row">
+    <label>Kategoriantal</label>
+    <div class="cat-count-ctrl" id="cat-count-ctrl">
+      <button data-count="3">3</button>
+      <button data-count="4">4</button>
+      <button data-count="5">5</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "theme": "light",
+  "accent": "#3d5afe",
+  "catCount": 5
+}/*EDITMODE-END*/;
+
+const ACCENTS = [
+  { name: "indigo", light: "#3d5afe", dark: "#7c8dff" },
+  { name: "rust",   light: "#d24a2a", dark: "#ff7a58" },
+  { name: "olive",  light: "#5d6b2f", dark: "#a3b668" },
+  { name: "plum",   light: "#7b2d65", dark: "#c96fb0" },
+  { name: "ink",    light: "#17181a", dark: "#f3f2ee" }
+];
+
+let state = { ...TWEAK_DEFAULTS };
+
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  document.querySelectorAll("#theme-toggle button").forEach(b => {
+    b.classList.toggle("active", b.dataset.theme === t);
+  });
+  applyAccent(state.accent);
+}
+
+function applyAccent(hex) {
+  // Find the palette entry for correct dark variant
+  const pal = ACCENTS.find(a => a.light.toLowerCase() === hex.toLowerCase()) || ACCENTS[0];
+  const isDark = document.documentElement.dataset.theme === "dark";
+  document.documentElement.style.setProperty("--accent", isDark ? pal.dark : pal.light);
+  document.documentElement.style.setProperty("--accent-ink",
+    (pal.name === "ink" && !isDark) ? "#fafaf8" :
+    (pal.name === "ink" && isDark) ? "#0d0e10" :
+    "#ffffff"
+  );
+  document.querySelectorAll(".accent-swatch").forEach(s => {
+    s.classList.toggle("active", s.dataset.hex.toLowerCase() === hex.toLowerCase());
+  });
+}
+
+function applyCatCount(n) {
+  const cats = document.querySelectorAll("#cats [data-cat]");
+  cats.forEach((c, i) => { c.style.display = i < n ? "" : "none"; });
+  document.querySelectorAll("#cat-count-ctrl button").forEach(b => {
+    b.classList.toggle("active", parseInt(b.dataset.count) === n);
+  });
+}
+
+function persist(edits) {
+  try { window.parent.postMessage({ type: "__edit_mode_set_keys", edits }, "*"); } catch(e){}
+}
+
+// Build accent swatches
+const accentRow = document.getElementById("accent-row");
+ACCENTS.forEach(a => {
+  const el = document.createElement("div");
+  el.className = "accent-swatch";
+  el.dataset.hex = a.light;
+  el.style.background = a.light;
+  el.addEventListener("click", () => {
+    state.accent = a.light;
+    applyAccent(a.light);
+    persist({ accent: a.light });
+  });
+  accentRow.appendChild(el);
+});
+
+// Theme
+document.querySelectorAll("#theme-toggle button").forEach(b => {
+  b.addEventListener("click", () => {
+    state.theme = b.dataset.theme;
+    applyTheme(state.theme);
+    persist({ theme: state.theme });
+  });
+});
+
+// Count
+document.querySelectorAll("#cat-count-ctrl button").forEach(b => {
+  b.addEventListener("click", () => {
+    state.catCount = parseInt(b.dataset.count);
+    applyCatCount(state.catCount);
+    persist({ catCount: state.catCount });
+  });
+});
+
+// Init
+applyTheme(state.theme);
+applyCatCount(state.catCount);
+
+// Search submit
+const homeSearch = document.getElementById("home-search");
+if (homeSearch) {
+  homeSearch.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && homeSearch.value.trim()) {
+      window.location.href = "search.html?q=" + encodeURIComponent(homeSearch.value.trim());
+    }
+  });
+}
+document.querySelector(".search-submit").addEventListener("click", () => {
+  const q = homeSearch.value.trim() || "ceramics studio";
+  window.location.href = "search.html?q=" + encodeURIComponent(q);
+});
+
+// Edit-mode protocol — listener FIRST, then announce
+window.addEventListener("message", (e) => {
+  const d = e.data;
+  if (!d || typeof d !== "object") return;
+  if (d.type === "__activate_edit_mode") {
+    document.getElementById("tweaks").classList.add("open");
+  } else if (d.type === "__deactivate_edit_mode") {
+    document.getElementById("tweaks").classList.remove("open");
+  }
+});
+try { window.parent.postMessage({ type: "__edit_mode_available" }, "*"); } catch(e){}
+</script>
+
+</body>
+</html>
