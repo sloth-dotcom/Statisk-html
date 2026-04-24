@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>CBX-New – Mind Map</title>
+<style>
+  :root {
+    /* Light Nordic palette */
+    --bg: #f6f4ef;           /* linen */
+    --bg-2: #efece5;         /* warm sand */
+    --panel: #ffffff;
+    --ink: #2b3442;          /* deep navy slate */
+    --ink-soft: #4a556b;
+    --muted: #8a93a3;
+    --accent: #7a9cc6;       /* soft Nordic blue */
+    --accent-2: #a8c0b4;     /* sage */
+    --accent-3: #d9b8a4;     /* warm clay */
+    --line: #e3ded5;         /* soft driftwood */
+    --line-strong: #cfc9be;
+    --leaf-bg: #fbfaf6;
+    --highlight: #f7e8a8;
+    --danger: #c88a7b;
+    --success: #8aa896;
+    --shadow: 0 1px 2px rgba(60, 70, 90, 0.04), 0 6px 18px rgba(60, 70, 90, 0.06);
+    --root-gradient: linear-gradient(135deg, #b9cfe2 0%, #d7c6d4 50%, #e4c9b6 100%);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 28px 32px 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  header h1 {
+    font-size: 22px; font-weight: 600; margin: 0;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  header .sub {
+    color: var(--muted); font-size: 13px;
+    margin-top: 2px;
+  }
+  .toolbar {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn {
+    background: var(--panel);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: #fff; }
+  .btn.primary {
+    background: var(--root-gradient);
+    border: none;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .btn.primary:hover { filter: brightness(1.03); }
+  .btn.success {
+    background: var(--success);
+    color: white;
+    border: none;
+  }
+  .btn.success:hover { filter: brightness(1.05); color: white; }
+  .btn.warn {
+    background: #fff;
+    color: var(--danger);
+    border-color: var(--line-strong);
+  }
+
+  .save-indicator {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all 0.25s ease;
+  }
+  .save-indicator.saved {
+    color: var(--success);
+    background: rgba(138, 168, 150, 0.12);
+  }
+  .save-indicator.dirty {
+    color: var(--danger);
+    background: rgba(200, 138, 123, 0.12);
+  }
+
+  main {
+    padding: 16px 32px 64px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .mindmap { padding: 16px 0; }
+
+  .root-node {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 26px;
+    background: var(--root-gradient);
+    color: var(--ink);
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 17px;
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid rgba(255,255,255,0.6);
+  }
+  .root-node .dot {
+    width: 8px; height: 8px; background: #fff; border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255,255,255,0.9);
+  }
+
+  /* Tree list */
+  ul.tree, ul.tree ul {
+    list-style: none;
+    margin: 0;
+    padding-left: 24px;
+    position: relative;
+  }
+  ul.tree { padding-left: 0; }
+
+  ul.tree li {
+    position: relative;
+    padding: 5px 0 5px 20px;
+  }
+
+  ul.tree li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--line);
+  }
+  ul.tree li::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 22px;
+    width: 16px;
+    height: 1px;
+    background: var(--line);
+  }
+  ul.tree > li::before { display: none; }
+  ul.tree > li::after { display: none; }
+  ul.tree li:last-child::before {
+    height: 22px;
+  }
+
+  /* Node row: label + action buttons */
+  .node-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+  }
+
+  .node {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.18s ease;
+    max-width: 100%;
+    line-height: 1.3;
+    color: var(--ink);
+    box-shadow: var(--shadow);
+  }
+  .node:hover {
+    border-color: var(--accent);
+    background: #fff;
+    transform: translateX(2px);
+  }
+
+  .node.leaf {
+    background: var(--leaf-bg);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    cursor: default;
+    font-size: 13px;
+    box-shadow: none;
+  }
+  .node.leaf:hover {
+    transform: none;
+    border-color: var(--line-strong);
+    background: #fff;
+    color: var(--ink);
+  }
+
+  .node .label {
+    outline: none;
+  }
+  .node .label[contenteditable="true"] {
+    background: #fffdf3;
+    padding: 0 4px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 2px #f1e4a1;
+  }
+
+  .chevron {
+    width: 14px; height: 14px;
+    display: inline-flex;
+    align-items: center; justify-content: center;
+    color: var(--muted);
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  .chevron svg { width: 10px; height: 10px; }
+  li.collapsed > .node-row .chevron {
+    transform: rotate(-90deg);
+  }
+
+  /* Action buttons (edit / add / delete) */
+  .actions {
+    display: none;
+    gap: 4px;
+    align-items: center;
+  }
+  .node-row:hover .actions,
+  .node-row.focus-within .actions {
+    display: inline-flex;
+  }
+  .action-btn {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all 0.15s ease;
+  }
+  .action-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: #fff;
+  }
+  .action-btn.delete:hover {
+    color: #fff;
+    background: var(--danger);
+    border-color: var(--danger);
+  }
+  .action-btn.add:hover {
+    color: #fff;
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .action-btn svg { width: 13px; height: 13px; }
+
+  /* Level color accents - Nordic */
+  li.level-1 > .node-row > .node {
+    background: linear-gradient(135deg, #e9f0f7 0%, #f3ecec 100%);
+    border-color: #c9d5e2;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 9px 16px;
+    color: var(--ink);
+  }
+  li.level-2 > .node-row > .node {
+    background: #f4efea;
+    border-color: #d9d1c4;
+    font-weight: 500;
+  }
+
+  li.collapsed > ul {
+    display: none;
+  }
+
+  ul.tree ul {
+    animation: fadein 0.25s ease;
+  }
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .count {
+    font-size: 11px;
+    color: var(--muted);
+    background: rgba(0,0,0,0.04);
+    border-radius: 10px;
+    padding: 1px 7px;
+    margin-left: 2px;
+  }
+
+  .search {
+    background: var(--panel);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    width: 220px;
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .search:focus { border-color: var(--accent); }
+  .search::placeholder { color: var(--muted); }
+
+  .hidden { display: none !important; }
+  .highlight { background: var(--highlight) !important; border-color: #e6c96a !important; }
+
+  /* Drag & drop */
+  .node[draggable="true"] { cursor: grab; }
+  .node.dragging { opacity: 0.45; cursor: grabbing; }
+  .node.drop-before {
+    box-shadow: 0 -2px 0 0 var(--accent), var(--shadow);
+  }
+  .node.drop-after {
+    box-shadow: 0 2px 0 0 var(--accent), var(--shadow);
+  }
+  .node.drop-inside {
+    background: #eaf1f9 !important;
+    border-color: var(--accent) !important;
+    border-style: dashed !important;
+  }
+  .grip {
+    display: inline-block;
+    width: 10px; height: 10px;
+    background-image: radial-gradient(circle, var(--muted) 1px, transparent 1px);
+    background-size: 3px 3px;
+    background-repeat: round;
+    opacity: 0;
+    transition: opacity 0.15s;
+    margin-right: 2px;
+  }
+  .node:hover .grip { opacity: 0.6; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    box-shadow: var(--shadow);
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--muted);
+    font-size: 12px;
+  }
+  footer kbd {
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-family: inherit;
+    color: var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>CBX-New</h1>
+    <div class="sub">Interaktivt mind map – klik for at folde, træk for at flytte, hover for at redigere, tilføje eller slette</div>
+  </div>
+  <div class="toolbar">
+    <input type="text" class="search" id="search" placeholder="Søg i mind map…">
+    <button class="btn" id="expandAll">Fold alt ud</button>
+    <button class="btn" id="collapseAll">Fold alt ind</button>
+    <button class="btn primary" id="toggleLevel1">Vis hovedgrene</button>
+    <button class="btn success" id="saveBtn">Gem</button>
+    <button class="btn" id="exportBtn">Eksportér</button>
+    <button class="btn" id="importBtn">Importér</button>
+    <button class="btn warn" id="resetBtn">Nulstil</button>
+    <span class="save-indicator saved" id="saveIndicator">Gemt</span>
+  </div>
+</header>
+
+<main>
+  <div class="mindmap">
+    <div class="root-node" id="rootNode">
+      <span class="dot"></span>
+      <span class="label" id="rootLabel">CBX-New</span>
+    </div>
+    <ul class="tree" id="tree"></ul>
+  </div>
+</main>
+
+<input type="file" id="fileInput" accept="application/json" style="display:none">
+<div class="toast" id="toast"></div>
+
+<footer>
+  Klik for at folde • Træk for at flytte • Hover for at <kbd>redigere</kbd> <kbd>tilføje</kbd> <kbd>slette</kbd> • Ændringer gemmes automatisk
+</footer>
+
+<script>
+/* ---------- Default data ---------- */
+const defaultData = {
+  "Strategisk idé": [
+    "Fra stockphoto-download til DAM-light",
+    "Gøre Colourbox mere sticky",
+    "Bro mellem Colourbox og Skyfish",
+    "Genbrug af købte/licenserede assets",
+    "Mere kontrol efter download",
+    "Lead engine til større DAM-behov"
+  ],
+  "Hovedproblem": [
+    "Kunden mister kontrol efter download",
+    "Billeder gemmes lokalt eller i mapper",
+    "Svært at vide hvad der er købt",
+    "Svært at dele korrekt med kolleger",
+    "Licensinformation forsvinder",
+    "Bureauer får billeder uden kontekst",
+    "Organisationer bruger dubletter"
+  ],
+  "Kernekoncept": {
+    "My Library": [
+      "Alle downloadede assets",
+      "Alle købte assets",
+      "Gemte collections",
+      "Delte collections",
+      "Modtagne share links"
+    ],
+    "Company Library": [
+      "Samlet virksomheds-bibliotek",
+      "Flere brugere",
+      "Admin-overblik",
+      "Genbrug på tværs af team"
+    ],
+    "Collections 2.0": [
+      "Private collection",
+      "Team collection",
+      "Campaign collection",
+      "Client collection",
+      "Approved collection"
+    ]
+  },
+  "Share Links": {
+    "Simpelt delingsflow": [
+      "Vælg billeder",
+      "Opret collection",
+      "Klik share",
+      "Kopiér link"
+    ],
+    "Indstillinger": [
+      "Download tilladt",
+      "Download ikke tilladt",
+      "Udløbsdato",
+      "Password",
+      "Kræv e-mail",
+      "Intern/ekstern adgang",
+      "Upload tilladt",
+      "Branding"
+    ],
+    "Admin-kontrol": [
+      "Se aktive links",
+      "Deaktivér links",
+      "Audit log",
+      "Rettighedsoverblik"
+    ]
+  },
+  "Share Page": {
+    "Branded landingsside": ["Colourbox-branding","Kundebranding","Logo","Farver"],
+    "Funktioner": ["Se billeder","Søg i delt collection","Filtrer billeder","Download valgte filer","Se licensinformation","Request access","Upload filer","Markér favoritter"]
+  },
+  "Primære use cases": {
+    "Marketing deler kampagnebilleder": ["Kampagnecollection","Link til kolleger","Download af godkendte billeder"],
+    "Bureau får adgang": ["Eksternt share link","Kun licenserede billeder","Mindre licensrisiko"],
+    "Customer Success hjælper kunde": ["Aktivér virksomheds-bibliotek","Strukturér gamle downloads","Vis værdi af genbrug"],
+    "Skyfish upsell": ["Når Share bliver for simpelt","Eget upload-behov","Avancerede rettigheder","Consent","Integrationer","Metadata workflows"]
+  },
+  "MVP": [
+    "Opret collection","Tilføj købte billeder","Tilføj downloadede billeder","Opret share link",
+    "Vælg download on/off","Vælg udløbsdato","Send link via mail","Modtager kan se billeder",
+    "Modtager kan downloade","Licensinfo vises","Admin kan deaktivere link","Tracking af share activity"
+  ],
+  "Version 2": [
+    "Upload til shared link","Kommentarer","Favoritmarkering","Approval flow","Password protection",
+    "Simpel branding","Modtager-login","Download request flow","AI-forslag til collection-navne",
+    "AI-forslag til billedstruktur","Find similar"
+  ],
+  "Version 3": [
+    "Mini-DAM","Upload af egne billeder","AI-tagging","Consent-visning","Rettighedsvisning",
+    "Versionering","Integration til Skyfish","Agentisk kundeopsætning","Automatisk upsell","Avanceret metadata-model"
+  ],
+  "Agentisk vinkel": {
+    "Colourbox Share Agent": [
+      "Opretter collections","Finder relevante billeder","Tjekker licenser","Foreslår struktur",
+      "Sætter rettigheder","Laver share link","Skriver e-mailtekst","Foreslår nye billeder","Anbefaler Skyfish upgrade"
+    ],
+    "Eksempelprompt": ["Lav en collection til efterårskampagne","Del med bureau","Tillad kun download af købte billeder"],
+    "Fremtidig ambition": [
+      "Kundeopsætning bliver agentisk","Forretningen kan konfigurere flows",
+      "Mindre afhængighed af frontend-udvikling","DAM vedligeholdes gennem kontrollerede AI-agenter"
+    ]
+  },
+  "Teknisk fundament": {
+    "Identity model": ["Company","Users","Roles","External viewers"],
+    "Asset model": ["Preview","Original","License","Download history","Collection membership","Share permissions"],
+    "ShareLink model": ["Collection ID","Created by","Access type","Expires at","Allow download","Allow upload","Require email","Password","Branding","Audit log"],
+    "Event tracking": ["Link created","Link opened","File viewed","File downloaded","Email captured","Upload completed","Link expired","Skyfish CTA clicked"]
+  },
+  "Sikkerhed og governance": [
+    "Udløbsdato","Deaktivér link","Download-kontrol","Admin-overblik","Audit log",
+    "Ingen søgemaskineindeksering","Rate limiting","GDPR-afklaring","Rettighedskontrol",
+    "Licensinformation følger filen","Eksterne brugere ser kun delte filer"
+  ],
+  "UX-principper": [
+    "Én simpel share-handling","Skal føles lettere end WeTransfer","Skal føles lettere end Dropbox",
+    "Licensinfo skal følge billedet","Ikke et tungt DAM fra dag ét","Collections som naturligt arbejdsrum",
+    "Admin kun hvor nødvendigt","Tydelig modtageroplevelse"
+  ],
+  "Kommerciel model": {
+    "Included": ["Private collections","Basic share link","Begrænset antal aktive links"],
+    "Team": ["Company Library","Flere brugere","Admin overview","Shared collections","Link expiry","Simpel branding"],
+    "Pro / Skyfish Lead": ["Upload","Approval","Advanced permissions","Consent","Integrations","Full DAM upgrade"]
+  },
+  "Positionering": {
+    "Kundeløfte": ["Del Colourbox-billeder sikkert med hele teamet","Et samlet bibliotek til alt I allerede har købt","Share licensed images without losing control"],
+    "Markedsposition": ["Stockphoto med indbygget asset control","Ikke et tungt DAM","Første skridt mod professionel asset management"],
+    "Skyfish-position": ["Share er DAM-light","Skyfish er full DAM","Share skaber kvalificerede Skyfish leads"]
+  },
+  "Prototype": {
+    "Create campaign share": [
+      "Søg billeder","Vælg 12 billeder","Add to campaign","Opret collection","Klik share",
+      "Vælg adgang","Sæt udløbsdato","Modtager åbner share page","Modtager downloader","Admin kan deaktivere link"
+    ]
+  },
+  "Succeskriterier": [
+    "Flere genbesøg","Flere brugere per virksomhed","Mere genbrug af købte billeder",
+    "Mindre support om tidligere downloads","Flere share links oprettes",
+    "Flere eksterne modtagere eksponeres for Colourbox","Flere Skyfish leads",
+    "Lavere licensrisiko for kunder","Højere oplevet værdi af abonnement"
+  ]
+};
+
+const STORAGE_KEY = "cbx-new-mindmap-v3";
+const ROOT_KEY = "cbx-new-mindmap-root-v3";
+const LEGACY_STORAGE_KEY = "colourbox-share-mindmap-v2";
+
+/* ---------- State ---------- */
+/* Internal tree model:
+   node = { id, label, children: [node] }
+   Leaves have empty children array.
+*/
+let rootNode = null;
+let dirty = false;
+let idCounter = 1;
+let dragSourceId = null;
+const uid = () => "n" + (idCounter++);
+
+function clearDropIndicators() {
+  document.querySelectorAll(".drop-before, .drop-after, .drop-inside")
+    .forEach(el => el.classList.remove("drop-before", "drop-after", "drop-inside"));
+}
+
+/* Convert raw nested object/array into tree model */
+function fromRaw(obj) {
+  function walk(value) {
+    if (Array.isArray(value)) {
+      return value.map(v => ({ id: uid(), label: String(v), children: [] }));
+    }
+    if (value && typeof value === "object") {
+      return Object.keys(value).map(k => ({
+        id: uid(),
+        label: k,
+        children: walk(value[k])
+      }));
+    }
+    return [];
+  }
+  return walk(obj);
+}
+
+/* Serialize tree back to a plain nested structure for export */
+function toRaw(nodes) {
+  // If every node is a leaf, return as array of strings
+  if (nodes.every(n => n.children.length === 0)) {
+    return nodes.map(n => n.label);
+  }
+  // Otherwise object of label -> subtree
+  const out = {};
+  nodes.forEach(n => {
+    if (n.children.length === 0) {
+      // Mixed case: promote this leaf with an empty array
+      out[n.label] = [];
+    } else {
+      out[n.label] = toRaw(n.children);
+    }
+  });
+  return out;
+}
+
+function loadState() {
+  try {
+    let saved = localStorage.getItem(STORAGE_KEY);
+    const savedRoot = localStorage.getItem(ROOT_KEY);
+    // Migrate from legacy v2 storage once
+    if (!saved) {
+      const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacy) { saved = legacy; }
+    }
+    if (saved) {
+      rootNode = JSON.parse(saved);
+      (function fix(nodes) {
+        nodes.forEach(n => {
+          if (!n.id) n.id = uid();
+          if (!Array.isArray(n.children)) n.children = [];
+          fix(n.children);
+        });
+      })(rootNode);
+      if (savedRoot) document.getElementById("rootLabel").textContent = savedRoot;
+      return;
+    }
+  } catch(e){}
+  rootNode = fromRaw(defaultData);
+}
+
+function saveState(silent) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(rootNode));
+    localStorage.setItem(ROOT_KEY, document.getElementById("rootLabel").textContent);
+    dirty = false;
+    updateIndicator();
+    if (!silent) showToast("Gemt");
+  } catch (e) {
+    showToast("Kunne ikke gemme: " + e.message);
+  }
+}
+
+function markDirty() {
+  dirty = true;
+  updateIndicator();
+}
+
+function updateIndicator() {
+  const ind = document.getElementById("saveIndicator");
+  if (dirty) {
+    ind.textContent = "Ikke gemt";
+    ind.classList.remove("saved");
+    ind.classList.add("dirty");
+  } else {
+    ind.textContent = "Gemt";
+    ind.classList.add("saved");
+    ind.classList.remove("dirty");
+  }
+}
+
+/* ---------- Rendering ---------- */
+const chevronSVG = '<svg viewBox="0 0 10 10" fill="none"><path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const editSVG   = '<svg viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5l2 2L5 13l-2.5.5L3 11l8.5-8.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+const addSVG    = '<svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+const delSVG    = '<svg viewBox="0 0 16 16" fill="none"><path d="M3.5 4.5h9M6 4.5V3a1 1 0 011-1h2a1 1 0 011 1v1.5M5 4.5l.5 8a1 1 0 001 1h3a1 1 0 001-1l.5-8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+function countLeaves(nodes) {
+  let total = 0;
+  nodes.forEach(n => {
+    if (n.children.length === 0) total += 1;
+    else total += countLeaves(n.children);
+  });
+  return total;
+}
+
+/* ---------- Tree helpers for drag & drop ---------- */
+function findNodeById(id, list = rootNode) {
+  for (const n of list) {
+    if (n.id === id) return n;
+    const sub = findNodeById(id, n.children);
+    if (sub) return sub;
+  }
+  return null;
+}
+function findParentList(id, list = rootNode) {
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].id === id) return { list, index: i };
+    const sub = findParentList(id, list[i].children);
+    if (sub) return sub;
+  }
+  return null;
+}
+function isDescendant(ancestor, target) {
+  for (const child of ancestor.children) {
+    if (child.id === target.id) return true;
+    if (isDescendant(child, target)) return true;
+  }
+  return false;
+}
+function moveNode(sourceId, targetId, position) {
+  if (sourceId === targetId) return false;
+  const source = findNodeById(sourceId);
+  const target = findNodeById(targetId);
+  if (!source || !target) return false;
+  if (isDescendant(source, target)) return false;
+  // Remove source from its current parent
+  const src = findParentList(sourceId);
+  if (!src) return false;
+  src.list.splice(src.index, 1);
+  if (position === "inside") {
+    target.children.push(source);
+  } else {
+    const tgt = findParentList(targetId);
+    if (!tgt) {
+      // Target was root-level and got removed somehow? put source back
+      src.list.splice(src.index, 0, source);
+      return false;
+    }
+    const insertAt = tgt.index + (position === "after" ? 1 : 0);
+    tgt.list.splice(insertAt, 0, source);
+  }
+  return true;
+}
+
+function buildTree(nodes, level = 1) {
+  const ul = document.createElement("ul");
+  if (level === 1) ul.classList.add("tree");
+
+  nodes.forEach(n => {
+    const li = document.createElement("li");
+    li.classList.add("level-" + level);
+    li.dataset.id = n.id;
+
+    const row = document.createElement("div");
+    row.className = "node-row";
+
+    const hasChildren = n.children.length > 0;
+    const node = document.createElement("span");
+    node.className = "node" + (hasChildren ? "" : " leaf");
+    node.setAttribute("draggable", "true");
+    node.dataset.id = n.id;
+
+    const grip = document.createElement("span");
+    grip.className = "grip";
+    node.appendChild(grip);
+
+    if (hasChildren) {
+      const chev = document.createElement("span");
+      chev.className = "chevron";
+      chev.innerHTML = chevronSVG;
+      node.appendChild(chev);
+    }
+
+    const label = document.createElement("span");
+    label.className = "label";
+    label.textContent = n.label;
+    node.appendChild(label);
+
+    /* Drag & drop handlers */
+    node.addEventListener("dragstart", (e) => {
+      if (label.getAttribute("contenteditable") === "true") {
+        e.preventDefault();
+        return;
+      }
+      dragSourceId = n.id;
+      try {
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", n.id);
+      } catch(_) {}
+      node.classList.add("dragging");
+    });
+    node.addEventListener("dragend", () => {
+      node.classList.remove("dragging");
+      clearDropIndicators();
+      dragSourceId = null;
+    });
+    node.addEventListener("dragover", (e) => {
+      if (!dragSourceId || dragSourceId === n.id) return;
+      const source = findNodeById(dragSourceId);
+      if (!source || isDescendant(source, n)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      const rect = node.getBoundingClientRect();
+      const y = e.clientY - rect.top;
+      const h = rect.height;
+      clearDropIndicators();
+      if (y < h * 0.3) node.classList.add("drop-before");
+      else if (y > h * 0.7) node.classList.add("drop-after");
+      else node.classList.add("drop-inside");
+    });
+    node.addEventListener("dragleave", () => {
+      node.classList.remove("drop-before", "drop-after", "drop-inside");
+    });
+    node.addEventListener("drop", (e) => {
+      if (!dragSourceId) return;
+      e.preventDefault();
+      e.stopPropagation();
+      let position = "after";
+      if (node.classList.contains("drop-before")) position = "before";
+      else if (node.classList.contains("drop-inside")) position = "inside";
+      clearDropIndicators();
+      const ok = moveNode(dragSourceId, n.id, position);
+      if (ok) {
+        markDirty();
+        rerender();
+        autosave();
+        // Ensure target is expanded if dropped inside
+        if (position === "inside") {
+          const li = document.querySelector('li[data-id="' + n.id + '"]');
+          if (li) li.classList.remove("collapsed");
+        }
+      }
+      dragSourceId = null;
+    });
+
+    if (hasChildren) {
+      const badge = document.createElement("span");
+      badge.className = "count";
+      badge.textContent = countLeaves(n.children);
+      node.appendChild(badge);
+    }
+
+    row.appendChild(node);
+
+    /* Action buttons */
+    const actions = document.createElement("span");
+    actions.className = "actions";
+
+    const editBtn = mkAction(editSVG, "Redigér navn", (e) => {
+      e.stopPropagation();
+      startEdit(label, n);
+    });
+    const addBtn  = mkAction(addSVG,  "Tilføj underpunkt", (e) => {
+      e.stopPropagation();
+      addChild(n);
+    });
+    addBtn.classList.add("add");
+    const delBtn  = mkAction(delSVG,  "Slet node", (e) => {
+      e.stopPropagation();
+      deleteNode(n);
+    });
+    delBtn.classList.add("delete");
+
+    actions.appendChild(editBtn);
+    actions.appendChild(addBtn);
+    actions.appendChild(delBtn);
+    row.appendChild(actions);
+
+    li.appendChild(row);
+
+    if (hasChildren) {
+      li.appendChild(buildTree(n.children, level + 1));
+    }
+
+    /* Collapse on click (only on the node, not on label while editing, not on buttons) */
+    node.addEventListener("click", (e) => {
+      if (label.getAttribute("contenteditable") === "true") return;
+      if (!hasChildren) return;
+      e.stopPropagation();
+      li.classList.toggle("collapsed");
+    });
+
+    /* Double-click the label to edit quickly */
+    label.addEventListener("dblclick", (e) => {
+      e.stopPropagation();
+      startEdit(label, n);
+    });
+
+    ul.appendChild(li);
+  });
+
+  return ul;
+}
+
+function mkAction(svg, title, handler) {
+  const b = document.createElement("button");
+  b.className = "action-btn";
+  b.type = "button";
+  b.title = title;
+  b.innerHTML = svg;
+  b.addEventListener("click", handler);
+  return b;
+}
+
+/* ---------- Editing ---------- */
+function startEdit(labelEl, node) {
+  labelEl.setAttribute("contenteditable", "true");
+  labelEl.focus();
+  // Select all text
+  const range = document.createRange();
+  range.selectNodeContents(labelEl);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  function commit() {
+    labelEl.removeAttribute("contenteditable");
+    const newVal = labelEl.textContent.trim();
+    if (newVal && newVal !== node.label) {
+      node.label = newVal;
+      markDirty();
+      autosave();
+    } else {
+      labelEl.textContent = node.label;
+    }
+    labelEl.removeEventListener("blur", commit);
+    labelEl.removeEventListener("keydown", keyHandler);
+  }
+  function keyHandler(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      labelEl.blur();
+    } else if (e.key === "Escape") {
+      labelEl.textContent = node.label;
+      labelEl.blur();
+    }
+  }
+  labelEl.addEventListener("blur", commit);
+  labelEl.addEventListener("keydown", keyHandler);
+}
+
+function addChild(parent) {
+  const newNode = { id: uid(), label: "Nyt punkt", children: [] };
+  parent.children.push(newNode);
+  markDirty();
+  rerender();
+  autosave();
+  // Expand parent and focus the new node for editing
+  const li = document.querySelector('li[data-id="' + parent.id + '"]');
+  if (li) li.classList.remove("collapsed");
+  const newLi = document.querySelector('li[data-id="' + newNode.id + '"]');
+  if (newLi) {
+    const lbl = newLi.querySelector(".label");
+    startEdit(lbl, newNode);
+  }
+}
+
+function deleteNode(target) {
+  const childCount = countLeaves(target.children);
+  const msg = target.children.length
+    ? `Slet "${target.label}" og ${childCount} underpunkt(er)?`
+    : `Slet "${target.label}"?`;
+  if (!confirm(msg)) return;
+
+  function removeFrom(list) {
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].id === target.id) { list.splice(i, 1); return true; }
+      if (removeFrom(list[i].children)) return true;
+    }
+    return false;
+  }
+  removeFrom(rootNode);
+  markDirty();
+  rerender();
+  autosave();
+}
+
+/* ---------- Root label editing ---------- */
+const rootLabelEl = document.getElementById("rootLabel");
+rootLabelEl.addEventListener("dblclick", (e) => {
+  e.stopPropagation();
+  rootLabelEl.setAttribute("contenteditable", "true");
+  rootLabelEl.focus();
+  const range = document.createRange();
+  range.selectNodeContents(rootLabelEl);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+
+  const orig = rootLabelEl.textContent;
+  function commit() {
+    rootLabelEl.removeAttribute("contenteditable");
+    const v = rootLabelEl.textContent.trim() || orig;
+    rootLabelEl.textContent = v;
+    if (v !== orig) { markDirty(); autosave(); }
+    rootLabelEl.removeEventListener("blur", commit);
+    rootLabelEl.removeEventListener("keydown", kh);
+  }
+  function kh(e){
+    if (e.key==="Enter"){ e.preventDefault(); rootLabelEl.blur(); }
+    else if (e.key==="Escape"){ rootLabelEl.textContent = orig; rootLabelEl.blur(); }
+  }
+  rootLabelEl.addEventListener("blur", commit);
+  rootLabelEl.addEventListener("keydown", kh);
+});
+
+/* Single click on root toggles tree visibility */
+document.getElementById("rootNode").addEventListener("click", (e) => {
+  if (rootLabelEl.getAttribute("contenteditable") === "true") return;
+  if (e.target === rootLabelEl) return;
+  const tree = document.getElementById("tree");
+  tree.classList.toggle("hidden");
+});
+
+/* ---------- Render / rerender ---------- */
+function rerender() {
+  // Remember collapsed state by id
+  const prevCollapsed = new Set();
+  document.querySelectorAll("#tree li.collapsed").forEach(li => prevCollapsed.add(li.dataset.id));
+
+  const newTree = buildTree(rootNode, 1);
+  newTree.id = "tree";
+  const old = document.getElementById("tree");
+  old.replaceWith(newTree);
+
+  // Restore collapse state
+  if (prevCollapsed.size) {
+    prevCollapsed.forEach(id => {
+      const li = newTree.querySelector('li[data-id="' + id + '"]');
+      if (li) li.classList.add("collapsed");
+    });
+  } else {
+    // First render: collapse level >= 2
+    collapseBelowLevel(1);
+  }
+}
+
+function collapseBelowLevel(level) {
+  document.querySelectorAll("#tree li").forEach(li => {
+    const cls = [...li.classList].find(c => c.startsWith("level-"));
+    const lvl = parseInt(cls.split("-")[1]);
+    if (lvl > level) li.classList.add("collapsed");
+    else li.classList.remove("collapsed");
+  });
+}
+
+/* ---------- Toolbar ---------- */
+document.getElementById("expandAll").addEventListener("click", () => {
+  document.querySelectorAll("#tree li").forEach(li => li.classList.remove("collapsed"));
+});
+document.getElementById("collapseAll").addEventListener("click", () => {
+  document.querySelectorAll("#tree li").forEach(li => li.classList.add("collapsed"));
+});
+document.getElementById("toggleLevel1").addEventListener("click", () => {
+  collapseBelowLevel(1);
+});
+document.getElementById("saveBtn").addEventListener("click", () => saveState(false));
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const data = {
+    root: document.getElementById("rootLabel").textContent,
+    tree: rootNode
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "colourbox-share-mindmap.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Eksporteret som JSON");
+});
+
+document.getElementById("importBtn").addEventListener("click", () => {
+  document.getElementById("fileInput").click();
+});
+document.getElementById("fileInput").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (parsed.tree && Array.isArray(parsed.tree)) {
+        rootNode = parsed.tree;
+        if (parsed.root) document.getElementById("rootLabel").textContent = parsed.root;
+      } else {
+        // Assume raw nested object
+        rootNode = fromRaw(parsed);
+      }
+      rerender();
+      saveState(true);
+      showToast("Importeret");
+    } catch (err) {
+      showToast("Kunne ikke læse filen: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm("Nulstil mind map til den oprindelige version? Dine ændringer går tabt.")) return;
+  rootNode = fromRaw(defaultData);
+  document.getElementById("rootLabel").textContent = "Colourbox Share";
+  rerender();
+  saveState(true);
+  showToast("Nulstillet");
+});
+
+/* ---------- Search ---------- */
+const searchBox = document.getElementById("search");
+searchBox.addEventListener("input", (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  const all = document.querySelectorAll("#tree li");
+
+  if (!q) {
+    all.forEach(li => {
+      li.classList.remove("hidden");
+      li.querySelector(".node").classList.remove("highlight");
+    });
+    collapseBelowLevel(1);
+    return;
+  }
+
+  all.forEach(li => {
+    li.classList.add("hidden");
+    li.querySelector(".node").classList.remove("highlight");
+  });
+
+  all.forEach(li => {
+    const text = li.querySelector(".label").textContent.toLowerCase();
+    if (text.includes(q)) {
+      li.querySelector(".node").classList.add("highlight");
+      let cur = li;
+      while (cur && cur.id !== "tree") {
+        if (cur.tagName === "LI") {
+          cur.classList.remove("hidden");
+          cur.classList.remove("collapsed");
+        }
+        cur = cur.parentElement;
+      }
+    }
+  });
+});
+
+/* ---------- Autosave ---------- */
+let autosaveTimer = null;
+function autosave() {
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => saveState(true), 500);
+}
+
+/* ---------- Toast ---------- */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 1800);
+}
+
+/* ---------- Warn on unsaved ---------- */
+window.addEventListener("beforeunload", (e) => {
+  if (dirty) { e.preventDefault(); e.returnValue = ""; }
+});
+
+/* ---------- Init ---------- */
+loadState();
+rerender();
+updateIndicator();
+</script>
+
+</body>
+</html>
