@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Colourbox">
+  <!-- 3D box silhouette -->
+  <path d="M50 4 L94 26 V70 L50 96 L6 70 V26 Z" fill="#E2231A"/>
+  <!-- Top fold / open-folder notch -->
+  <path d="M50 22 L72 33 L50 46 L28 33 Z" fill="#fff"/>
+  <!-- Shutter / aperture blade cutout -->
+  <path d="M50 52 Q88 58 80 84 Q70 78 60 70 Q52 62 50 52 Z" fill="#fff"/>
+</svg>
