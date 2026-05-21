@@ -1,0 +1,10 @@
+# Python / DataFlow setup
+.venv/
+__pycache__/
+*.pyc
+
+# DataFlow WebUI download + extraction artifacts
+DataFlow-WebUI*/
+*.webui.zip
+dataflow_webui*/
+.dataflow/
