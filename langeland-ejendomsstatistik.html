@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Langeland Ejendomsstatistik — solgte ejendomme</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#eef1f4; --card:#ffffff; --ink:#1f2933; --muted:#5b6770; --line:#dfe4e8;
+    --green:#15803d; --green-bg:#ecfdf3; --green-line:#a7e3bf;
+    --amber:#b45309; --amber-bg:#fff8ec; --amber-line:#f3d9a4;
+    --accent:#2563eb;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1180px;margin:0 auto;padding:24px 18px 64px}
+  a{color:var(--accent)}
+
+  header.top{padding:8px 0 18px}
+  header.top h1{font-size:1.7rem;letter-spacing:-.02em}
+  header.top .sub{color:var(--muted);font-size:.97rem;margin-top:4px}
+  header.top .meta{color:var(--muted);font-size:.82rem;margin-top:8px}
+
+  .banner{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:10px;padding:14px 16px;margin:14px 0 24px;font-size:.9rem;color:var(--muted)}
+  .banner strong{color:var(--ink)}
+
+  .panel{border-radius:14px;padding:20px;margin-bottom:26px;border:1px solid var(--line);background:var(--card)}
+  .panel.verified{background:var(--green-bg);border-color:var(--green-line)}
+  .panel.example{background:var(--amber-bg);border-color:var(--amber-line)}
+  .panel-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .panel-head h2{font-size:1.15rem;letter-spacing:-.01em}
+  .panel-desc{color:var(--muted);font-size:.88rem;margin-bottom:16px}
+  .tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+    padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .tag.v{background:var(--green);color:#fff}
+  .tag.e{background:var(--amber);color:#fff}
+
+  .grid{display:grid;gap:14px}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(165px,1fr))}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 15px}
+  .kpi .lbl{font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+  .kpi .val{font-size:1.5rem;font-weight:700;margin-top:6px;letter-spacing:-.02em}
+  .kpi .note{font-size:.78rem;color:var(--muted);margin-top:3px}
+  .kpi .src{font-size:.7rem;margin-top:7px;font-weight:700;color:var(--green)}
+  .delta-up{color:var(--green)} .delta-down{color:#c0392b}
+
+  .charts{grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-top:6px}
+  .chart-card{background:#fff;border:1px solid var(--line);border-radius:11px;padding:14px 15px}
+  .chart-card h3{font-size:.95rem;margin-bottom:2px}
+  .chart-card .ch-note{font-size:.78rem;color:var(--muted);margin-bottom:10px}
+  .chart-box{position:relative;height:260px}
+  .chart-box.tall{height:320px}
+
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 18px}
+  .controls .seg-lbl{font-size:.82rem;color:var(--muted);margin-right:4px}
+  button.fbtn{font:inherit;font-size:.86rem;padding:7px 15px;border-radius:999px;cursor:pointer;
+    border:1px solid var(--line);background:#fff;color:var(--ink)}
+  button.fbtn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  table{width:100%;border-collapse:collapse;font-size:.86rem;background:#fff;
+    border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  th,td{padding:9px 11px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{background:#f6f8fa;font-size:.76rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+  tbody tr:last-child td{border-bottom:none}
+  tbody tr.total td{font-weight:700;background:#f6f8fa}
+  .cat-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:middle}
+
+  .cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+  .cmp label{display:block;font-size:.78rem;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em}
+  select{font:inherit;width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--ink)}
+
+  .scroll{overflow-x:auto}
+  .sources{font-size:.86rem;color:var(--muted)}
+  .sources li{margin:5px 0 5px 18px}
+  footer.foot{color:var(--muted);font-size:.8rem;border-top:1px solid var(--line);margin-top:30px;padding-top:16px}
+  code{background:#eceff1;padding:1px 6px;border-radius:5px;font-size:.85em}
+  @media(max-width:560px){.cmp{grid-template-columns:1fr}header.top h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <h1>Langeland Ejendomsstatistik</h1>
+    <div class="sub">Solgte ejendomme · seneste 12 måneder · Erhverv vs. Privat · på tværs af mæglerkæder · udbudspris vs. reel salgspris</div>
+    <div class="meta">Opdateret <span id="metaDato"></span> · Langeland Kommune (kommunenr. 482)</div>
+  </header>
+
+  <div class="banner">
+    <strong>Om datagrundlaget — læs dette først.</strong> Verificerede tal nedenfor er
+    kildemærket og hentet fra offentligt tilgængelige opgørelser (Boliga, Boligsiden,
+    Boligmarkedsstatistikken). En komplet opdeling pr. <strong>mæglerkæde</strong> og pr.
+    <strong>erhverv/privat med priser</strong> udgives <em>ikke</em> offentligt på kommuneniveau —
+    de tal kræver en dataeksport fra Boliga eller Boligsiden. Afsnittet
+    <strong>«Interaktivt salgsdashboard»</strong> kører derfor på tydeligt mærkede
+    <strong>eksempeldata</strong>; udskift dem ét sted i <code>DATA</code>-objektet i denne fils
+    kildekode, så bliver det rigtig statistik. Bemærk også: Langeland er et lille marked, så
+    tal pr. celle bygger på få handler (<code>n</code> vises) og er statistisk følsomme.
+  </div>
+
+  <!-- ============ PANEL A — VERIFICEREDE TAL ============ -->
+  <section class="panel verified">
+    <div class="panel-head">
+      <span class="tag v">Verificeret</span>
+      <h2>Markedstal for Langeland</h2>
+    </div>
+    <div class="panel-desc">
+      Kvadratmeterpriser for parcel- og rækkehuse, kvartalsvis gennemsnit. Senest
+      offentliggjorte data fra Boligmarkedsstatistikken/Boliga (kvartalsdata er forsinket
+      ift. dags dato).
+    </div>
+
+    <div class="grid kpis" id="vKpis"></div>
+
+    <div class="grid charts">
+      <div class="chart-card">
+        <h3>Prisudvikling — kr./m² (parcel- og rækkehuse)</h3>
+        <div class="ch-note">Kilde: Boliga / Boligmarkedsstatistikken</div>
+        <div class="chart-box"><canvas id="chartM2"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Markedskontekst</h3>
+        <div class="ch-note">Verificerede nøgleobservationer</div>
+        <ul style="font-size:.9rem;margin:6px 0 0 18px;line-height:1.7">
+          <li>Q1 2025: <strong>5.506 kr./m²</strong> — et fald på <strong>7,5 %</strong> ift. kvartalet før og <strong>18,4 %</strong> år/år.</li>
+          <li>Gns. liggetid ca. <strong>336 dage</strong> — blandt landets længste (Langeland toppede med 348 dage i Q1 2022).</li>
+          <li>Ca. <strong>285 boliger</strong> til salg aktuelt — lavt handelsvolumen gør gennemsnit følsomme.</li>
+          <li>Markedet er volatilt: +40,1 % Q4 2023→Q1 2024, herefter fald gennem hele 2024.</li>
+          <li>Boligsiden har historisk registreret ca. <strong>8.000 solgte boliger</strong> i kommunen i alt (ikke 12 mdr.).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PANEL B — INTERAKTIVT DASHBOARD (EKSEMPELDATA) ============ -->
+  <section class="panel example">
+    <div class="panel-head">
+      <span class="tag e">Eksempeldata</span>
+      <h2>Interaktivt salgsdashboard</h2>
+    </div>
+    <div class="panel-desc">
+      Fuldt funktionelt dashboard med filtrering og sammenligning. Tallene herunder er
+      <strong>illustrative pladsholdere</strong> — udskift dem med en Boliga/Boligsiden-eksport
+      for at få ægte mægler- og erhvervsopdeling.
+    </div>
+
+    <div class="controls">
+      <span class="seg-lbl">Segment:</span>
+      <button class="fbtn active" data-filter="Alle">Alle</button>
+      <button class="fbtn" data-filter="Privat">Privat</button>
+      <button class="fbtn" data-filter="Erhverv">Erhverv</button>
+    </div>
+
+    <div class="grid kpis" id="kpis"></div>
+
+    <div class="grid charts">
+      <div class="chart-card">
+        <h3>Udbudspris vs. reel salgspris</h3>
+        <div class="ch-note" id="noteUdbudSalg">Gennemsnit pr. segment</div>
+        <div class="chart-box"><canvas id="chartUdbudSalg"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Fordeling af handler</h3>
+        <div class="ch-note" id="noteFordeling">Antal handler pr. segment</div>
+        <div class="chart-box"><canvas id="chartFordeling"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Handler pr. mæglerkæde</h3>
+        <div class="ch-note">Alle segmenter · seneste 12 mdr.</div>
+        <div class="chart-box tall"><canvas id="chartMaeglerAntal"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Gns. nedslag i pris pr. mæglerkæde</h3>
+        <div class="ch-note">Forskel mellem udbudspris og salgspris, i %</div>
+        <div class="chart-box tall"><canvas id="chartMaeglerNedslag"></canvas></div>
+      </div>
+    </div>
+
+    <h3 style="margin:24px 0 10px;font-size:1rem">Datatabel — segmenter</h3>
+    <div class="scroll">
+      <table>
+        <thead><tr>
+          <th>Segment</th><th>n (handler)</th><th>Gns. udbudspris</th><th>Gns. salgspris</th>
+          <th>Nedslag</th><th>Nedslag %</th><th>Liggetid</th><th>Kr./m²</th>
+        </tr></thead>
+        <tbody id="tabelBody"></tbody>
+      </table>
+    </div>
+
+    <h3 style="margin:26px 0 10px;font-size:1rem">Sammenligning</h3>
+    <div class="ch-note" style="margin-bottom:10px;color:var(--muted);font-size:.86rem">
+      Vælg to segmenter eller kategorier og sammenlign alle nøgletal side om side.
+    </div>
+    <div class="cmp">
+      <div><label for="cmpA">Sammenlign</label><select id="cmpA"></select></div>
+      <div><label for="cmpB">Med</label><select id="cmpB"></select></div>
+    </div>
+    <div class="scroll" id="cmpResult"></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h2 style="font-size:1.05rem">Kilder</h2></div>
+    <ul class="sources">
+      <li><a href="https://www.boliga.dk/boligpriser/resultater?area=77482&type=0" target="_blank" rel="noopener">Boliga — kvadratmeterpriser, Langeland Kommune</a></li>
+      <li><a href="https://www.boliga.dk/statistikker/liggetid-kommuner" target="_blank" rel="noopener">Boliga — gennemsnitlige liggetider pr. kommune</a></li>
+      <li><a href="https://www.boligsiden.dk/kommune/langeland/solgte" target="_blank" rel="noopener">Boligsiden — solgte boliger i Langeland Kommune</a></li>
+      <li><a href="https://www.boligsiden.dk/markedsindeks" target="_blank" rel="noopener">Boligsiden — Markedsindeks (udbud, salgspris, nedslag, liggetid)</a></li>
+      <li><a href="https://finansdanmark.dk/tal-og-data/boligstatistik/boligmarkedsstatistikken/" target="_blank" rel="noopener">Finans Danmark — Boligmarkedsstatistikken</a></li>
+      <li><a href="https://www.dst.dk/da/Statistik/emner/oekonomi/ejendomme/ejendomssalg" target="_blank" rel="noopener">Danmarks Statistik — Ejendomssalg</a></li>
+    </ul>
+  </section>
+
+  <footer class="foot">
+    <p><strong>Sådan gør du det til rigtig statistik:</strong> åbn denne fil, find
+    <code>DATA</code>-objektet øverst i <code>&lt;script&gt;</code>, og udskift
+    <code>segmenter</code> og <code>maeglere</code> med tal fra din egen Boliga-/Boligsiden-eksport
+    (felter: dato, type, mæglerkæde, boligtype, m², udbudspris, salgspris, liggetid). Dashboardet,
+    graferne og sammenligningen opdateres automatisk.</p>
+    <p style="margin-top:8px">Verificerede tal er hentet maj 2026 via offentlige opgørelser og bør
+    altid efterkontrolleres mod den aktuelle kilde. Erhvervshandler og mæglerkæde-opdeling er
+    eksempeldata. Ingen tal på dette site må bruges til værdiansættelse uden verifikation.</p>
+  </footer>
+
+</div>
+
+<script>
+/* ====================================================================
+   DATA — REDIGÉR HER. Udskift eksempeldata med din egen dataeksport.
+   ==================================================================== */
+const DATA = {
+  opdateret: "21. maj 2026",
+
+  /* --- VERIFICEREDE TAL (kilder: Boliga / Boligsiden / Boligmarkedsstatistikken) --- */
+  verificeret: {
+    m2serie: [
+      { periode:"Q2 2024", m2pris:7288 },
+      { periode:"Q3 2024", m2pris:6349 },
+      { periode:"Q4 2024", m2pris:5952 },
+      { periode:"Q1 2025", m2pris:5506 }
+    ],
+    m2prisSenest: 5506,
+    aendringKvartal: -7.5,
+    aendringAar: -18.4,
+    liggetidDage: 336,
+    boligerTilSalg: 285
+  },
+
+  /* --- EKSEMPELDATA — udskift med rigtige tal --- */
+  segmenter: [
+    { navn:"Villa / parcelhus",      kategori:"Privat",  antal:168, udbud:1295000, salg:1185000, liggetid:331, m2pris:5506 },
+    { navn:"Fritidshus / sommerhus", kategori:"Privat",  antal:74,  udbud:1180000, salg:1095000, liggetid:248, m2pris:13769 },
+    { navn:"Ejerlejlighed",          kategori:"Privat",  antal:11,  udbud:795000,  salg:735000,  liggetid:205, m2pris:9400 },
+    { navn:"Landejendom",            kategori:"Privat",  antal:19,  udbud:1850000, salg:1620000, liggetid:402, m2pris:7100 },
+    { navn:"Butik / kontor",         kategori:"Erhverv", antal:7,   udbud:1650000, salg:1410000, liggetid:445, m2pris:6200 },
+    { navn:"Produktion / lager",     kategori:"Erhverv", antal:5,   udbud:2300000, salg:1950000, liggetid:512, m2pris:3900 }
+  ],
+
+  maeglere: [
+    { navn:"EDC",               antal:80, nedslagPct:7.4 },
+    { navn:"home",              antal:56, nedslagPct:8.1 },
+    { navn:"Nybolig",           antal:50, nedslagPct:7.9 },
+    { navn:"danbolig",          antal:38, nedslagPct:8.6 },
+    { navn:"Estate",            antal:22, nedslagPct:9.0 },
+    { navn:"RealMæglerne",      antal:15, nedslagPct:8.4 },
+    { navn:"Lokalbolig",        antal:13, nedslagPct:9.7 },
+    { navn:"Øvrige / selvsalg", antal:10, nedslagPct:6.5 }
+  ]
+};
+
+/* ==================== HJÆLPEFUNKTIONER ==================== */
+const fmtNum = n => Math.round(n).toLocaleString('da-DK');
+const fmtKr  = n => Math.round(n).toLocaleString('da-DK') + ' kr.';
+const fmtKrK = n => Math.round(n/1000).toLocaleString('da-DK') + ' t.kr.';
+const fmtPct = n => n.toLocaleString('da-DK',{minimumFractionDigits:1,maximumFractionDigits:1}) + ' %';
+const PALET = ['#2563eb','#0d9488','#f59e0b','#dc2626','#7c3aed','#0891b2','#65a30d','#db2777'];
+const catColor = c => c==='Erhverv' ? '#b45309' : '#2563eb';
+
+function aggregate(segs){
+  const antal = segs.reduce((a,s)=>a+s.antal,0);
+  if(!antal) return {antal:0,udbud:0,salg:0,liggetid:0,m2pris:0,nedslagKr:0,nedslagPct:0};
+  const w = k => segs.reduce((a,s)=>a+s[k]*s.antal,0)/antal;
+  const udbud=w('udbud'), salg=w('salg');
+  return { antal, udbud, salg, liggetid:w('liggetid'), m2pris:w('m2pris'),
+           nedslagKr:udbud-salg, nedslagPct:(udbud-salg)/udbud*100 };
+}
+
+let filter = 'Alle';
+const charts = {};
+const filtered = () => DATA.segmenter.filter(s => filter==='Alle' || s.kategori===filter);
+
+/* ==================== PANEL A — VERIFICERET ==================== */
+function renderVerified(){
+  const v = DATA.verificeret;
+  const cards = [
+    { lbl:'Kr./m² — senest (Q1 2025)', val:fmtNum(v.m2prisSenest)+' kr.', note:'Parcel- og rækkehuse' },
+    { lbl:'Ændring år/år', val:fmtPct(v.aendringAar), note:'Q1 2025 vs. Q1 2024', down:true },
+    { lbl:'Gns. liggetid', val:fmtNum(v.liggetidDage)+' dage', note:'Blandt landets længste' },
+    { lbl:'Boliger til salg', val:fmtNum(v.boligerTilSalg), note:'Aktuelt udbud' }
+  ];
+  document.getElementById('vKpis').innerHTML = cards.map(c=>`
+    <div class="kpi">
+      <div class="lbl">${c.lbl}</div>
+      <div class="val ${c.down?'delta-down':''}">${c.val}</div>
+      <div class="note">${c.note}</div>
+      <div class="src">Kilde: Boliga</div>
+    </div>`).join('');
+
+  charts.m2 = new Chart(document.getElementById('chartM2'),{
+    type:'line',
+    data:{ labels:v.m2serie.map(p=>p.periode),
+      datasets:[{ label:'kr./m²', data:v.m2serie.map(p=>p.m2pris),
+        borderColor:'#15803d', backgroundColor:'rgba(21,128,61,.12)',
+        fill:true, tension:.3, pointRadius:5, pointBackgroundColor:'#15803d' }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label:c=>fmtKr(c.parsed.y)+' /m²' } } },
+      scales:{ y:{ ticks:{ callback:v=>fmtNum(v) } } } }
+  });
+}
+
+/* ==================== PANEL B — KPI'er ==================== */
+function renderKPIs(){
+  const a = aggregate(filtered());
+  const cards = [
+    { lbl:'Antal handler (n)', val:fmtNum(a.antal) },
+    { lbl:'Gns. udbudspris',   val:fmtKr(a.udbud) },
+    { lbl:'Gns. salgspris',    val:fmtKr(a.salg) },
+    { lbl:'Gns. nedslag',      val:fmtKr(a.nedslagKr), down:true },
+    { lbl:'Gns. nedslag %',    val:fmtPct(a.nedslagPct), down:true },
+    { lbl:'Gns. liggetid',     val:fmtNum(a.liggetid)+' dage' }
+  ];
+  document.getElementById('kpis').innerHTML = cards.map(c=>`
+    <div class="kpi">
+      <div class="lbl">${c.lbl}</div>
+      <div class="val ${c.down?'delta-down':''}">${c.val}</div>
+      <div class="note">Segment: ${filter}</div>
+    </div>`).join('');
+}
+
+/* ==================== PANEL B — GRAFER ==================== */
+function renderUdbudSalg(){
+  const segs = filtered();
+  if(charts.us) charts.us.destroy();
+  charts.us = new Chart(document.getElementById('chartUdbudSalg'),{
+    type:'bar',
+    data:{ labels:segs.map(s=>s.navn),
+      datasets:[
+        { label:'Udbudspris', data:segs.map(s=>s.udbud), backgroundColor:'#93c5fd' },
+        { label:'Salgspris',  data:segs.map(s=>s.salg),  backgroundColor:'#2563eb' }
+      ]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ tooltip:{ callbacks:{ label:c=>c.dataset.label+': '+fmtKr(c.parsed.y) } } },
+      scales:{ y:{ ticks:{ callback:v=>fmtKrK(v) } } } }
+  });
+}
+
+function renderFordeling(){
+  const segs = filtered();
+  if(charts.ford) charts.ford.destroy();
+  charts.ford = new Chart(document.getElementById('chartFordeling'),{
+    type:'doughnut',
+    data:{ labels:segs.map(s=>s.navn),
+      datasets:[{ data:segs.map(s=>s.antal), backgroundColor:PALET }] },
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}},
+        tooltip:{ callbacks:{ label:c=>c.label+': '+fmtNum(c.parsed)+' handler' } } } }
+  });
+}
+
+function renderMaeglere(){
+  const m = [...DATA.maeglere].sort((a,b)=>b.antal-a.antal);
+  charts.mAntal = new Chart(document.getElementById('chartMaeglerAntal'),{
+    type:'bar',
+    data:{ labels:m.map(x=>x.navn),
+      datasets:[{ label:'Handler', data:m.map(x=>x.antal), backgroundColor:'#0d9488' }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label:c=>fmtNum(c.parsed.x)+' handler' } } } }
+  });
+  charts.mNed = new Chart(document.getElementById('chartMaeglerNedslag'),{
+    type:'bar',
+    data:{ labels:m.map(x=>x.navn),
+      datasets:[{ label:'Nedslag %', data:m.map(x=>x.nedslagPct), backgroundColor:'#f59e0b' }] },
+    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false},
+        tooltip:{ callbacks:{ label:c=>fmtPct(c.parsed.x) } } },
+      scales:{ x:{ ticks:{ callback:v=>v+' %' } } } }
+  });
+}
+
+/* ==================== PANEL B — TABEL ==================== */
+function renderTabel(){
+  const segs = filtered();
+  const rows = segs.map(s=>{
+    const a = aggregate([s]);
+    return `<tr>
+      <td><span class="cat-dot" style="background:${catColor(s.kategori)}"></span>${s.navn}
+        <span style="color:var(--muted)">· ${s.kategori}</span></td>
+      <td>${fmtNum(s.antal)}</td>
+      <td>${fmtKr(s.udbud)}</td>
+      <td>${fmtKr(s.salg)}</td>
+      <td>${fmtKr(a.nedslagKr)}</td>
+      <td>${fmtPct(a.nedslagPct)}</td>
+      <td>${fmtNum(s.liggetid)} dage</td>
+      <td>${fmtNum(s.m2pris)}</td>
+    </tr>`;
+  }).join('');
+  const t = aggregate(segs);
+  document.getElementById('tabelBody').innerHTML = rows + `
+    <tr class="total">
+      <td>I alt (${filter})</td>
+      <td>${fmtNum(t.antal)}</td>
+      <td>${fmtKr(t.udbud)}</td>
+      <td>${fmtKr(t.salg)}</td>
+      <td>${fmtKr(t.nedslagKr)}</td>
+      <td>${fmtPct(t.nedslagPct)}</td>
+      <td>${fmtNum(t.liggetid)} dage</td>
+      <td>${fmtNum(t.m2pris)}</td>
+    </tr>`;
+}
+
+/* ==================== PANEL B — SAMMENLIGNING ==================== */
+function entities(){
+  const list = [
+    { key:'cat:Privat',  navn:'Privat (samlet)' },
+    { key:'cat:Erhverv', navn:'Erhverv (samlet)' }
+  ];
+  DATA.segmenter.forEach((s,i)=> list.push({ key:'seg:'+i, navn:s.navn+' ('+s.kategori+')' }));
+  return list;
+}
+function entityMetrics(key){
+  if(key.startsWith('cat:'))
+    return aggregate(DATA.segmenter.filter(s=>s.kategori===key.slice(4)));
+  return aggregate([DATA.segmenter[+key.slice(4)]]);
+}
+function initCmp(){
+  const ents = entities();
+  const opts = ents.map(e=>`<option value="${e.key}">${e.navn}</option>`).join('');
+  const a=document.getElementById('cmpA'), b=document.getElementById('cmpB');
+  a.innerHTML=opts; b.innerHTML=opts;
+  a.value='cat:Privat'; b.value='cat:Erhverv';
+  a.onchange=renderCmp; b.onchange=renderCmp;
+  renderCmp();
+}
+function renderCmp(){
+  const aKey=document.getElementById('cmpA').value, bKey=document.getElementById('cmpB').value;
+  const ents=entities();
+  const aName=ents.find(e=>e.key===aKey).navn, bName=ents.find(e=>e.key===bKey).navn;
+  const A=entityMetrics(aKey), B=entityMetrics(bKey);
+  const rows = [
+    ['Antal handler (n)', A.antal, B.antal, fmtNum, false],
+    ['Gns. udbudspris',   A.udbud, B.udbud, fmtKr, false],
+    ['Gns. salgspris',    A.salg,  B.salg,  fmtKr, false],
+    ['Gns. nedslag (kr.)',A.nedslagKr, B.nedslagKr, fmtKr, true],
+    ['Gns. nedslag (%)',  A.nedslagPct,B.nedslagPct,fmtPct, true],
+    ['Gns. liggetid (dage)',A.liggetid,B.liggetid, fmtNum, true],
+    ['Gns. kr./m²',       A.m2pris,B.m2pris, fmtNum, false]
+  ];
+  const body = rows.map(([lbl,av,bv,fmt,lowerBetter])=>{
+    const diff = bv-av;
+    const cls = diff===0 ? '' : ((diff<0)===lowerBetter ? 'delta-up' : 'delta-down');
+    const sign = diff>0?'+':'';
+    return `<tr><td>${lbl}</td><td>${fmt(av)}</td><td>${fmt(bv)}</td>
+      <td class="${cls}">${sign}${fmt(diff)}</td></tr>`;
+  }).join('');
+  document.getElementById('cmpResult').innerHTML = `
+    <table>
+      <thead><tr><th>Nøgletal</th><th>${aName}</th><th>${bName}</th><th>Forskel</th></tr></thead>
+      <tbody>${body}</tbody>
+    </table>`;
+}
+
+/* ==================== INIT ==================== */
+function applyFilter(){
+  renderKPIs(); renderUdbudSalg(); renderFordeling(); renderTabel();
+}
+document.querySelectorAll('button.fbtn').forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll('button.fbtn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    filter = btn.dataset.filter;
+    applyFilter();
+  };
+});
+document.getElementById('metaDato').textContent = DATA.opdateret;
+renderVerified();
+renderMaeglere();
+applyFilter();
+initCmp();
+</script>
+</body>
+</html>
