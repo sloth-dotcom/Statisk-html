@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/ansigtsgenkendelse.html" }
+    { "source": "/", "destination": "/ansigtsgenkendelse.html" },
+    { "source": "/skyfish-roadmap", "destination": "/skyfish-roadmap.html" }
   ]
 }
