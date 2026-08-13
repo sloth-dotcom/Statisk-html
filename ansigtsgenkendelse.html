@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ansigtsgenkendelse — Roadmap &amp; Status</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page:           #f9f9f7;
+    --surface-1:      #fcfcfb;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --grid:           #e1e0d9;
+    --baseline:       #c3c2b7;
+    --border:         rgba(11,11,11,0.10);
+    --good:           #0ca30c;
+    --good-text:      #006300;
+    --critical:       #d03b3b;
+    --warning:        #fab219;
+    --cat-cs:         #2a78d6;   /* slot 1 blue  — Customer Success */
+    --cat-growth:     #eb6834;   /* slot 2 orange — Growth */
+    --cat-sales:      #1baf7a;   /* slot 3 aqua  — Sales */
+    --cat-ceo:        #eda100;   /* slot 4 yellow — CEO */
+    --wash-good:      rgba(12,163,12,0.08);
+    --wash-critical:  rgba(208,59,59,0.07);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page:           #0d0d0d;
+      --surface-1:      #1a1a19;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --grid:           #2c2c2a;
+      --baseline:       #383835;
+      --border:         rgba(255,255,255,0.10);
+      --good:           #0ca30c;
+      --good-text:      #0ca30c;
+      --critical:       #d03b3b;
+      --warning:        #fab219;
+      --cat-cs:         #3987e5;
+      --cat-growth:     #d95926;
+      --cat-sales:      #199e70;
+      --cat-ceo:        #c98500;
+      --wash-good:      rgba(12,163,12,0.12);
+      --wash-critical:  rgba(208,59,59,0.12);
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text-primary);
+    line-height: 1.55;
+    padding: 40px 20px 72px;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; }
+
+  /* ---------- Header ---------- */
+  header { margin-bottom: 32px; }
+  .kicker {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;
+  }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -0.01em; }
+  .sub { color: var(--text-secondary); font-size: 15px; margin-top: 8px; max-width: 72ch; }
+
+  /* ---------- Stat row ---------- */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin: 28px 0 10px; }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px;
+  }
+  .tile .label { font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+  .tile .value { font-size: 32px; font-weight: 700; margin-top: 4px; }
+  .tile .note { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+  .value .up { color: var(--good-text); font-size: 18px; vertical-align: 3px; }
+
+  /* progress */
+  .progress-tile { grid-column: span 2; display: flex; flex-direction: column; justify-content: center; }
+  .bar-track {
+    height: 14px; border-radius: 7px; background: var(--grid);
+    margin-top: 12px; overflow: hidden; display: flex;
+  }
+  .bar-fill { background: var(--good); border-radius: 7px 0 0 7px; }
+  .bar-caption { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--text-secondary); margin-top: 8px; }
+
+  /* ---------- Sections ---------- */
+  section { margin-top: 44px; }
+  h2 { font-size: 21px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .section-sub { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; max-width: 78ch; }
+
+  /* legend for groups */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 22px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex: 0 0 auto; }
+
+  /* ---------- Item cards ---------- */
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-left: 4px solid var(--baseline);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 14px;
+  }
+  .card.cs     { border-left-color: var(--cat-cs); }
+  .card.growth { border-left-color: var(--cat-growth); }
+  .card.sales  { border-left-color: var(--cat-sales); }
+  .card.ceo    { border-left-color: var(--cat-ceo); }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .card-head { min-width: 0; }
+  .card-num { font-size: 12px; font-weight: 700; color: var(--text-muted); letter-spacing: 0.06em; }
+  .card-title { font-size: 16.5px; font-weight: 700; margin-top: 2px; }
+  .card-how { font-size: 13.5px; color: var(--text-secondary); font-style: italic; margin-top: 3px; }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12.5px; font-weight: 700; letter-spacing: 0.03em;
+    padding: 5px 12px; border-radius: 999px; white-space: nowrap; flex: 0 0 auto;
+  }
+  .badge svg { flex: 0 0 auto; }
+  .badge.done    { background: var(--wash-good);     color: var(--good-text); }
+  .badge.notdone { background: var(--wash-critical); color: var(--critical); }
+
+  .card-body { margin-top: 12px; font-size: 14.5px; color: var(--text-primary); max-width: 88ch; }
+  .card-body .why {
+    margin-top: 10px; font-size: 13.5px; color: var(--text-secondary);
+    border-top: 1px solid var(--grid); padding-top: 10px;
+  }
+  .why strong { color: var(--text-primary); font-weight: 600; }
+
+  /* group headers inside item list */
+  .group-h {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--text-secondary); margin: 26px 0 12px;
+  }
+  .group-h:first-of-type { margin-top: 0; }
+  .group-h .swatch { width: 14px; height: 14px; }
+  .group-h .thread { flex: 1; height: 1px; background: var(--grid); }
+
+  /* ---------- Challenges section ---------- */
+  .ch-card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 14px;
+  }
+  .ch-title { font-size: 15px; font-weight: 700; }
+  .ch-title .ref { color: var(--text-muted); font-weight: 600; font-size: 12.5px; margin-right: 8px; letter-spacing: 0.05em; }
+  .ch-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 12px; }
+  .ch-col h4 {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--text-secondary); margin-bottom: 8px;
+  }
+  .ch-col ul { list-style: none; }
+  .ch-col li {
+    font-size: 13.5px; color: var(--text-primary); padding-left: 14px; position: relative; margin-bottom: 7px;
+  }
+  .ch-col li::before {
+    content: ""; position: absolute; left: 0; top: 9px;
+    width: 5px; height: 5px; border-radius: 50%; background: var(--baseline);
+  }
+
+  /* cross-cutting box */
+  .cross {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 22px;
+  }
+  .cross h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+  .cross p { font-size: 13.5px; color: var(--text-secondary); max-width: 92ch; }
+  .cross p + p { margin-top: 8px; }
+
+  footer {
+    margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--grid);
+    font-size: 12.5px; color: var(--text-muted);
+  }
+
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: 1fr 1fr; }
+    .progress-tile { grid-column: span 2; }
+    .ch-cols { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="kicker">Produkt-roadmap · Ledelsesoverblik · August 2026</div>
+    <h1>Ansigtsgenkendelse: Fra søgefunktion til consent-motor</h1>
+    <p class="sub">Ni initiativer bygger oven på hinanden — fra basal ansigtsdetektion (del af 1. version) over avanceret søgning og oprydning til en fuld consent-motor, der samlet løfter produktværdi, fastholdelse og NARR. Nedenfor: status og forklaring pr. punkt, efterfulgt af en separat liste over udfordringer og typiske misforståelser.</p>
+  </header>
+
+  <!-- ================= STATUS ================= -->
+  <div class="stats">
+    <div class="tile">
+      <div class="label">Initiativer i alt</div>
+      <div class="value">9</div>
+      <div class="note">Fordelt på CS, Growth, Sales og CEO-niveau</div>
+    </div>
+    <div class="tile">
+      <div class="label">Del af 1. version</div>
+      <div class="value">2 <span class="up">✓</span></div>
+      <div class="note">Fundamentet: detektion + genkendelse/navngivning</div>
+    </div>
+    <div class="tile progress-tile">
+      <div class="label">Fremdrift på værditrappen</div>
+      <div class="bar-track" role="img" aria-label="2 af 9 initiativer er del af 1. version, cirka 22 procent">
+        <div class="bar-fill" style="width: 22.2%;"></div>
+      </div>
+      <div class="bar-caption"><span>2 af 9 i 1. version</span><span>7 udestår</span></div>
+    </div>
+  </div>
+
+  <!-- ================= ITEMS ================= -->
+  <section>
+    <h2>Punkterne forklaret</h2>
+    <p class="section-sub">Kolonnen "What" i den oprindelige tabel angiver, hvilken del af forretningen initiativet trækker på: CS = fastholdelse og mersalg på eksisterende kunder, Growth = selvbetjent vækst, Sales = nysalg og NARR (Net Annual Recurring Revenue), CEO = samlet virksomhedsværdi.</p>
+
+    <div class="legend" aria-hidden="true">
+      <span class="legend-item"><span class="swatch" style="background: var(--cat-cs)"></span>Customer Success</span>
+      <span class="legend-item"><span class="swatch" style="background: var(--cat-growth)"></span>Growth</span>
+      <span class="legend-item"><span class="swatch" style="background: var(--cat-sales)"></span>Sales / NARR</span>
+      <span class="legend-item"><span class="swatch" style="background: var(--cat-ceo)"></span>CEO / virksomhedsværdi</span>
+    </div>
+
+    <div class="group-h"><span class="swatch" style="background: var(--cat-cs)"></span>Customer Success — fastholdelse og expansion<span class="thread"></span></div>
+
+    <div class="card cs">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 1 · CS (LAV CHURN)</div>
+          <div class="card-title">Find billeder med ansigter</div>
+          <div class="card-how">"Find images with faces"</div>
+        </div>
+        <span class="badge done"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Del af 1. version</span>
+      </div>
+      <div class="card-body">
+        Basal ansigts<em>detektion</em>: systemet markerer, hvilke billeder der indeholder personer, så kunden kan filtrere mellem person- og produktbilleder. Det er den enkleste og mindst følsomme del af teknologien — og fundamentet, som alle de øvrige punkter bygger ovenpå.
+        <div class="why"><strong>Forretningsværdi:</strong> Gør biblioteket markant lettere at navigere og rydde op i. Kunder, der hurtigt finder det rigtige indhold, bliver hængende — direkte effekt på churn.</div>
+      </div>
+    </div>
+
+    <div class="card cs">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 2 · CS (EXPANSION / PRISSTIGNING)</div>
+          <div class="card-title">Find samme ansigt og navngiv det</div>
+          <div class="card-how">"Find images with same face and name face"</div>
+        </div>
+        <span class="badge done"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.5 8.5l3.5 3.5 7-8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Del af 1. version</span>
+      </div>
+      <div class="card-body">
+        Egentlig ansigts<em>genkendelse</em>: alle billeder af den samme person samles i én profil, som kan navngives. "Vis mig alle billeder af Mette fra marketing" bliver ét klik. Dette er springet fra "der er et ansigt" til "det er denne person".
+        <div class="why"><strong>Forretningsværdi:</strong> Mærkbar, betalbar merværdi der retfærdiggør prisstigning eller opgradering til et højere abonnementstrin. Samtidig forudsætningen for hele consent-sporet (punkt 6–8).</div>
+      </div>
+    </div>
+
+    <div class="card cs">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 3 · CS (EXPANSION)</div>
+          <div class="card-title">Avancerede søgefiltre på personer</div>
+          <div class="card-how">"Advance search filter: expression, newest, gender, age, race, combine with object"</div>
+        </div>
+        <span class="badge notdone"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Ikke i 1. version</span>
+      </div>
+      <div class="card-body">
+        Udvidede søgefiltre oven på ansigtsdata: udtryk (smil/neutral), nyeste billeder af en person, demografiske attributter samt kombination med objektgenkendelse ("Mette ved en messestand"). Kombinationen ansigt + objekt er den reelt differentierende del. Filtrene fungerer sammen med den semantiske søgning, som udvikles som et separat projekt — ansigtsfiltrene afgrænser <em>hvem</em>, den semantiske søgning finder <em>hvad</em>, og tilsammen giver de den fulde søgeoplevelse.
+        <div class="why"><strong>Forretningsværdi:</strong> Dybere søgning øger dagligt brug og stickiness. Bemærk dog: de demografiske filtre (køn, alder, etnicitet) er juridisk og etisk højrisiko — se udfordringslisten, inden scope besluttes.</div>
+      </div>
+    </div>
+
+    <div class="group-h"><span class="swatch" style="background: var(--cat-growth)"></span>Growth — selvbetjent vækst<span class="thread"></span></div>
+
+    <div class="card growth">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 4 · GROWTH (LOW TOUCH)</div>
+          <div class="card-title">Sælg flere billeder via nem deling og lav friktion</div>
+          <div class="card-how">"Selling more images, easy share, easy to use"</div>
+        </div>
+        <span class="badge notdone"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Ikke i 1. version</span>
+      </div>
+      <div class="card-body">
+        En vækstmotor snarere end en feature: produktet skal være så nemt at bruge og dele fra, at det sælger sig selv uden salgs- eller onboardingindsats ("low touch"). Deling af billeder og samlinger bliver samtidig en kanal, hvor modtagere eksponeres for produktet — en freemium-funnel.
+        <div class="why"><strong>Forretningsværdi:</strong> Skalerbar vækst med lav kundeanskaffelsesomkostning. Effekten er betinget af, at kerneoplevelsen (punkt 1–3) er skarp — deling forstærker et godt produkt, men redder ikke et middelmådigt.</div>
+      </div>
+    </div>
+
+    <div class="group-h"><span class="swatch" style="background: var(--cat-sales)"></span>Sales — NARR og expansion<span class="thread"></span></div>
+
+    <div class="card sales">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 5 · SALES (NARR)</div>
+          <div class="card-title">Oprydning: Match nye billeder mod kendte og ukendte ansigter</div>
+          <div class="card-how">"Clean up: Compare new images with known and unknown faces"</div>
+        </div>
+        <span class="badge notdone"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Ikke i 1. version</span>
+      </div>
+      <div class="card-body">
+        Automatisk governance ved upload: nye billeder sammenlignes med eksisterende ansigtsprofiler. Kendte personer knyttes automatisk til deres profil; ukendte ansigter flagges til manuel stillingtagen. Biblioteket holder sig selv rent, i stedet for at oprydning er et årligt projekt.
+        <div class="why"><strong>Forretningsværdi:</strong> Et konkret salgsargument over for større organisationer med mange billeder og høj personudskiftning — den type governance-kapacitet, der vinder enterprise-aftaler og driver NARR.</div>
+      </div>
+    </div>
+
+    <div class="card sales">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 6 · SALES (NARR + EXPANSION)</div>
+          <div class="card-title">Consent: Kobl samtykke til en ansigtsprofil</div>
+          <div class="card-how">"Consent: Match Consent to a face profile"</div>
+        </div>
+        <span class="badge notdone"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Ikke i 1. version</span>
+      </div>
+      <div class="card-body">
+        Samtykkeerklæringer (model releases) kobles direkte til personens ansigtsprofil. Dermed arver <em>alle</em> billeder af personen automatisk samtykkestatus: "Må vi bruge dette billede i marketing?" besvares af systemet i stedet for af en jurist eller en mappestruktur.
+        <div class="why"><strong>Forretningsværdi:</strong> Første skridt fra "smart søgning" til compliance-infrastruktur. Rammer et reelt smertepunkt hos HR, kommunikation og marketing i alle GDPR-underlagte organisationer — stærkt både i nysalg og som opgraderingsargument.</div>
+      </div>
+    </div>
+
+    <div class="card sales">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 7 · SALES (NARR + EXPANSION)</div>
+          <div class="card-title">Consent: Selfie kobler personen automatisk til sit samtykke</div>
+          <div class="card-how">"Consent: Shoot selfie and automatic link to a specific consent"</div>
+        </div>
+        <span class="badge notdone"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Ikke i 1. version</span>
+      </div>
+      <div class="card-body">
+        Onboarding-mekanisme til punkt 6: når en person underskriver et samtykke, tager vedkommende en selfie, som automatisk opretter/matcher ansigtsprofilen og binder den til netop dét samtykke. Det manuelle arbejde med at koble dokumenter til personer forsvinder.
+        <div class="why"><strong>Forretningsværdi:</strong> Fjerner den største praktiske barriere for at consent-koblingen faktisk bliver brugt i hverdagen — fx ved events, fotodage og medarbejder-onboarding. Adoption er det, der gør punkt 6 til tilbagevendende værdi frem for en demo-feature.</div>
+      </div>
+    </div>
+
+    <div class="card sales">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 8 · SALES (NARR + EXPANSION)</div>
+          <div class="card-title">Fuld consent-motor: auto-stop-brug og automatisk modelkontrol</div>
+          <div class="card-how">"Full Consent version with auto-stop-using, auto-model-control"</div>
+        </div>
+        <span class="badge notdone"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Ikke i 1. version</span>
+      </div>
+      <div class="card-body">
+        Slutmålet for consent-sporet: en motor, der løbende håndhæver samtykker. Udløber eller tilbagekaldes et samtykke, sættes personens billeder automatisk i karantæne ("auto-stop-using"), og systemet fører løbende kontrol med, hvilke personer der optræder hvor ("auto-model-control") — med fuld audit trail.
+        <div class="why"><strong>Forretningsværdi:</strong> "Compliance på autopilot" er en kategori-differentiator, som få konkurrenter kan matche. Den type kapacitet, der flytter produktet fra nice-to-have til forretningskritisk infrastruktur — med tilsvarende prissætning og lav churn.</div>
+      </div>
+    </div>
+
+    <div class="group-h"><span class="swatch" style="background: var(--cat-ceo)"></span>CEO — samlet virksomhedsværdi<span class="thread"></span></div>
+
+    <div class="card ceo">
+      <div class="card-top">
+        <div class="card-head">
+          <div class="card-num">PUNKT 9 · CEO (ØGET VIRKSOMHEDSVÆRDI)</div>
+          <div class="card-title">Integrér ansigt + objekt + consent + workflow</div>
+          <div class="card-how">"Integrate facial with object and consent + workflow = Increase product value + stickiness + vertical domain position"</div>
+        </div>
+        <span class="badge notdone"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>Ikke i 1. version</span>
+      </div>
+      <div class="card-body">
+        Den strategiske sammenfatning: når ansigtsgenkendelse, objektgenkendelse, consent-styring og kundens arbejdsgange smelter sammen til ét integreret system, opstår et datamoat — licens-, person- og brugsdata i samme platform — som er meget svært at kopiere og meget dyrt at forlade.
+        <div class="why"><strong>Forretningsværdi:</strong> Højere produktværdi og stickiness giver direkte udslag i virksomhedens værdiansættelse (multipel på NARR og retention). En stærk vertikal domæneposition — "rights-aware DAM med indbygget consent" — er slutgevinsten, punkterne 1–8 tilsammen skal indløse.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CHALLENGES ================= -->
+  <section>
+    <h2>Udfordringer &amp; misforståelser — separat liste</h2>
+    <p class="section-sub">Hvert punkt har sine egne faldgruber. De tværgående (GDPR, præcision, afhængigheder) er samlet øverst, så de ikke gentages ni gange.</p>
+
+    <div class="cross">
+      <h3>⚠️ Tværgående — gælder hele roadmappet</h3>
+      <p><strong>GDPR &amp; biometri:</strong> Ansigtsgenkendelse til identifikation er biometrisk data (GDPR art. 9) og kræver eksplicit hjemmel, ret til sletning og audit trail. Consent-arkitekturen skal bygges <em>før</em> features — ikke eftermonteres. EU AI Act stiller derudover krav til visse anvendelser af ansigtsanalyse.</p>
+      <p><strong>Præcision er aldrig 100 %:</strong> Tvillinger, søskende, aldring, dårlig belysning og små ansigter giver falske matches og oversete ansigter. Alle workflows skal designes med menneskelig verifikation som sikkerhedsnet — ellers bliver fejl til compliance-hændelser.</p>
+      <p><strong>Afhængighedskæden:</strong> Punkt 5–9 står alle på skuldrene af punkt 2. Kvalitetsproblemer i ansigtsprofilerne forplanter sig opad i hele værditrappen — jo tidligere de fanges, desto billigere er de.</p>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 1</span>Find billeder med ansigter</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Detektionskvalitet på små, delvise eller uskarpe ansigter — falske positiver (statuer, plakater, malerier) irriterer i søgeresultater.</li>
+            <li>Batch-processering af eksisterende arkiver kan være tung og skal prioriteres/faseinddeles for store kunder.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>"Systemet ved, hvem der er på billedet" — nej. Detektion finder kun, <em>at</em> der er et ansigt, ikke <em>hvis</em> ansigt. Identifikation er punkt 2.</li>
+            <li>At detektion i sig selv udløser samme GDPR-krav som genkendelse — kravene skærpes markant først ved identifikation af personer.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 2</span>Find samme ansigt og navngiv det</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Navngivne profiler gør billedsamlingen til et register over identificerbare personer — med alt hvad det kræver af hjemmel, sletteret og adgangsstyring.</li>
+            <li>Forkerte sammenfletninger (to personer i én profil) eller splittede profiler (én person i flere) skal kunne rettes nemt af kunden.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>"Navngivning er bare et tag" — juridisk er det springet fra anonym billeddata til persondata. Det er en beslutning, kunden skal træffe informeret.</li>
+            <li>At matchning er fejlfri. Kunder, der forventer 100 %, mister tilliden ved første fejl — forventningsafstemning er en del af featuren.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 3</span>Avancerede søgefiltre (udtryk, køn, alder, etnicitet, objekt)</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Klassifikation af køn, alder og især etnicitet er både teknisk upræcis og etisk/juridisk højrisiko (diskriminationslovgivning, EU AI Act, omdømme). Kræver aktiv stillingtagen til, om det overhovedet skal bygges.</li>
+            <li>Kombination med objektgenkendelse kræver en samlet søgearkitektur på tværs af to AI-modeller — reelt et infrastrukturprojekt, ikke et filter.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>"Det er bare flere filtre på det, vi allerede har" — hvert attribut kræver egne modeller, egen validering og eget compliance-arbejde.</li>
+            <li>At redaktionel filtrering og profilering er det samme. Et søgefilter til billedredaktion kan hurtigt <em>opfattes</em> (og misbruges) som personprofilering — formålsbegrænsning skal designes ind.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 4</span>Growth — nem deling, lav friktion</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>"Low touch" kræver meget høj UX- og onboarding-modenhed — vækstmotoren virker først, når produktet kan forklare sig selv.</li>
+            <li>Nem deling af <em>personbilleder</em> øger risikoen for spredning uden rettigheder — delingsflowet bør være rights-aware fra start (kobling til punkt 6–8).</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>At growth er en feature, man bygger én gang — det er en kontinuerlig motor af målinger, funnel-optimering og friktionsjagt.</li>
+            <li>Punktet forveksles med CS-punkterne. Det er en distributions- og salgsmotor, ikke en søgefunktion — succes måles i konvertering, ikke i søgekvalitet.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 5</span>Oprydning — match nye billeder mod kendte/ukendte ansigter</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Matchtærskler skal balanceres: for løse giver forkerte koblinger, for stramme drukner kunden i "ukendte" til manuel behandling.</li>
+            <li>Løbende sammenligning mod hele profilbiblioteket har reelle drifts- og omkostningskonsekvenser ved enterprise-volumener.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>"Clean up" betyder ikke automatisk sletning — det handler om at organisere, flagge og skabe overblik. Sletning er altid en menneskelig beslutning.</li>
+            <li>At featuren kan stå alene. Den forudsætter, at profilbiblioteket (punkt 2) er etableret og vedligeholdt — ellers er der intet at matche imod.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 6</span>Consent koblet til ansigtsprofil</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Samtykkers livscyklus: udløb, tilbagetrækning, scope-ændringer ("kun intern brug") skal modelleres — det er en rettighedsmotor, ikke et dokumentarkiv.</li>
+            <li>Ansvarsfordeling: platformen leverer værktøjet, men kunden er dataansvarlig. Kontrakter og UI skal gøre den grænse tydelig.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>At samtykke er statisk. Et samtykke kan trækkes tilbage i morgen — og så skal systemet kunne håndhæve det (deraf punkt 8).</li>
+            <li>At et teknisk match = juridisk gyldigt samtykke. Gyldigheden afhænger af indholdet i erklæringen og formålet med brugen — systemet dokumenterer, det garanterer ikke.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 7</span>Selfie-kobling til samtykke</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Identitetssikring: er personen på selfien den, der underskrev? Flowet skal designes, så koblingen er troværdig (fx selfie som del af selve underskriftsøjeblikket).</li>
+            <li>Selfien er en biometrisk referenceoptagelse — opbevaring, kryptering og sletteret skal være på plads fra dag ét.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>Forveksles med Face ID/login. Det er en <em>registrerings</em>mekanisme, der binder person til samtykke — ikke en sikkerheds- eller adgangsfeature.</li>
+            <li>At selfien er valgfri pynt. Uden den falder man tilbage til manuel kobling — og så mister punkt 6 sin skalerbarhed.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 8</span>Fuld consent-motor (auto-stop, auto-modelkontrol)</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Automatik, der rører ved kundens aktive materialer (kampagner, web, tryk), er følsom — der skal være varsler, karensperioder og mulighed for kontrolleret undtagelse.</li>
+            <li>Håndhævelse uden for platformen (allerede downloadede/publicerede billeder) kræver integrationer eller notifikationer — kan ikke løses af platformen alene.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>"Auto-stop" fjerner ikke billeder fra tryksager, sociale medier eller partneres kanaler — det stopper fremadrettet brug i platformen og advarer om resten.</li>
+            <li>At motoren flytter det juridiske ansvar. Den reducerer risiko og dokumenterer compliance — men ansvaret som dataansvarlig bliver hos kunden.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-title"><span class="ref">PUNKT 9</span>Integration: ansigt + objekt + consent + workflow</div>
+      <div class="ch-cols">
+        <div class="ch-col">
+          <h4>Udfordringer</h4>
+          <ul>
+            <li>Sekvensering: punktet er summen af 1–8. Den største risiko er at bygge bredt (lidt af alt) frem for dybt (én kæde, der virker end-to-end hos betalende kunder).</li>
+            <li>Værdien opstår først ved kundeadoption — integration uden ændrede arbejdsgange hos kunden flytter hverken stickiness eller multipel.</li>
+          </ul>
+        </div>
+        <div class="ch-col">
+          <h4>Misforståelser</h4>
+          <ul>
+            <li>At dette er ét projekt med én deadline. Det er en strategisk retning, der indløses trinvist — hvert trin skal kunne stå alene forretningsmæssigt.</li>
+            <li>At "øget virksomhedsværdi" kommer af featurelisten. Den kommer af dokumenterbar retention, NARR-vækst og en position, konkurrenter ikke let kan kopiere.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Kilde: intern roadmap-tabel (What / How / Check), august 2026 · Status: ✓ = del af 1. version, ✗ = ikke i 1. version · Udarbejdet til ledelsesbrug — forklaringer og risikovurderinger er fortolkning til diskussion, ikke juridisk rådgivning.
+  </footer>
+
+</div>
+</body>
+</html>
