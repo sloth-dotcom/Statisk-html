@@ -86,3 +86,13 @@ export function isPast(value: Date | string | null | undefined, now: Date = new 
   if (Number.isNaN(date.getTime())) return false;
   return date.getTime() < now.getTime();
 }
+
+/** Local hour in Copenhagen, 0-23. Used to pin the digest to 07:00 local. */
+export function copenhagenHour(now: Date = new Date()): number {
+  const value = new Intl.DateTimeFormat("en-GB", {
+    timeZone: APP_TIME_ZONE,
+    hour: "2-digit",
+    hour12: false,
+  }).format(now);
+  return Number(value) % 24;
+}

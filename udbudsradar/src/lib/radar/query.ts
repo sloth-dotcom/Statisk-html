@@ -60,6 +60,29 @@ export async function listRadar(filters: RadarFilters): Promise<{ rows: RadarRow
   const pageSize = Math.min(filters.pageSize ?? 25, 100);
   const page = Math.max(filters.page ?? 1, 1);
 
+  /**
+   * The best current verdict per notice: one row per notice, from the selected
+   * profile or — when no profile is chosen — whichever profile rates it highest.
+   * Only scores made with a profile's current version count, so an edited
+   * profile stops showing stale verdicts.
+   */
+  const bestScores = db.$with("best_scores").as(
+    db
+      .selectDistinctOn([noticeScores.noticeId], {
+        noticeId: noticeScores.noticeId,
+        score: noticeScores.score,
+        reasoning: noticeScores.reasoning,
+        fit: noticeScores.fit,
+      })
+      .from(noticeScores)
+      .innerJoin(
+        profiles,
+        and(eq(profiles.id, noticeScores.profileId), eq(profiles.version, noticeScores.profileVersion)),
+      )
+      .where(filters.profileId ? eq(noticeScores.profileId, filters.profileId) : undefined)
+      .orderBy(noticeScores.noticeId, desc(noticeScores.score)),
+  );
+
   const conditions: SQL[] = [];
 
   if (filters.region) conditions.push(ilike(notices.buyerRegion, `%${filters.region}%`));
@@ -82,21 +105,14 @@ export async function listRadar(filters: RadarFilters): Promise<{ rows: RadarRow
     conditions.push(eq(noticeStatus.status, "afvist"));
   }
 
-  if (filters.minScore !== undefined && filters.profileId) {
-    conditions.push(gte(noticeScores.score, filters.minScore));
+  if (filters.minScore !== undefined) {
+    conditions.push(gte(bestScores.score, filters.minScore));
   }
-
-  const scoreJoin = filters.profileId
-    ? and(
-        eq(noticeScores.noticeId, notices.id),
-        eq(noticeScores.profileId, filters.profileId),
-        sql`${noticeScores.profileVersion} = (select version from profiles where id = ${filters.profileId})`,
-      )
-    : sql`false`;
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
   const rows = await db
+    .with(bestScores)
     .select({
       id: notices.id,
       noticeId: notices.noticeId,
@@ -113,24 +129,25 @@ export async function listRadar(filters: RadarFilters): Promise<{ rows: RadarRow
       publishedAt: notices.publishedAt,
       deadlineAt: notices.deadlineAt,
       sourceUrl: notices.sourceUrl,
-      score: noticeScores.score,
-      reasoning: noticeScores.reasoning,
-      fit: noticeScores.fit,
+      score: bestScores.score,
+      reasoning: bestScores.reasoning,
+      fit: bestScores.fit,
       status: noticeStatus.status,
       assignedTo: noticeStatus.assignedTo,
     })
     .from(notices)
-    .leftJoin(noticeScores, scoreJoin)
+    .leftJoin(bestScores, eq(bestScores.noticeId, notices.id))
     .leftJoin(noticeStatus, eq(noticeStatus.noticeId, notices.noticeId))
     .where(where)
-    .orderBy(sql`${noticeScores.score} desc nulls last`, desc(notices.publishedAt))
+    .orderBy(sql`${bestScores.score} desc nulls last`, desc(notices.publishedAt))
     .limit(pageSize)
     .offset((page - 1) * pageSize);
 
   const [count] = await db
+    .with(bestScores)
     .select({ value: sql<number>`count(*)::int` })
     .from(notices)
-    .leftJoin(noticeScores, scoreJoin)
+    .leftJoin(bestScores, eq(bestScores.noticeId, notices.id))
     .leftJoin(noticeStatus, eq(noticeStatus.noticeId, notices.noticeId))
     .where(where);
 

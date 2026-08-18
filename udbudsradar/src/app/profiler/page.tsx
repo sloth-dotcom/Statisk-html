@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, sql } from "drizzle-orm";
 import { getDb } from "@/db";
 import { noticeScores, profiles } from "@/db/schema";
 import { deleteProfile, rescoreProfileAction, saveProfile } from "@/app/actions";

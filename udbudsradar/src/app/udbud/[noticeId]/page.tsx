@@ -89,7 +89,7 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ n
             <Fact label="Tilbudsfrist" value={formatCopenhagen(current.deadlineAt)} />
             <Fact label="Først set" value={formatCopenhagen(current.firstSeenAt)} />
             <Fact label="Sidst set" value={formatCopenhagen(current.lastSeenAt)} />
-            <Fact label="Hoved-CPV" value={current.cpvMain ? `${current.cpvMain} — ${cpvLabel(current.cpvMain)}` : "—"} />
+            <Fact label="Hoved-CPV" value={cpvFact(current.cpvMain)} />
             <Fact label="Bekendtgørelses-id" value={`${current.noticeId} / ${current.noticeVersion}`} />
           </dl>
 
@@ -247,6 +247,13 @@ export default async function NoticeDetailPage({ params }: { params: Promise<{ n
       </details>
     </div>
   );
+}
+
+/** The label is only added when the codelist actually knows the code. */
+function cpvFact(code: string | null): string {
+  if (!code) return "—";
+  const label = cpvLabel(code);
+  return label === code ? code : `${code} — ${label}`;
 }
 
 function Fact({ label, value }: { label: string; value: string }) {

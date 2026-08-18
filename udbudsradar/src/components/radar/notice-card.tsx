@@ -22,7 +22,7 @@ export function NoticeCard({ row }: { row: RadarRow }) {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start justify-between gap-4">
           <CardTitle>
             <Link href={`/udbud/${encodeURIComponent(row.noticeId)}`} className="hover:text-[var(--color-accent)]">
               {row.title ?? "(uden titel)"}

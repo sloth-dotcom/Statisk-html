@@ -17,7 +17,6 @@ export function createDb(url?: string) {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var __udbudsradarDb: { client: postgres.Sql; db: ReturnType<typeof drizzle<typeof schema>> } | undefined;
 }
 
