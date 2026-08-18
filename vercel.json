@@ -1,7 +1,6 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/ansigtsgenkendelse.html" },
-    { "source": "/skyfish-roadmap", "destination": "/skyfish-roadmap.html" },
-    { "source": "/sf2026", "destination": "/SF2026/index.html" }
+    { "source": "/skyfish-roadmap", "destination": "/skyfish-roadmap.html" }
   ]
 }

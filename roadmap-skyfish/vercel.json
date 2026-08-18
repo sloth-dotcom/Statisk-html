@@ -1,5 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/sf2026", "destination": "/SF2026/index.html" }
-  ]
-}
