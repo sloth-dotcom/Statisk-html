@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+  --color-flade: #f6f7f9;
+  --color-kort: #ffffff;
+  --color-kant: #e3e6ea;
+  --color-tekst: #16181d;
+  --color-daempet: #5b6472;
+  --color-accent: #1f5f9c;
+  --color-accent-svag: #eaf2fa;
+  --color-groen: #17663f;
+  --color-groen-svag: #e6f4ec;
+  --color-gul: #8a5a00;
+  --color-gul-svag: #fdf2dc;
+  --color-roed: #a11b1b;
+  --color-roed-svag: #fbeaea;
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-flade);
+  color: var(--color-tekst);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Internal tool: readable beats decorative. One accent colour, one card style. */
