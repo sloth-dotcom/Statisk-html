@@ -1,0 +1,15 @@
+{
+  "_advarsel": "SYNTETISK. Ikke et svar fra udbud.dk. Se README.md i denne mappe.",
+  "noticeId": "2026-000123",
+  "noticeVersion": "01",
+  "noticeType": "udbudsbekendtgoerelse",
+  "title": { "dan": "Udbud af drift og vedligehold af kommunens it-arbejdspladser", "eng": "Workplace IT services" },
+  "description": { "dan": "Rammeaftale om support, udrulning og livscyklusstyring af ca. 4.000 arbejdspladser." },
+  "buyer": { "name": "Aarhus Kommune", "cvr": "55133018", "region": "Region Midtjylland" },
+  "cpvMain": "72200000-7",
+  "cpvCodes": ["72200000-7", "72600000-6", "30200000-1"],
+  "value": { "amount": "48.500.000,00", "currency": "DKK" },
+  "publicationDate": "2026-08-14T09:00:00+02:00",
+  "tenderPeriod": { "endDate": "2026-09-30" },
+  "procedureType": "offentligt-udbud"
+}
