@@ -155,6 +155,8 @@
   .chip.k3 { background: var(--cat-3-wash); color: var(--cat-3); }
   .chip.k7 { background: var(--cat-7-wash); color: var(--cat-7); }
   .chip.be { background: var(--backend-wash); color: var(--backend-ink); border: 1px solid var(--border); }
+  .chip.major { background: var(--cat-1); color: #fff; }
+  .card.major-card { border-width: 1px 1px 1px 3px; box-shadow: 0 0 0 1px var(--cat-1) inset, 0 2px 10px rgba(42,120,214,0.10); }
 
   /* ---------- Løbende hygiejne-spor ---------- */
   .hygiene-track {
@@ -317,6 +319,7 @@
       <span><span class="swatch" style="background:var(--cat-7)"></span>Differentiator (Kontainer har det ikke)</span>
       <span><span class="swatch" style="background:var(--cat-5)"></span>Consent UI-spor (gennemgående)</span>
       <span><span class="swatch" style="background:var(--cat-4)"></span>Platform-spor (PostHog user data)</span>
+      <span><span class="chip major" style="margin-right:6px">★ Major</span>De 3 store leverancer: Face detection · Semantisk søgning · Dashboard</span>
       <span><span class="be-chip-demo">Back-end</span>kræver back-end/API-arbejde</span>
     </div>
 
@@ -344,7 +347,7 @@
         <div class="phase-dot"></div>
         <div class="phase-when">Fase 1 · Sep – Okt 2026</div>
         <div class="phase-name">Face detection, deling &amp; kort</div>
-        <div class="phase-goal">Luk det mest synlige Kontainer-gap først, og lever deling, Maps og forbrugsstyring, hvor UI-forarbejdet allerede ligger klar.</div>
+        <div class="phase-goal">Luk det mest synlige Kontainer-gap først, rul det nye dashboard ud, og lever deling, Maps og forbrugsstyring, hvor UI-forarbejdet allerede ligger klar.</div>
       </div>
       <div class="phase-label">
         <div class="phase-dot"></div>
@@ -363,10 +366,15 @@
     <div class="columns">
       <!-- FASE 1 -->
       <div class="col">
-        <div class="card c2">
+        <div class="card c2 major-card">
           <h4>Face detection</h4>
           <p>Topprioritet: Find alle billeder af samme person. Direkte paritet med Kontainers «Ansigtsgenkendelse» — API-valg, datamodel og feature leveres samlet i denne fase.</p>
-          <div class="chips"><span class="chip k2">Konkurrence-gap</span><span class="chip be">Back-end</span></div>
+          <div class="chips"><span class="chip major">★ Major</span><span class="chip k2">Konkurrence-gap</span><span class="chip be">Back-end</span></div>
+        </div>
+        <div class="card c1 major-card">
+          <h4>Dashboard udrulning</h4>
+          <p>Udrulning af det nye dashboard til kunderne — samlet overblik som indgang til appen. Spiller direkte sammen med platform-punkt 4 (rodmappen som landingsside i stedet for en tom mappeliste).</p>
+          <div class="chips"><span class="chip major">★ Major</span><span class="chip k1">Kundedrevet</span></div>
         </div>
         <div class="card c1">
           <h4>Delings-opdateringer (e-mail + log)</h4>
@@ -406,10 +414,10 @@
 
       <!-- FASE 2 -->
       <div class="col">
-        <div class="card c1">
+        <div class="card c1 major-card">
           <h4>Semantisk søgning</h4>
           <p>Den store kundedrevne leverance. Går forbi Kontainers «Advanced Media Search» + AI-tags ved at søge på mening, ikke kun metadata.</p>
-          <div class="chips"><span class="chip k1">Kundedrevet</span><span class="chip k7">Differentiator</span><span class="chip be">Back-end</span></div>
+          <div class="chips"><span class="chip major">★ Major</span><span class="chip k1">Kundedrevet</span><span class="chip k7">Differentiator</span><span class="chip be">Back-end</span></div>
         </div>
         <div class="card c2">
           <h4>Face detection · Consent</h4>
