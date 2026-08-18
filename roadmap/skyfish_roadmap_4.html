@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skyfish Roadmap · Sep 2026 – Feb 2027</title>
+<style>
+  .viz-root {
+    color-scheme: light;
+    --surface-1:      #fcfcfb;
+    --page:           #f9f9f7;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #898781;
+    --hairline:       #e1e0d9;
+    --border:         rgba(11,11,11,0.10);
+    --cat-1:          #2a78d6;  /* blå   – kundedrevet */
+    --cat-2:          #eb6834;  /* orange– konkurrence-gap */
+    --cat-3:          #1baf7a;  /* aqua  – hygiejne */
+    --cat-7:          #4a3aa7;  /* violet– differentiator */
+    --cat-1-wash:     rgba(42,120,214,0.10);
+    --cat-2-wash:     rgba(235,104,52,0.10);
+    --cat-3-wash:     rgba(27,175,122,0.12);
+    --cat-7-wash:     rgba(74,58,167,0.10);
+    --backend-ink:    #52514e;
+    --backend-wash:   rgba(11,11,11,0.06);
+    --cat-5:          #e87ba4;  /* magenta – consent-spor */
+    --cat-5-strong:   #c94f7e;
+    --cat-5-wash:     rgba(232,123,164,0.12);
+    --cat-4:          #eda100;  /* gul – platform-spor */
+    --cat-4-strong:   #a97300;
+    --cat-4-wash:     rgba(237,161,0,0.13);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root {
+      color-scheme: dark;
+      --surface-1:      #1a1a19;
+      --page:           #0d0d0d;
+      --text-primary:   #ffffff;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #898781;
+      --hairline:       #2c2c2a;
+      --border:         rgba(255,255,255,0.10);
+      --cat-1:          #3987e5;
+      --cat-2:          #d95926;
+      --cat-3:          #199e70;
+      --cat-7:          #9085e9;
+      --cat-1-wash:     rgba(57,135,229,0.16);
+      --cat-2-wash:     rgba(217,89,38,0.16);
+      --cat-3-wash:     rgba(25,158,112,0.16);
+      --cat-7-wash:     rgba(144,133,233,0.16);
+      --backend-ink:    #c3c2b7;
+      --backend-wash:   rgba(255,255,255,0.08);
+      --cat-5:          #d55181;
+      --cat-5-strong:   #d55181;
+      --cat-5-wash:     rgba(213,81,129,0.16);
+      --cat-4:          #c98500;
+      --cat-4-strong:   #eda100;
+      --cat-4-wash:     rgba(201,133,0,0.16);
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--page); }
+  .viz-root {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 40px 32px 56px;
+  }
+  .wrap { max-width: 1240px; margin: 0 auto; }
+
+  /* ---------- Header ---------- */
+  .brand { margin-bottom: 18px; }
+  .brand img { height: 34px; width: auto; display: block; }
+  .brand img.logo-dark { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz-root .brand img.logo-light { display: none; }
+    :root:where(:not([data-theme="light"])) .viz-root .brand img.logo-dark { display: block; }
+  }
+  :root[data-theme="dark"] .viz-root .brand img.logo-light { display: none; }
+  :root[data-theme="dark"] .viz-root .brand img.logo-dark { display: block; }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px;
+  }
+  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; }
+  .subtitle { font-size: 14.5px; color: var(--text-secondary); margin-top: 6px; max-width: 760px; line-height: 1.5; }
+
+  .legend {
+    display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 20px;
+    padding: 14px 18px; background: var(--surface-1);
+    border: 1px solid var(--border); border-radius: 10px;
+    font-size: 12.5px; color: var(--text-secondary); align-items: center;
+  }
+  .legend .swatch { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 7px; vertical-align: -1px; }
+  .legend .be-chip-demo {
+    font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 99px;
+    background: var(--backend-wash); color: var(--backend-ink);
+    border: 1px solid var(--border); margin-right: 6px;
+  }
+
+  /* ---------- Gap-oversigt ---------- */
+  .gap-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 26px; }
+  .gap-tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 18px 14px;
+  }
+  .gap-tile h3 { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .gap-tile.ahead h3   { color: var(--cat-2); }
+  .gap-tile.parity h3  { color: var(--cat-1); }
+  .gap-tile.diff h3    { color: var(--cat-7); }
+  .gap-tile p { font-size: 13px; line-height: 1.55; color: var(--text-secondary); }
+
+  /* ---------- Tidslinje ---------- */
+  .timeline-head {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin-top: 34px; position: relative;
+  }
+  .timeline-rail {
+    position: absolute; left: 0; right: 0; top: 21px; height: 2px;
+    background: var(--hairline); z-index: 0;
+  }
+  .phase-label { position: relative; z-index: 1; padding-left: 2px; }
+  .phase-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+    border: 2.5px solid var(--cat-1); background: var(--surface-1);
+    margin: 14px 0 10px;
+  }
+  .phase-when { font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); }
+  .phase-name { font-size: 17px; font-weight: 700; margin-top: 2px; }
+  .phase-goal { font-size: 12.5px; color: var(--text-secondary); margin-top: 3px; line-height: 1.45; }
+
+  .columns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 16px; align-items: start; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+
+  .card {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-left: 3px solid var(--hairline);
+    border-radius: 8px; padding: 12px 14px 11px;
+  }
+  .card.c1 { border-left-color: var(--cat-1); }
+  .card.c2 { border-left-color: var(--cat-2); }
+  .card.c3 { border-left-color: var(--cat-3); }
+  .card.c7 { border-left-color: var(--cat-7); }
+  .card h4 { font-size: 14px; font-weight: 650; line-height: 1.35; }
+  .card p  { font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; margin-top: 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 9px; }
+  .chip {
+    font-size: 10.5px; font-weight: 600; padding: 2.5px 8px; border-radius: 99px;
+    letter-spacing: 0.01em; white-space: nowrap;
+  }
+  .chip.k1 { background: var(--cat-1-wash); color: var(--cat-1); }
+  .chip.k2 { background: var(--cat-2-wash); color: var(--cat-2); }
+  .chip.k3 { background: var(--cat-3-wash); color: var(--cat-3); }
+  .chip.k7 { background: var(--cat-7-wash); color: var(--cat-7); }
+  .chip.be { background: var(--backend-wash); color: var(--backend-ink); border: 1px solid var(--border); }
+
+  /* ---------- Løbende hygiejne-spor ---------- */
+  .hygiene-track {
+    margin-top: 30px; background: var(--surface-1);
+    border: 1px solid var(--border); border-top: 3px solid var(--cat-3);
+    border-radius: 10px; padding: 18px 20px 18px;
+  }
+  .hygiene-track h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--cat-3); }
+  .hygiene-track .hint { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; max-width: 900px; line-height: 1.5; }
+  .hygiene-items { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+  .hygiene-items .card { background: var(--page); }
+  @media (max-width: 880px) { .hygiene-items { grid-template-columns: 1fr; } }
+
+  .test-note {
+    font-size: 11.5px; color: var(--text-muted); line-height: 1.5;
+    margin-top: 7px; padding-top: 7px; border-top: 1px dashed var(--hairline);
+  }
+  .test-note strong { color: var(--text-secondary); font-weight: 600; }
+  .preview-link {
+    display: inline-block; margin-top: 6px; font-size: 11.5px; font-weight: 600;
+    color: var(--cat-1); text-decoration: none;
+  }
+  .preview-link:hover { text-decoration: underline; }
+
+  /* ---------- Consent UI-spor ---------- */
+  .consent-track {
+    margin-top: 16px; background: var(--surface-1);
+    border: 1px solid var(--border); border-top: 3px solid var(--cat-5);
+    border-radius: 10px; padding: 18px 20px 18px;
+  }
+  .consent-track h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--cat-5-strong); }
+  .consent-track .hint { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; max-width: 960px; line-height: 1.5; }
+  .consent-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin-top: 14px; }
+  .consent-item {
+    display: flex; gap: 9px; align-items: flex-start;
+    font-size: 12.5px; color: var(--text-secondary); line-height: 1.5;
+  }
+  .consent-item::before {
+    content: ""; flex: 0 0 auto; width: 7px; height: 7px; border-radius: 2px;
+    background: var(--cat-5); margin-top: 5.5px;
+  }
+  .consent-item strong { color: var(--text-primary); font-weight: 600; }
+  .consent-sub {
+    margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--hairline);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .consent-sub .card { background: var(--page); }
+  @media (max-width: 880px) { .consent-cols, .consent-sub { grid-template-columns: 1fr; } }
+
+  /* ---------- Platform-spor ---------- */
+  .platform-track {
+    margin-top: 16px; background: var(--surface-1);
+    border: 1px solid var(--border); border-top: 3px solid var(--cat-4);
+    border-radius: 10px; padding: 18px 20px 18px;
+  }
+  .platform-track > h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--cat-4-strong); }
+  .platform-track .hint { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; max-width: 960px; line-height: 1.5; }
+  .platform-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .platform-items .card { background: var(--page); border-left-color: var(--cat-4); position: relative; }
+  .p-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 6px; margin-right: 7px;
+    background: var(--cat-4-wash); color: var(--cat-4-strong);
+    font-size: 11.5px; font-weight: 700; vertical-align: -4px;
+  }
+  .chip.k4 { background: var(--cat-4-wash); color: var(--cat-4-strong); }
+  .p-goal { font-size: 11.5px; color: var(--text-muted); margin-top: 6px; }
+  .p-goal strong { color: var(--text-secondary); font-weight: 600; }
+  .platform-foot {
+    margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--hairline);
+    font-size: 12.5px; color: var(--text-secondary); line-height: 1.55;
+  }
+  @media (max-width: 880px) { .platform-items { grid-template-columns: 1fr; } }
+
+  /* ---------- Backlog ---------- */
+  .backlog {
+    margin-top: 34px; background: var(--surface-1);
+    border: 1px dashed var(--hairline); border-radius: 10px; padding: 18px 20px 16px;
+  }
+  .backlog h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+  .backlog .hint { font-size: 12.5px; color: var(--text-secondary); margin-top: 4px; }
+  .backlog-items { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .backlog-item {
+    font-size: 12.5px; color: var(--text-secondary);
+    background: var(--page); border: 1px solid var(--border);
+    border-radius: 99px; padding: 5px 13px;
+  }
+  .backlog-item strong { color: var(--text-primary); font-weight: 600; }
+
+  footer { margin-top: 26px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+
+  @media (max-width: 880px) {
+    .gap-strip, .timeline-head, .columns { grid-template-columns: 1fr; }
+    .timeline-rail { display: none; }
+    .viz-root { padding: 24px 16px 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="viz-root">
+  <div class="wrap">
+
+    <div class="brand">
+      <img class="logo-light" src="data:image/png;base64,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" alt="Skyfish">
+      <img class="logo-dark" src="data:image/png;base64,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" alt="Skyfish">
+    </div>
+    <div class="eyebrow">Produkt-roadmap</div>
+    <h1>Roadmap · September 2026 – Februar 2027</h1>
+    <p class="subtitle">Internt roadmap sammenholdt med Kontainers modulliste (DAM/PIM, AI &amp; workflows).
+    Face detection er første store leverance, herefter semantisk søgning — og hygiejne-punkterne er
+    samlet i et løbende spor, der tages kontinuerligt hen over alle tre faser.</p>
+
+    <div class="legend">
+      <span><span class="swatch" style="background:var(--cat-1)"></span>Kundedrevet</span>
+      <span><span class="swatch" style="background:var(--cat-2)"></span>Konkurrence-gap (Kontainer har det)</span>
+      <span><span class="swatch" style="background:var(--cat-3)"></span>Hygiejne / UI-kvalitet</span>
+      <span><span class="swatch" style="background:var(--cat-7)"></span>Differentiator (Kontainer har det ikke)</span>
+      <span><span class="swatch" style="background:var(--cat-5)"></span>Consent UI-spor (gennemgående)</span>
+      <span><span class="swatch" style="background:var(--cat-4)"></span>Platform-spor (PostHog user data)</span>
+      <span><span class="be-chip-demo">Back-end</span>kræver back-end/API-arbejde</span>
+    </div>
+
+    <div class="gap-strip">
+      <div class="gap-tile ahead">
+        <h3>Hvor Kontainer er foran</h3>
+        <p>Ansigtsgenkendelse, samtykke-/GDPR-styring, notifikationer, statistik &amp; delings-tracking,
+        gæste-/leverandørupload og et bredt integrationskatalog (Office/Adobe, CMS, SSO).</p>
+      </div>
+      <div class="gap-tile parity">
+        <h3>Paritet på vej i denne plan</h3>
+        <p>Face detection og delingslog med e-mail-notifikationer lukkes allerede i Fase 1, consent-flowet
+        følger i Fase 2 — de vigtigste gaps er lukket inden udgangen af februar 2027.</p>
+      </div>
+      <div class="gap-tile diff">
+        <h3>Hvor Skyfish kan differentiere</h3>
+        <p>Semantisk søgning går forbi Kontainers metadata-søgning, og Maps-/geo-søgning findes slet
+        ikke i deres modulliste — to synlige salgsargumenter.</p>
+      </div>
+    </div>
+
+    <div class="timeline-head">
+      <div class="timeline-rail"></div>
+      <div class="phase-label">
+        <div class="phase-dot"></div>
+        <div class="phase-when">Fase 1 · Sep – Okt 2026</div>
+        <div class="phase-name">Face detection, deling &amp; kort</div>
+        <div class="phase-goal">Luk det mest synlige Kontainer-gap først, og lever deling, Maps og forbrugsstyring, hvor UI-forarbejdet allerede ligger klar.</div>
+      </div>
+      <div class="phase-label">
+        <div class="phase-dot"></div>
+        <div class="phase-when">Fase 2 · Nov – Dec 2026</div>
+        <div class="phase-name">Semantisk søgning &amp; consent</div>
+        <div class="phase-goal">Lever den store kundedrevne søgeoplevelse og luk GDPR-pariteten med consent på ansigter.</div>
+      </div>
+      <div class="phase-label">
+        <div class="phase-dot"></div>
+        <div class="phase-when">Fase 3 · Jan – Feb 2027</div>
+        <div class="phase-name">Indsigt &amp; statistik</div>
+        <div class="phase-goal">Statistik og tracking — og luft til at trække de første backlog-gaps ind.</div>
+      </div>
+    </div>
+
+    <div class="columns">
+      <!-- FASE 1 -->
+      <div class="col">
+        <div class="card c2">
+          <h4>Face detection</h4>
+          <p>Topprioritet: Find alle billeder af samme person. Direkte paritet med Kontainers «Ansigtsgenkendelse» — API-valg, datamodel og feature leveres samlet i denne fase.</p>
+          <div class="chips"><span class="chip k2">Konkurrence-gap</span><span class="chip be">Back-end</span></div>
+        </div>
+        <div class="card c1">
+          <h4>Delings-opdateringer (e-mail + log)</h4>
+          <p>Nyt delingsflow: højreklik på fil/mappe → «Del link», og skift mellem link og e-mail. Matcher Kontainers delte links + notifikationsværktøj. Password, e-mail og delingshistorik er UI-preview og kræver fortsat back-end.</p>
+          <p class="test-note"><strong>Test:</strong> Højreklik på en fil eller mappe, vælg Del link, og skift imellem link og e-mail.</p>
+          <a class="preview-link" href="https://share-dialog-sf2.cbx.xyz/" target="_blank" rel="noopener">Preview: share-dialog-sf2.cbx.xyz →</a>
+          <div class="chips"><span class="chip k1">Kundedrevet</span><span class="chip k2">Konkurrence-gap</span><span class="chip be">Back-end</span></div>
+        </div>
+        <div class="card c1">
+          <h4>Forbedret delingsoversigt &amp; aktivitetslog</h4>
+          <p>Samlet overblik over hvem der har delt hvad, hvornår — bygger direkte oven på delingsloggen.</p>
+          <div class="chips"><span class="chip k1">Kundedrevet</span></div>
+        </div>
+        <div class="card c7">
+          <h4>Maps-søgning og kortoversigt</h4>
+          <p>Se billeder med lokationsdata på et kort — både i mapper og i søgeresultater. Nyt kort-menupunkt i visnings-værktøjslinjen; kortet kan også åbnes via lokationsvisningen i billedets højrepanel. Findes ikke i Kontainers modulliste — ren differentiator.</p>
+          <p class="test-note"><strong>Test:</strong> Åbn en mappe eller søg på billeder med GPS-data, vælg kort-visning i værktøjslinjen, klik på en markør og åbn billedet.</p>
+          <a class="preview-link" href="https://sfmap-sf2.cbx.xyz/" target="_blank" rel="noopener">Preview: sfmap-sf2.cbx.xyz →</a>
+          <div class="chips"><span class="chip k7">Differentiator</span><span class="chip be">Back-end</span></div>
+        </div>
+        <div class="card c1">
+          <h4>Bruger-/dataforbrugs-begrænsning</h4>
+          <p>Kvoter og begrænsning af forbrug pr. bruger/konto — grundlag for prisdifferentiering og styring.</p>
+          <div class="chips"><span class="chip k1">Kundedrevet</span></div>
+        </div>
+        <div class="card c1">
+          <h4>Nyt upload-UI</h4>
+          <p>Redesign af upload-flowet — forberedt til senere gæste-/leverandørupload («Modtag filer fra leverandører», som Kontainer tilbyder i dag).</p>
+          <div class="chips"><span class="chip k1">Kundedrevet</span><span class="chip k2">Baner vej for gap</span></div>
+        </div>
+        <div class="card c1">
+          <h4>Forberedelse: semantisk søgning</h4>
+          <p>Model-/indekseringsvalg og back-end-grundlag afklares parallelt med face detection, så Fase 2 kan gå direkte i produktion.</p>
+          <div class="chips"><span class="chip k1">Kundedrevet</span><span class="chip be">Back-end</span></div>
+        </div>
+      </div>
+
+      <!-- FASE 2 -->
+      <div class="col">
+        <div class="card c1">
+          <h4>Semantisk søgning</h4>
+          <p>Den store kundedrevne leverance. Går forbi Kontainers «Advanced Media Search» + AI-tags ved at søge på mening, ikke kun metadata.</p>
+          <div class="chips"><span class="chip k1">Kundedrevet</span><span class="chip k7">Differentiator</span><span class="chip be">Back-end</span></div>
+        </div>
+        <div class="card c2">
+          <h4>Face detection · Consent</h4>
+          <p>Samtykke koblet på genkendte personer. Sammen med samtykkemodulet = paritet med Kontainers GDPR-samtykke og datostyring.</p>
+          <div class="chips"><span class="chip k2">Konkurrence-gap</span><span class="chip be">Back-end</span></div>
+        </div>
+        <div class="card c2">
+          <h4>Notifikationer på fulgte mapper</h4>
+          <p><em>Nyt fra konkurrentanalysen:</em> besked ved ændringer/nye filer i fulgte mapper — genbruger notifikations-infrastrukturen fra delingsloggen.</p>
+          <div class="chips"><span class="chip k2">Konkurrence-gap</span><span class="chip be">Back-end</span></div>
+        </div>
+      </div>
+
+      <!-- FASE 3 -->
+      <div class="col">
+        <div class="card c2">
+          <h4>Basal statistik &amp; download-tracking</h4>
+          <p><em>Nyt fra konkurrentanalysen:</em> track logins, downloads og delingsaktivitet — Kontainer sælger aktivt på «Statistik».</p>
+          <div class="chips"><span class="chip k2">Konkurrence-gap</span><span class="chip be">Back-end</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Løbende hygiejne-spor -->
+    <div class="hygiene-track">
+      <div class="hygiene-head">
+        <h3>Løbende hygiejne-spor · Sep 2026 → Feb 2027</h3>
+        <p class="hint">Grupperede UI-kvalitetspunkter, der tages kontinuerligt ved siden af de store leverancer — quick wins først. Passer i huller mellem sprints og kræver ikke back-end.</p>
+      </div>
+      <div class="hygiene-items">
+        <div class="card c3">
+          <h4>1 · Højrepanel: resize + opdateret UI</h4>
+          <p>Gør højrepanelet justerbart ligesom venstre panel, og løft UI'et visuelt og strukturelt.</p>
+          <p class="test-note"><strong>Test:</strong> Åbn en fil eller mappe, vis højrepanelet, og gør det både bredt og smalt. Kontrollér især tags, metadata og samtykke-knapper.</p>
+          <a class="preview-link" href="https://update-details-panel-sf2.cbx.xyz/" target="_blank" rel="noopener">Preview: update-details-panel-sf2.cbx.xyz →</a>
+        </div>
+        <div class="card c3">
+          <h4>2 · Empty-, loading- &amp; error-states</h4>
+          <p>Ensartede tomme/fejl/indlæsnings-tilstande i hele appen. Billigt løft af oplevet kvalitet.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consent UI · gennemgående spor -->
+    <div class="consent-track">
+      <h3>Consent UI · Gennemgående spor over alle 3 faser</h3>
+      <p class="hint">Samtykke-oplevelsen ensartes løbende med Skyfish Drev (tidl. «Ensart UI Drev og Samtykke») og kulminerer i Face detection · Consent i Fase 2. Alle punkter i sporet:</p>
+      <div class="consent-cols">
+        <div class="consent-item"><span><strong>Ensartet design med Drev</strong> — ens toolbars, knapper, ikoner, afstande og primære blå handlinger.</span></div>
+        <div class="consent-item"><span><strong>Standardiseret pagination</strong> på tværs af Consent med ens højde, placering og luft.</span></div>
+        <div class="consent-item"><span><strong>Forbedret selection-toolbar</strong> i samtykkelisten: nulstilling, redigering, download, flytning, filer og sletning.</span></div>
+        <div class="consent-item"><span><strong>Venstrepanel på underskriversiden</strong> med statusfiltre og dynamiske antal.</span></div>
+        <div class="consent-item"><span><strong>Korrekt filter-overlap</strong> — aktive og udløbne filtre kan begge indeholde samme person.</span></div>
+        <div class="consent-item"><span><strong>Responsivt card view</strong> for underskrivere; det valgte view huskes.</span></div>
+        <div class="consent-item"><span><strong>Underskriverkort</strong> med kontaktdata, filer, samtykker og status samt hurtig redigering af e-mail og telefon.</span></div>
+        <div class="consent-item"><span><strong>Underskriverprofiler</strong> med ens brødkrummer, forbedret header og tydeligere statusoversigt.</span></div>
+        <div class="consent-item"><span><strong>Profilbilleder</strong> kan forstørres ved hover og tastaturfokus, som i Drev.</span></div>
+        <div class="consent-item"><span><strong>Fleksible responsive kort-grids</strong> for digitale samtykker og skabeloner.</span></div>
+        <div class="consent-item"><span><strong>Forbedret mobilvisning</strong> samt loading-, fejl-, tomme og disabled-tilstande.</span></div>
+        <div class="consent-item"><span><strong>Scroll-/virtualiseringsfejl</strong> i underskriverlisten er rettet.</span></div>
+        <div class="consent-item"><span><strong>Storybook- og enhedstests</strong> tilføjet for de vigtigste nye funktioner.</span></div>
+      </div>
+      <div class="consent-sub">
+        <div class="card" style="border-left-color: var(--cat-5);">
+          <h4>Link Consent Dialog</h4>
+          <p>Rettet dropdown og mouseover-billede i dialogen til at linke samtykker til filer.</p>
+          <p class="test-note"><strong>Test:</strong> Vælg en fil, klik «Link samtykke», og test søgning, mouseover på profilbilleder samt valg af ét eller alle samtykker.</p>
+          <a class="preview-link" href="https://link-consent-dialog-sf2.cbx.xyz/" target="_blank" rel="noopener">Preview: link-consent-dialog-sf2.cbx.xyz →</a>
+        </div>
+        <div class="card" style="border-left-color: var(--cat-5);">
+          <h4>Kobling til faserne</h4>
+          <p>Sporet løber parallelt med de store leverancer: designensretning og listeforbedringer starter i Fase 1, så et færdigt og gennemtestet Consent-UI ligger klar, når Face detection · Consent og GDPR-pariteten med Kontainer leveres i Fase 2.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Platform · hæv bundniveauet -->
+    <div class="platform-track">
+      <h3>Platform · Hæv bundniveauet — baseret på user data (PostHog)</h3>
+      <p class="hint">Top 10 fra adfærdsanalysen (3.035 engangsbrugere vs. 297 engagerede, 12 måledage 27. jul – 17. aug 2026).
+      Engagerede brugere adskiller sig ved at <strong>søge, dele og organisere</strong> — og friktionen rammer kernebrugerne hårdest
+      (sessioner med rage-klik + fejl er 66,9 sider mod 6,4 uden friktion). Rangeret efter berørte brugere × effekt ÷ indsats; 1–3 kan startes med det samme.</p>
+      <div class="platform-items">
+        <div class="card">
+          <h4><span class="p-num">1</span>Gør fil- og mappefelterne responsive</h4>
+          <p>1.187 brugere rage-klikker på miniaturerne i filgitteret; INP p75 er 536 ms («dårlig», grænsen er 200 ms). Visuel respons &lt;100 ms, skeletindlæsning, entydigt klik-mønster.</p>
+          <p class="p-goal"><strong>Mål:</strong> INP p75 &lt; 200 ms · rage-klik-brugere −60 %</p>
+          <div class="chips"><span class="chip k4">Start nu</span><span class="chip be">Indsats: Mellem</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">2</span>Cookiebanner væk fra delte links første skærm</h4>
+          <p>1.512 delt-link-sessioner møder Cookiebot først: 3 sek. median mod 69, download 5,8 % mod 22,7 %. Afklar om delte links overhovedet kræver dialogen — ellers gør den diskret.</p>
+          <p class="p-goal"><strong>Mål:</strong> Download-andel i banner-sessioner op fra 5,8 %</p>
+          <div class="chips"><span class="chip k4">Start nu</span><span class="chip be">Indsats: Lav</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">3</span>Gør søgning hurtig — og derefter synlig</h4>
+          <p>66 % af engagerede søger mod 24,6 % af engangsbrugere — men kun 17,8 % søger overhovedet, og 1.155 bladrer manuelt. Fix responsivitet først, så fremtrædende placering, forslag og filtre. Fundament for semantisk søgning i Fase 2.</p>
+          <p class="p-goal"><strong>Mål:</strong> Søgeandel 17,8 % → 40 %</p>
+          <div class="chips"><span class="chip k4">Start nu</span><span class="chip k1">Kobler til Fase 2</span><span class="chip be">Indsats: Mellem</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">4</span>Rodmappen som landingsside, ikke mappeliste</h4>
+          <p>1.533 sessioner dør i rodmappen uden at åbne en undermappe; 87,1 % downloader intet. Vis senest tilføjede, mest downloadede, seneste mapper og søgeprompt.</p>
+          <p class="p-goal"><strong>Mål:</strong> Sessioner der dør i rodmappen −40 %</p>
+          <div class="chips"><span class="chip be">Indsats: Mellem</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">5</span>Delt link: én tydelig primær handling</h4>
+          <p>Kun 43,5 % af delt-link-sessioner åbner en fil, 19,4 % downloader. «Download alle» som primær knap på landingen, færre trin — og erstat 404-blindgyden med en forklarende side.</p>
+          <p class="p-goal"><strong>Mål:</strong> Download-andel 19,4 % → 30 %</p>
+          <div class="chips"><span class="chip be">Indsats: Mellem</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">6</span>Fix download på mobil</h4>
+          <p>Mobil downloader 11,7 % mod 25,0 % på desktop — og mobilbrugerne er netop delt-link-modtagerne. Gennemgå flowet på iOS Safari; fjern trin der ikke virker på telefon.</p>
+          <p class="p-goal"><strong>Mål:</strong> Mobil download-andel til 20 %</p>
+          <div class="chips"><span class="chip be">Indsats: Mellem</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">7</span>Deling som én knap — og fix copyToClipboard</h4>
+          <p>Deling er 5,3× stærkere hos engagerede, men kun 12,3 % deler. Oversættelsesnøglen copyToClipboard fejler på dansk og engelsk (225 brugere ramt) — ret den nu, og gør «del» direkte fra fil-/mappekortet. Styrker delings-leverancen i Fase 1.</p>
+          <p class="p-goal"><strong>Mål:</strong> Delingsandel 12,3 % → 25 %</p>
+          <div class="chips"><span class="chip k1">Kobler til Fase 1</span><span class="chip be">Indsats: Lav–mellem</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">8</span>Onboarding mod første upload og første tag</h4>
+          <p>Upload er 5,4× og tags 4,0× stærkere hos engagerede, men kun 61 af 364 aktive konti har lagt noget ind. Definér «aktiveret bruger» (1 upload + 1 tag på 30 dage) og byg guidet forløb — start med de 86 konti med 5+ brugere. Kobler til nyt upload-UI i Fase 1.</p>
+          <p class="p-goal"><strong>Mål:</strong> Aktiverede konti 17 % → 35 %</p>
+          <div class="chips"><span class="chip k1">Kobler til Fase 1</span><span class="chip be">Indsats: Høj</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">9</span>Ryd fejlbilledet, så reelle fejl bliver synlige</h4>
+          <p>Consent-403-støjen rammer 2.632 brugere i 57,9 % af sessionerne og skjuler de reelle fejl (405 state-machine-fejl, 87 afbrudte downloads). Håndtér 403 som forventet tilstand; alarm på resten.</p>
+          <p class="p-goal"><strong>Mål:</strong> Sessioner med reel fejl under 5 %</p>
+          <div class="chips"><span class="chip be">Indsats: Lav</span></div>
+        </div>
+        <div class="card">
+          <h4><span class="p-num">10</span>Mål engagement — events, alarmer og dashboard</h4>
+          <p>Målingen var nede 6.–14. aug uden at nogen opdagede det; ingen navngivne produkt-events, ingen berigede virksomhedsgrupper. 10–15 kerne-events, alarm på event-volumen, ugentligt dashboard. Forudsætning for at følge alle mål — og for statistik-leverancen i Fase 3.</p>
+          <p class="p-goal"><strong>Mål:</strong> Ugentligt engagement-dashboard i drift</p>
+          <div class="chips"><span class="chip k1">Kobler til Fase 3</span><span class="chip be">Indsats: Mellem</span></div>
+        </div>
+      </div>
+      <p class="platform-foot"><strong>Kan I kun nå tre ting:</strong> tag 1, 2 og 3. Nr. 1 gør produktet behageligt for dem, der bruger det mest;
+      nr. 2 er den billigste rettelse med størst rækkevidde (58 % af brugerbasen, ingen ny funktionalitet); nr. 3 rammer den adfærd,
+      der tydeligst adskiller tilbagevendende brugere fra engangsbrugere. Forbehold: Tallene viser sammenhæng, ikke bevist årsag — men hvert punkt har et målepunkt, så effekten kan efterprøves.</p>
+    </div>
+
+    <div class="backlog">
+      <h3>Backlog · Kontainer-gaps til senere vurdering (H2 2027 →)</h3>
+      <p class="hint">Moduler Kontainer markedsfører i dag, som ikke er kritiske de næste 6 mdr., men bør holdes på radaren:</p>
+      <div class="backlog-items">
+        <span class="backlog-item"><strong>Gæste-/leverandørupload</strong> · modtag filer udefra (upload-UI'et forbereder dette)</span>
+        <span class="backlog-item"><strong>Smarte mapper</strong> · filterbaserede automatiske mapper</span>
+        <span class="backlog-item"><strong>Download-formater</strong> · auto-beskæring &amp; konvertering</span>
+        <span class="backlog-item"><strong>Digitalt showroom</strong> · delbare brand-/pressesider</span>
+        <span class="backlog-item"><strong>Kommentar- &amp; godkendelsesflow</strong></span>
+        <span class="backlog-item"><strong>Office/Adobe-integration</strong></span>
+        <span class="backlog-item"><strong>CMS-/webshop-integration</strong> &amp; PIM/custom fields</span>
+        <span class="backlog-item"><strong>SSO/ADFS</strong></span>
+        <span class="backlog-item"><strong>SoMe-publicering</strong> direkte fra platformen</span>
+      </div>
+    </div>
+
+    <footer>
+      Kilder: Skyfish internt roadmap (aug 2026), Kontainer.com featureliste («Funktioner i Kontainer — DAM/PIM, AI-integrationer og workflows»)
+      &amp; «Top 10: tilfredse brugere og højere engagement» (PostHog-adfærdsdata, 12 måledage 27. jul – 17. aug 2026).
+      Rækkefølgen inden for hver fase er prioriteret; back-end-mærkede punkter forudsætter back-end-kapacitet i den pågældende fase.
+    </footer>
+
+  </div>
+</div>
+</body>
+</html>

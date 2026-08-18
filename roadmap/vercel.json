@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/skyfish_roadmap_4.html" },
+    { "source": "/SF2026", "destination": "/skyfish_roadmap_4.html" },
+    { "source": "/sf2026", "destination": "/skyfish_roadmap_4.html" }
+  ]
+}
