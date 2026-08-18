@@ -97,6 +97,23 @@ Fire lag, hvor de første tre er gratis og deterministiske (`src/lib/relevance/`
    `src/lib/scoring/prompt.ts`. Hver score caches på
    `(notice, profil, profilversion)` og genberegnes kun ved eksplicit trigger.
 
+## Ydelse
+
+SPEC §8 kræver at radaren loader under ét sekund med 50.000 bekendtgørelser i
+basen. Målt på en lokal Postgres 16 med 50.000 bekendtgørelser og 20.000
+scoringer (tid for hele forespørgslen inkl. optælling):
+
+| Visning | Tid |
+|---|---|
+| Standardvisning | 117 ms |
+| Profil + minimum score | 111 ms |
+| Fritekstsøgning | 103 ms |
+| Region + ordregiver | 154 ms |
+| Side 20 | 100 ms |
+
+Indekser: `published_at`, `deadline_at`, `cpv_main`, GIN på `cpv_all` og GIN på
+den genererede `search_vector`.
+
 ## Selfhost i stedet for Vercel
 
 Cron-planerne i `vercel.json` er de eneste Vercel-specifikke linjer. Ved selfhost
