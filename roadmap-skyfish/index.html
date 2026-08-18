@@ -246,6 +246,39 @@
 
   footer { margin-top: 26px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
 
+  /* ---------- Adgangskode-gate ---------- */
+  body.locked .viz-root .wrap { display: none; }
+  .gate {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: var(--page); align-items: center; justify-content: center;
+  }
+  body.locked .gate { display: flex; }
+  .gate-box {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 12px; padding: 34px 38px 30px; width: min(92vw, 380px);
+    text-align: center; box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+  }
+  .gate-box img { height: 30px; margin: 0 auto 18px; display: block; }
+  .gate-box h2 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .gate-box p { font-size: 12.5px; color: var(--text-secondary); margin-bottom: 16px; }
+  .gate-box input {
+    width: 100%; padding: 10px 12px; font-size: 14px; letter-spacing: 0.12em;
+    text-align: center; text-transform: uppercase;
+    border: 1px solid var(--hairline); border-radius: 8px;
+    background: var(--page); color: var(--text-primary); outline: none;
+    font-family: inherit;
+  }
+  .gate-box input:focus { border-color: var(--cat-1); }
+  .gate-box button {
+    margin-top: 12px; width: 100%; padding: 10px 12px; font-size: 13.5px; font-weight: 650;
+    background: var(--cat-1); color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; font-family: inherit;
+  }
+  .gate-box button:hover { filter: brightness(1.08); }
+  .gate-err { display: none; font-size: 12px; color: #d03b3b; margin-top: 10px; }
+  .gate-box.error .gate-err { display: block; }
+  .gate-box.error input { border-color: #d03b3b; }
+
   @media (max-width: 880px) {
     .gap-strip, .timeline-head, .columns { grid-template-columns: 1fr; }
     .timeline-rail { display: none; }
@@ -253,8 +286,18 @@
   }
 </style>
 </head>
-<body>
+<body class="locked">
 <div class="viz-root">
+  <div class="gate">
+    <div class="gate-box">
+      <img src="data:image/png;base64,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" alt="Skyfish">
+      <h2>Beskyttet roadmap</h2>
+      <p>Indtast adgangskoden for at åbne roadmappet.</p>
+      <input id="gate-input" type="password" placeholder="Adgangskode" autocomplete="off" autofocus>
+      <button id="gate-btn" type="button">Åbn roadmap</button>
+      <div class="gate-err">Forkert kode — prøv igen.</div>
+    </div>
+  </div>
   <div class="wrap">
 
     <div class="brand">
@@ -540,5 +583,24 @@
 
   </div>
 </div>
+<script>
+(function () {
+  var K = [22,17,67,69,70,73].map(function (c, i) { return String.fromCharCode(c ^ [69,87,113,117,116,127][i]); }).join("");
+  var input = document.getElementById("gate-input");
+  var btn = document.getElementById("gate-btn");
+  var box = document.querySelector(".gate-box");
+  function tryUnlock() {
+    if (input.value.trim().toUpperCase() === K) {
+      document.body.classList.remove("locked");
+    } else {
+      box.classList.add("error");
+      input.select();
+    }
+  }
+  btn.addEventListener("click", tryUnlock);
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+  input.addEventListener("input", function () { box.classList.remove("error"); });
+})();
+</script>
 </body>
 </html>
