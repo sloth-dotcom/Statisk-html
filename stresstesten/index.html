@@ -148,11 +148,45 @@
   .kgroup{font-weight:800; color:var(--ink); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin:14px 0 6px; column-span:none}
   footer{padding:34px 0 60px}
   .mantra{font-size:12px; letter-spacing:.14em; font-weight:800; text-transform:uppercase; color:var(--muted); border-top:1px solid var(--line); padding-top:22px}
+  /* ---------- Adgangskode-gate ---------- */
+  body:not(.unlocked) > .nav, body:not(.unlocked) > .wrap{display:none}
+  .gate{display:flex; position:fixed; inset:0; z-index:200; background:var(--bg);
+        align-items:center; justify-content:center; padding:26px}
+  body.unlocked .gate{display:none}
+  .gate-box{background:var(--card); border:1px solid var(--line); border-radius:14px;
+            padding:34px 34px 30px; width:min(92vw,392px); text-align:center; box-shadow:0 8px 30px rgba(16,24,40,.10)}
+  .gate-box .kick{margin-bottom:8px}
+  .gate-box h2{font-size:19px; margin-bottom:6px}
+  .gate-box p{font-size:13px; color:var(--muted); margin-bottom:18px}
+  .gate-box input{width:100%; padding:11px 12px; font-size:14.5px; letter-spacing:.14em;
+                  text-align:center; text-transform:uppercase; font-family:inherit;
+                  border:1px solid var(--line2); border-radius:9px; background:var(--card2);
+                  color:var(--ink); outline:none}
+  .gate-box input:focus{border-color:var(--k2)}
+  .gate-box button{margin-top:12px; width:100%; padding:11px 12px; font-size:13.5px; font-weight:700;
+                   font-family:inherit; background:var(--k2); color:#fff; border:none;
+                   border-radius:9px; cursor:pointer}
+  .gate-box button:hover{filter:brightness(1.08)}
+  .gate-err{display:none; font-size:12.5px; color:var(--v-nej); margin-top:11px}
+  .gate-box.error .gate-err{display:block}
+  .gate-box.error input{border-color:var(--v-nej)}
+
   @media (max-width:720px){
     h1{font-size:31px} .panel{padding:24px 20px} header.top{padding-top:30px}
     .delbanner{padding:24px 20px} .kilder{columns:1}
   }
 </style>
+
+<div class="gate">
+  <div class="gate-box">
+    <p class="kick">Fortroligt &#xB7; udkast til ledelsesgruppen</p>
+    <h2>Stresstesten &amp; agenten</h2>
+    <p>Indtast adgangskoden for at &#xE5;bne analysen.</p>
+    <input id="gate-input" type="password" placeholder="Adgangskode" autocomplete="off" autofocus>
+    <button id="gate-btn" type="button">&#xC5;bn analysen</button>
+    <div class="gate-err">Forkert kode &#x2014; pr&#xF8;v igen.</div>
+  </div>
+</div>
 
 <nav class="nav" aria-label="Sektioner">
   <div class="wrap nav-in">
@@ -901,3 +935,25 @@
 </footer>
 
 </div>
+
+<script>
+(function () {
+  var M = [71,83,109,88,101,94,113];
+  var K = [4,17,53,106,85,108,71].map(function (c, i) { return String.fromCharCode(c ^ M[i]); }).join("");
+  var input = document.getElementById("gate-input");
+  var btn = document.getElementById("gate-btn");
+  var box = document.querySelector(".gate-box");
+  function tryUnlock() {
+    if (input.value.trim().toUpperCase() === K) {
+      document.body.classList.add("unlocked");
+    } else {
+      box.classList.add("error");
+      input.select();
+    }
+  }
+  btn.addEventListener("click", tryUnlock);
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter") tryUnlock(); });
+  input.addEventListener("input", function () { box.classList.remove("error"); });
+  input.focus();
+})();
+</script>
