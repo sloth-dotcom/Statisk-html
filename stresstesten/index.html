@@ -1,0 +1,903 @@
+<meta charset="utf-8">
+<title>Stresstesten &amp; agenten</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --bg:#f2f3f6; --card:#ffffff; --card2:#f8f9fb; --ink:#12161f; --body:#3a4150; --muted:#6b7280;
+    --line:#e4e6eb; --line2:#d5d9e0; --shadow:0 1px 2px rgba(16,24,40,.05);
+    --k1:#188a44; --k2:#2458d6; --k3:#c26a00; --k4:#7433d6;
+    --k1-soft:#e7f5ec; --k2-soft:#e9effc; --k3-soft:#fbf0df; --k4-soft:#f2eafc;
+    --v-ok:#15733c; --v-ok-bg:#dff2e5; --v-pres:#9a5a00; --v-pres-bg:#faeed7; --v-nej:#b02a2a; --v-nej-bg:#fbe5e5; --v-del:#1d4ed8; --v-del-bg:#e4ecfc;
+    --t-red:#fcf1f0; --t-red-l:#f2dad7; --t-blue:#f4f8fe; --t-blue-l:#dbe6f8; --t-green:#eff8f1; --t-green-l:#d6ecdb;
+    --t-purple:#f7f4fc; --t-purple-l:#e5dcf5; --t-yellow:#fdfaef; --t-yellow-l:#f0e8cd; --t-pink:#fdf2f7; --t-pink-l:#f4d9e6;
+    --deep:#12351f; --deep-ink:#eef7f0; --thead:#151a24; --thead-ink:#f4f5f8;
+    --mark:#fff3c4; --mark-ink:#6b5200; --pink-kick:#c2367e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1014; --card:#171a21; --card2:#1c2029; --ink:#eceef3; --body:#c0c6d2; --muted:#8d93a1;
+      --line:#272c36; --line2:#333a47; --shadow:0 1px 2px rgba(0,0,0,.35);
+      --k1:#4cc57a; --k2:#7ba3f2; --k3:#e8a04c; --k4:#b18cf0;
+      --k1-soft:#16281d; --k2-soft:#182238; --k3-soft:#2c2214; --k4-soft:#251b36;
+      --v-ok:#5fd08c; --v-ok-bg:#15301f; --v-pres:#eec06a; --v-pres-bg:#33270f; --v-nej:#f08a8a; --v-nej-bg:#391818; --v-del:#8fb0f5; --v-del-bg:#182543;
+      --t-red:#231518; --t-red-l:#43262b; --t-blue:#141a26; --t-blue-l:#26324a; --t-green:#12211a; --t-green-l:#24402f;
+      --t-purple:#1b1626; --t-purple-l:#342a4a; --t-yellow:#221e12; --t-yellow-l:#413a20; --t-pink:#221420; --t-pink-l:#40263a;
+      --deep:#12351f; --deep-ink:#eef7f0; --thead:#090b10; --thead-ink:#e8eaf0;
+      --mark:#3a3113; --mark-ink:#eeda8a; --pink-kick:#ef7fb4;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1014; --card:#171a21; --card2:#1c2029; --ink:#eceef3; --body:#c0c6d2; --muted:#8d93a1;
+    --line:#272c36; --line2:#333a47; --shadow:0 1px 2px rgba(0,0,0,.35);
+    --k1:#4cc57a; --k2:#7ba3f2; --k3:#e8a04c; --k4:#b18cf0;
+    --k1-soft:#16281d; --k2-soft:#182238; --k3-soft:#2c2214; --k4-soft:#251b36;
+    --v-ok:#5fd08c; --v-ok-bg:#15301f; --v-pres:#eec06a; --v-pres-bg:#33270f; --v-nej:#f08a8a; --v-nej-bg:#391818; --v-del:#8fb0f5; --v-del-bg:#182543;
+    --t-red:#231518; --t-red-l:#43262b; --t-blue:#141a26; --t-blue-l:#26324a; --t-green:#12211a; --t-green-l:#24402f;
+    --t-purple:#1b1626; --t-purple-l:#342a4a; --t-yellow:#221e12; --t-yellow-l:#413a20; --t-pink:#221420; --t-pink-l:#40263a;
+    --deep:#12351f; --deep-ink:#eef7f0; --thead:#090b10; --thead-ink:#e8eaf0;
+    --mark:#3a3113; --mark-ink:#eeda8a; --pink-kick:#ef7fb4;
+  }
+  *{box-sizing:border-box; margin:0}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+  body{background:var(--bg); color:var(--body); font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+       font-size:14.5px; line-height:1.58; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1290px; margin:0 auto; padding:0 26px}
+  h1,h2,h3,h4{color:var(--ink); text-wrap:balance; line-height:1.22}
+  h1{font-size:40px; font-weight:800; letter-spacing:-.02em}
+  h2{font-size:26px; font-weight:800; letter-spacing:-.015em}
+  h3{font-size:15.5px; font-weight:700}
+  p{margin:0}
+  a{color:var(--k2)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--k2); outline-offset:2px; border-radius:3px}
+  .kick{font-size:10.5px; letter-spacing:.15em; text-transform:uppercase; font-weight:700; color:var(--muted)}
+  .kick.k1{color:var(--k1)} .kick.k2{color:var(--k2)} .kick.k3{color:var(--k3)} .kick.k4{color:var(--k4)}
+  .dash{display:inline-block; width:34px; height:4px; border-radius:2px; margin-bottom:10px}
+  .sub{font-size:15.5px; color:var(--body); max-width:74ch}
+  .small{font-size:12.5px; color:var(--muted)}
+  .rf{font-size:9.5px; vertical-align:super; line-height:0; color:var(--muted); text-decoration:none; font-weight:600; letter-spacing:.02em}
+  .rf:hover{color:var(--k2)}
+  mark.gap{background:var(--mark); color:var(--mark-ink); padding:0 5px; border-radius:4px; font-weight:600}
+  /* nav */
+  .nav{position:sticky; top:0; z-index:60; background:color-mix(in srgb, var(--bg) 88%, transparent);
+       backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+  .nav-in{display:flex; gap:4px; align-items:center; overflow-x:auto; padding:9px 0; scrollbar-width:none}
+  .nav-in::-webkit-scrollbar{display:none}
+  .nav a{white-space:nowrap; font-size:12px; font-weight:600; color:var(--muted); text-decoration:none; padding:5px 11px; border-radius:999px}
+  .nav a:hover{color:var(--ink); background:var(--card2)}
+  .nav .nv-t{font-weight:800; color:var(--ink); padding-right:8px; font-size:12.5px}
+  .nav .del{color:var(--line2); padding:0 2px}
+  /* panels & cards */
+  .panel{border-radius:16px; border:1px solid var(--line); background:var(--card); padding:34px 34px 30px; margin:26px 0}
+  .panel.t-red{background:var(--t-red); border-color:var(--t-red-l)}
+  .panel.t-blue{background:var(--t-blue); border-color:var(--t-blue-l)}
+  .panel.t-green{background:var(--t-green); border-color:var(--t-green-l)}
+  .panel.t-purple{background:var(--t-purple); border-color:var(--t-purple-l)}
+  .panel.t-yellow{background:var(--t-yellow); border-color:var(--t-yellow-l)}
+  .panel.t-pink{background:var(--t-pink); border-color:var(--t-pink-l)}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:11px; padding:17px 19px; box-shadow:var(--shadow)}
+  .card h3{margin-bottom:6px}
+  .card p{font-size:13.5px}
+  .g2,.g3,.g4{display:grid; gap:14px; margin-top:18px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(232px,1fr))}
+  .hd{display:flex; flex-wrap:wrap; gap:10px 16px; align-items:baseline; justify-content:space-between; margin-bottom:6px}
+  /* chips */
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:800; letter-spacing:.08em;
+        text-transform:uppercase; padding:3.5px 10px; border-radius:999px; white-space:nowrap}
+  .chip::before{content:""; width:7px; height:7px; border-radius:50%; background:currentColor}
+  .c-ok{color:var(--v-ok); background:var(--v-ok-bg)}
+  .c-pres{color:var(--v-pres); background:var(--v-pres-bg)}
+  .c-nej{color:var(--v-nej); background:var(--v-nej-bg)}
+  .c-del{color:var(--v-del); background:var(--v-del-bg)}
+  .c-info{color:var(--k2); background:var(--v-del-bg)}
+  /* tables */
+  .scroll{overflow-x:auto; margin-top:16px; border-radius:10px; border:1px solid var(--line)}
+  table{width:100%; border-collapse:separate; border-spacing:0; font-size:13px; background:var(--card); min-width:640px}
+  thead th{background:var(--thead); color:var(--thead-ink); text-align:left; font-weight:600; font-size:12px; padding:10px 13px; white-space:nowrap}
+  tbody td, tbody th{padding:9.5px 13px; border-top:1px solid var(--line); vertical-align:top; text-align:left}
+  tbody th{font-weight:600; color:var(--ink)}
+  td.num{font-variant-numeric:tabular-nums; white-space:nowrap}
+  .ja{color:var(--v-ok); font-weight:700} .nej{color:var(--v-nej); font-weight:700} .delv{color:var(--v-pres); font-weight:700}
+  tr.hero-row td, tr.hero-row th{background:var(--k1-soft)}
+  /* verdict strip */
+  .dom{display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; background:var(--card2); border:1px solid var(--line);
+       border-radius:10px; padding:13px 16px; margin-top:16px}
+  .dom p{font-size:13.5px}
+  .dom .bevis{font-size:12.5px; color:var(--muted)}
+  /* steelman + betingelser */
+  .steel{border-left:3px solid var(--line2); padding:2px 0 2px 14px; margin-top:14px; font-size:13.5px; max-width:88ch}
+  .steel b{color:var(--ink)}
+  ul.tight{margin:8px 0 0 0; padding-left:18px; font-size:13.5px}
+  ul.tight li{margin-top:5px}
+  /* del-banner */
+  .delbanner{border-radius:16px; padding:30px 34px; margin:40px 0 10px; background:var(--thead); color:var(--thead-ink)}
+  .delbanner .kick{color:#9aa3b5}
+  .delbanner h2{color:var(--thead-ink); font-size:29px; margin-top:6px}
+  .delbanner p{color:#c3c9d6; margin-top:8px; max-width:86ch; font-size:14.5px}
+  /* number tiles */
+  .tile{background:var(--card); border:1px solid var(--line); border-radius:11px; padding:15px 17px; box-shadow:var(--shadow)}
+  .tile .n{font-size:25px; font-weight:800; color:var(--ink); letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+  .tile .n small{font-size:13px; font-weight:700; color:var(--muted)}
+  .tile p{font-size:12.5px; color:var(--muted); margin-top:3px}
+  /* architecture layers */
+  .layer{border:1px solid var(--line); border-radius:11px; background:var(--card); padding:14px 18px; box-shadow:var(--shadow)}
+  .layer h4{font-size:13.5px; margin-bottom:3px}
+  .layer p{font-size:12.5px; color:var(--muted)}
+  .layer.core{background:var(--k2-soft); border-color:var(--t-blue-l)}
+  .arrow{color:var(--muted); text-align:center; font-size:15px; line-height:1; padding:5px 0}
+  .stack{display:flex; flex-direction:column; margin-top:18px}
+  /* callouts */
+  .co{border-left:4px solid var(--k2); background:var(--k2-soft); border-radius:8px; padding:14px 18px; margin-top:18px; font-size:13.5px}
+  .co b{color:var(--ink)}
+  .co.warn{border-left-color:var(--k3); background:var(--k3-soft)}
+  .co.ok{border-left-color:var(--k1); background:var(--k1-soft)}
+  .co.risk{border-left-color:var(--v-nej); background:var(--v-nej-bg)}
+  /* header meta box */
+  .metabox{background:var(--card); border:1px solid var(--line); border-radius:11px; padding:16px 19px; box-shadow:var(--shadow); max-width:390px}
+  .metabox h4{font-size:12.5px; margin-bottom:6px}
+  .metabox p{font-size:12px; color:var(--muted); margin-top:4px}
+  header.top{display:flex; flex-wrap:wrap; gap:26px; justify-content:space-between; align-items:flex-start; padding:46px 0 8px}
+  /* sources */
+  .kilder{columns:2; column-gap:34px; font-size:11.5px; color:var(--muted); margin-top:14px}
+  .kilder li{margin-bottom:5px; break-inside:avoid}
+  .kilder a{color:var(--muted); text-decoration:none}
+  .kilder a:hover{color:var(--k2); text-decoration:underline}
+  .kgroup{font-weight:800; color:var(--ink); font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin:14px 0 6px; column-span:none}
+  footer{padding:34px 0 60px}
+  .mantra{font-size:12px; letter-spacing:.14em; font-weight:800; text-transform:uppercase; color:var(--muted); border-top:1px solid var(--line); padding-top:22px}
+  @media (max-width:720px){
+    h1{font-size:31px} .panel{padding:24px 20px} header.top{padding-top:30px}
+    .delbanner{padding:24px 20px} .kilder{columns:1}
+  }
+</style>
+
+<nav class="nav" aria-label="Sektioner">
+  <div class="wrap nav-in">
+    <span class="nv-t">Stresstesten &amp; agenten</span>
+    <a href="#domme">Dommene</a><a href="#verden">2026</a><a href="#forsyning">Forsyning</a><a href="#forstaaelse">Forst&#xE5;else</a><a href="#rettigheder">Rettigheder</a><a href="#kontrol">Kontrol</a><a href="#blinde">Matrix 2.0</a><a href="#kredsloeb">Kredsl&#xF8;bene</a>
+    <span class="del">|</span>
+    <a href="#koncept">Agenten</a><a href="#konfig">Konfigurationer</a><a href="#usecases">Use cases</a><a href="#marked">Markedet</a><a href="#model">Forretningsmodel</a><a href="#economics">&#xD8;konomi</a><a href="#arkitektur">Arkitektur</a><a href="#jura">Jura</a><a href="#gtm">Faser</a><a href="#redteam">Red team</a><a href="#beslutning">Beslutningen</a><a href="#kilder">Kilder</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="top">
+  <div style="max-width:760px">
+    <p class="kick">Opf&#xF8;lger p&#xE5; kernekompetencemodellen &#xBB;Hvorfor os&#xAB;</p>
+    <h1 style="margin-top:10px">Stresstesten &amp; agenten</h1>
+    <p class="sub" style="margin-top:14px">De fire kernekompetencer efterpr&#xF8;vet mod DAM- og stockmarkedet, som det faktisk ser ud i august 2026 &#x2014; og derefter forretningsanalysen af det, stresstesten peger p&#xE5;: en white-label AI-agent p&#xE5; europ&#xE6;isk open source-infrastruktur.</p>
+    <p class="small" style="margin-top:12px">Udkast til ledelsesgruppen &#xB7; Research afsluttet 23. august 2026 &#xB7; Felter i <mark class="gap">[kantede parenteser]</mark> er tal, der stadig mangler</p>
+  </div>
+  <div class="metabox">
+    <h4>S&#xE5;dan er analysen lavet</h4>
+    <p>Syv parallelle research-spor med ca. 90 eksterne kilder (dateret pr. kilde, se nederst): stockmarkedet, DAM-markedet, EU-regulering, suver&#xE6;nitet, den &#xE5;bne modelstak, agent-markedet og dansk kontekst.</p>
+    <p>Krydset med internt materiale: kernekompetencemodellen, UX-rapporten for app.skyfish.com (aug. 2026), white-label chat-motor-rapporten v1.0, &#xF8;konomiarket, routing-lag v1 og konceptnotat v2.</p>
+    <p>Domme gives pr. kompetence: <span class="chip c-ok">Holder</span> <span class="chip c-pres">Under pres</span> <span class="chip c-del">Delvist</span> <span class="chip c-nej">Holder ikke</span></p>
+  </div>
+</header>
+
+<section class="panel" id="domme">
+  <p class="kick">00 &#xB7; Konklusionen f&#xF8;rst</p>
+  <h2 style="margin-top:8px">Fire p&#xE5;stande gik ind. &#xC9;n kom helskindet ud.</h2>
+  <p class="sub" style="margin-top:10px">Modellens test var: en kernekompetence skal &#xE5;bne flere markeder, v&#xE6;re sv&#xE6;r at kopiere og m&#xE6;rkes direkte af kunden. Holdt op mod markedet i august 2026 &#x2014; og mod jeres egne produktionsdata &#x2014; fordeler dommene sig s&#xE5;dan her.</p>
+  <div class="g4">
+    <div class="card"><span class="dash" style="background:var(--k1)"></span>
+      <div class="hd"><h3>01 &#xB7; Forsyning</h3><span class="chip c-pres">Under pres</span></div>
+      <p>Holder som kurateret niche &#x2014; &#xE6;gte, nordisk, dokumenterbart. Falder som volumenp&#xE5;stand: 26,9 mio. aktiver konkurrerer mod 800+ mio. hos Adobe og uendelig generering.</p>
+    </div>
+    <div class="card"><span class="dash" style="background:var(--k2)"></span>
+      <div class="hd"><h3>02 &#xB7; Forst&#xE5;else</h3><span class="chip c-nej">Holder ikke</span></div>
+      <p>Semantisk s&#xF8;gning og auto-tagging er blevet gratis hyldevare &#x2014; selv SharePoint har det med i Copilot-licensen. Kun tenant-dataloopet kan g&#xF8;re forst&#xE5;else til en kompetence igen.</p>
+    </div>
+    <div class="card"><span class="dash" style="background:var(--k3)"></span>
+      <div class="hd"><h3>03 &#xB7; Rettigheder</h3><span class="chip c-ok">Holder</span></div>
+      <p>Den &#xE6;gte kernekompetence &#x2014; og reguleringen bl&#xE6;ser medvind. Men den er underbevist: d&#xE6;kningsgraden er ukendt, og rettighedstjekket i produktion fejler 20.540 gange p&#xE5; 30 dage.</p>
+    </div>
+    <div class="card"><span class="dash" style="background:var(--k4)"></span>
+      <div class="hd"><h3>04 &#xB7; Kontrol</h3><span class="chip c-del">Delvist</span></div>
+      <p>Reel i forbundne kanaler, illusion udenfor. Skal scopes &#xE6;rligt &#x2014; og genopfindes til agent-&#xE6;raen, hvor kontrol betyder: kan fremmede AI-agenter hente aktiver <em>med</em> rettighedsh&#xE5;ndh&#xE6;velse?</p>
+    </div>
+  </div>
+  <div class="co"><b>Den tv&#xE6;rg&#xE5;ende konklusion:</b> Kompetencerne holder kun som system &#x2014; kredsl&#xF8;bene er det rigtige svar p&#xE5; kopieringstruslen. Men et kredsl&#xF8;b uden telemetri er en tegning: n&#xE6;sten alle modellens <mark class="gap">[beviser]</mark> er stadig tomme felter, og jeres egen m&#xE5;ling kan i dag ikke engang opg&#xF8;re s&#xF8;g-til-download p&#xE5;lideligt. Det, der mangler, er ikke en femte kompetence. Det er en flade, der p&#xE5; &#xE9;n gang driver brugen, opsamler dataene og beviser rettighederne. Det er Del 2.</div>
+</section>
+
+<section class="panel" id="verden">
+  <p class="kick">01 &#xB7; Pr&#xE6;missen</p>
+  <h2 style="margin-top:8px">Seks ting, der er sket med markedet, siden modellen blev tegnet</h2>
+  <p class="sub" style="margin-top:10px">Stresstesten skal m&#xE5;les mod verden af i dag, ikke mod 2024. Seks tektoniske skift &#x2014; hvert med tal og dato.</p>
+  <div class="g3">
+    <div class="card">
+      <h3>Duopolet vaklede &#x2014; fusionen d&#xF8;de</h3>
+      <p>Getty&#xD7;Shutterstock (3,7 mia. $) blev opgivet 7. juli 2026, efter CMA kr&#xE6;vede frasalg af Shutterstocks editorial-forretning.<a class="rf" href="#kilder">1&#x2013;3</a> Getty st&#xE5;r med 2,1 mia. $ g&#xE6;ld og 51,6 mio. $ i kassen; Q2-underskud 85,8 mio. $.<a class="rf" href="#kilder">4</a> Shutterstock: oms&#xE6;tning &#x2212;17 %, nedskrivning 163 mio. $, guidance trukket.<a class="rf" href="#kilder">5</a> Giganterne er s&#xE5;rbare &#x2014; men et presset Getty jagter nu de samme nicher som alle andre.</p>
+    </div>
+    <div class="card">
+      <h3>Gen-AI flyttede eftersp&#xF8;rgslen &#x2014; sk&#xE6;vt</h3>
+      <p>Shutterstocks betalte downloads faldt 12,3 % p&#xE5; &#xE9;t &#xE5;r.<a class="rf" href="#kilder">5</a> Freepik droppede stock-identiteten og rundede 230 mio. $ ARR &#x2014; halvdelen fra AI-video.<a class="rf" href="#kilder">6</a> Men Gettys editorial voksede +9,2 %, og 98 % af forbrugerne siger, at <em>&#xE6;gte</em> billeder er afg&#xF8;rende for tillid.<a class="rf" href="#kilder">4, 9</a> Det generiske kollapser; det dokumenterbart &#xE6;gte stiger i v&#xE6;rdi.</p>
+    </div>
+    <div class="card">
+      <h3>AI-forst&#xE5;else blev hyldevare</h3>
+      <p>Bynder: 1.000+ kunder p&#xE5; AI-s&#xF8;gning, AI-agenter og egen MCP-server; agent-abonnementer &#xD7;3 pr. kvartal.<a class="rf" href="#kilder">11, 12</a> Cloudinary skibede DAM-branchens f&#xF8;rste MCP-server juni 2025.<a class="rf" href="#kilder">13</a> SharePoints Knowledge Agent auto-tagger billeder &#x2014; inkluderet i Copilot-licensen.<a class="rf" href="#kilder">14</a> Semantisk s&#xF8;gning differentierer ikke l&#xE6;ngere nogen.</p>
+    </div>
+    <div class="card">
+      <h3>Reguleringen blev en featureliste</h3>
+      <p>AI-forordningens artikel 50 tr&#xE5;dte i kraft 2. august 2026: chatbot-transparens og maskinl&#xE6;sbar m&#xE6;rkning af AI-indhold &#x2014; legacy-systemer har frist 2. december 2026.<a class="rf" href="#kilder">15</a> H&#xF8;jrisiko-reglerne blev til geng&#xE6;ld udskudt til december 2027 med AI-Omnibus'en.<a class="rf" href="#kilder">16, 17</a> M&#xE6;rknings-kodekset er f&#xE6;rdigt med ~190 underskrivere.<a class="rf" href="#kilder">18</a> Compliance er ikke l&#xE6;ngere et notat &#x2014; det er produktkrav med datoer.</p>
+    </div>
+    <div class="card">
+      <h3>Suver&#xE6;nitet fik budgetter</h3>
+      <p>Europ&#xE6;isk sovereign-cloud-forbrug: 6,9 &#x2192; 12,6 mia. $ i 2026 (+83 %), p&#xE5; vej mod 23,1 mia. $ i 2027.<a class="rf" href="#kilder">20</a> EDPB bad 31. juli 2026 Kommissionen genvurdere EU-US-dataaftalen.<a class="rf" href="#kilder">21</a> Herhjemme: Datatilsynet gav 51 kommuner alvorlig kritik i Chromebook-sagen (jan. 2026), og digitaliseringsstrategien 2026-29 kortl&#xE6;gger europ&#xE6;iske alternativer.<a class="rf" href="#kilder">22, 23</a> Suver&#xE6;nitet er blevet et indk&#xF8;bskriterium.</p>
+    </div>
+    <div class="card">
+      <h3>&#xC5;bne modeller lukkede (n&#xE6;sten) gabet</h3>
+      <p>Mistral 3 er Apache 2.0; GLM-5.2 (MIT) ligger p&#xE5; frontier-niveau i agentiske benchmarks; alt k&#xF8;rer p&#xE5; EU-inferens hos Scaleway/OVH &#x2014; 13-45&#xD7; billigere pr. svar end frontier-API'er.<a class="rf" href="#kilder">24&#x2013;27, 79</a> Meta lukkede omvendt Llama 4 multimodal for EU-selskaber.<a class="rf" href="#kilder">28</a> Og Danmark fik sin egen: DFM Mimir v1, tr&#xE6;net og hostet i Danmark &#x2014; lanceret fra Odense 14. august 2026.<a class="rf" href="#kilder">29</a> &#xBB;GDPR eller kvalitet&#xAB; er et for&#xE6;ldet valg &#x2014; kun den absolutte frontier-top er stadig lukket land.</p>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="forsyning">
+  <span class="dash" style="background:var(--k1)"></span>
+  <p class="kick k1">Stresstest &#xB7; Kernekompetence 01 &#xB7; Forsyning</p>
+  <h2 style="margin-top:8px">&#xBB;Vi ejer selve indholdet&#xAB;</h2>
+  <p class="steel"><b>Modellen siger:</b> egen billedbank (26,9 mio. aktiver<a class="rf" href="#kilder">35</a>), et fotografmilj&#xF8; der producerer til os, nordisk og europ&#xE6;isk billedsprog. <b>St&#xE6;rkeste udgave af argumentet:</b> I en verden, der drukner i AI-slop og tr&#xE6;ningsdata-retssager, er ejet, dokumenterbart, &#xE6;gte indhold den reneste r&#xE5;vare &#x2014; og CMA's fusionsafg&#xF8;relse bekr&#xE6;ftede indirekte, at netop &#xE6;gte (editorial) indhold er d&#xE9;t knappe aktiv, konkurrencemyndigheder bekymrer sig om.<a class="rf" href="#kilder">1, 92</a></p>
+  <div class="g2">
+    <div class="card">
+      <div class="hd"><h3>Volumen-argumentet er d&#xF8;dt</h3><span class="chip c-nej">H&#xE5;rdt pres</span></div>
+      <p>26,9 mio. aktiver mod Adobe Stocks 800+ mio. og Fireflys 22+ mia. genereringer.<a class="rf" href="#kilder">7</a> Canva bundler Pexels/Pixabay gratis for 240 mio. brugere.<a class="rf" href="#kilder">8</a> Forsyning m&#xE5;lt i m&#xE6;ngde kan aldrig vindes &#x2014; p&#xE5;standen overlever kun, hvis den sk&#xE6;res til: <em>kurateret, &#xE6;gte, nordisk</em>. Ikke &#xBB;mange billeder&#xAB;, men &#xBB;de rigtige billeder, som ingen andre har&#xAB;.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Fotograf-flywheelet er &#xF8;konomisk presset</h3><span class="chip c-pres">Pres</span></div>
+      <p>Betalte downloads falder tocifret hos Shutterstock, og kontributor-indtjeningen falder branchen over.<a class="rf" href="#kilder">5</a> &#xBB;Vi er den eneste i k&#xE6;den, der betaler fotograferne&#xAB; er desuden upr&#xE6;cis &#x2014; Getty og Adobe betaler ogs&#xE5; bidragydere. Den reelle forskel er <em>n&#xE6;rhed og kuratering</em>: et navngivet nordisk fotografmilj&#xF8; vs. en anonym global pulje. Sig d&#xE9;t i stedet &#x2014; og bevis det med <mark class="gap">[nye fotografer og aktiver pr. kvartal]</mark>.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Lav-enden er allerede tabt</h3><span class="chip c-pres">Pres</span></div>
+      <p>Gratisbiblioteker, Canva og Firefly-i-Express har &#xE6;dt SMB-k&#xF8;bet af generiske billeder. Colourbox' prisenkelthed konkurrerer i stigende grad mod <em>gratis</em>. Konsekvens: forsyningens betalende fremtid ligger opad (organisationer med compliance-behov) og i bundtningen med DAM &#x2014; ikke i enkeltsalg af generiske motiver.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>AI-licensering er en check, ikke en s&#xF8;jle</h3><span class="chip c-pres">Pres</span></div>
+      <p>Markedsrater for billedkorpora ligger omkring 0,02&#x2013;0,04 $ pr. billede (Freepiks aftaler), og Shutterstocks datalicens-forretning faldt 16 % i Q2.<a class="rf" href="#kilder">31, 5</a> 26,9 mio. aktiver &#x2248; et engangsbel&#xF8;b i lav million-dollar-klasse &#x2014; betinget af, at kontributor-aftalerne overhovedet tillader det. En mulig bonus. Ikke et ben at st&#xE5; p&#xE5;.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Getty-dommen sv&#xE6;kkede frygtsalget</h3><span class="chip c-info">Nyt vilk&#xE5;r</span></div>
+      <p>UK-dommen i Getty v Stability (nov. 2025) gav ikke rettighedshaverne det v&#xE5;ben, de h&#xE5;bede &#x2014; de prim&#xE6;re ophavsretskrav faldt.<a class="rf" href="#kilder">10</a> &#xBB;K&#xF8;b licenseret, ellers bliver du sags&#xF8;gt&#xAB; b&#xE6;rer ikke alene. Men enterprise-indk&#xF8;b k&#xF8;ber stadig <em>skadesl&#xF8;sholdelse</em>: Getty markedsf&#xF8;rer uncapped indemnitet, Shutterstock 10.000&#x2013;250.000 $.<a class="rf" href="#kilder">32, 33</a> Colourbox' tilbud her: <mark class="gap">[udefineret]</mark>. Det er en blind vinkel med direkte enterprise-v&#xE6;rdi.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Proveniens er den &#xE5;bne d&#xF8;r</h3><span class="chip c-info">Mulighed</span></div>
+      <p>C2PA-sporing er nu i kameraer fra Leica, Sony, Nikon og Canon og vises p&#xE5; LinkedIn, Google og Meta &#x2014; men adoption-trackeren viser <em>ingen stock-akt&#xF8;rer</em> med end-to-end Content Credentials i leverancen.<a class="rf" href="#kilder">34</a> &#xBB;Dokumenterbart &#xE6;gte, fra optagelse til publicering&#xAB; er en forsyningsposition, der stadig er ledig &#x2014; og den passer pr&#xE6;cis til det nordiske autenticitetsbrand.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:16px"><b style="color:var(--ink)">Hvad der skal v&#xE6;re sandt, for at p&#xE5;standen holder:</b></p>
+  <ul class="tight">
+    <li>Nordisk autenticitet kan m&#xE5;les i eftersp&#xF8;rgsel &#x2014; s&#xF8;gninger og downloads p&#xE5; eget indhold, ikke bare eksistensen af det. I dag: <mark class="gap">[andel af downloads fra egen bank]</mark>.</li>
+    <li>Proveniens (C2PA + usynligt vandm&#xE6;rke) p&#xE5;f&#xF8;res ved ingest, s&#xE5; &#xBB;&#xE6;gte&#xAB; bliver et produktl&#xF8;fte, ikke et adjektiv.</li>
+    <li>Der findes en defineret indemnitetspolitik, som salg kan sige h&#xF8;jt i enterprise- og udbudssammenh&#xE6;ng.</li>
+  </ul>
+  <div class="dom">
+    <span class="chip c-pres">Dom: Under pres</span>
+    <p>Holder som kurateret niche &#x2014; &#xE6;gte, nordisk, dokumenterbart, med fotografer man kan ringe til. Falder som volumen- og eneretsp&#xE5;stand.</p>
+    <p class="bevis">Bevis der afg&#xF8;r det: andel af ARR og downloads p&#xE5; egen forsyning + m&#xE5;lt eftersp&#xF8;rgsel efter nordisk autenticitet.</p>
+  </div>
+</section>
+
+<section class="panel" id="forstaaelse">
+  <span class="dash" style="background:var(--k2)"></span>
+  <p class="kick k2">Stresstest &#xB7; Kernekompetence 02 &#xB7; Forst&#xE5;else</p>
+  <h2 style="margin-top:8px">&#xBB;Vi ved hvad der er i billedet&#xAB;</h2>
+  <p class="steel"><b>Modellen siger:</b> AI-berigelse af personer, objekter og brandelementer; metadata der f&#xF8;lger med fra upload til publicering; s&#xF8;gning der forst&#xE5;r kundens egne ord. <b>St&#xE6;rkeste udgave:</b> forst&#xE5;else af <em>kundens</em> kontekst &#x2014; deres produkter, deres mennesker med samtykkestatus, deres brandsprog &#x2014; er reelt v&#xE6;rdifuld og reelt sv&#xE6;r, fordi den kr&#xE6;ver kundens egne data.</p>
+  <div class="g2">
+    <div class="card">
+      <div class="hd"><h3>Generisk forst&#xE5;else er gratis nu</h3><span class="chip c-nej">H&#xE5;rdt pres</span></div>
+      <p>Alle Forrester-ledere har semantisk s&#xF8;gning og auto-tagging; Bynder, Cloudinary og Frontify har samtaleagenter oven p&#xE5;.<a class="rf" href="#kilder">40, 11&#x2013;13</a> SharePoints Knowledge Agent tagger billeder automatisk <em>inden for Copilot-licensen</em>, og Gemini g&#xF8;r det i Drive.<a class="rf" href="#kilder">14, 48</a> &#xC5;bne vision-modeller (Qwen-VL-klassen) g&#xF8;r berigelse til et API-kald. P&#xE5;standen best&#xE5;r ikke modellens egen sv&#xE6;r-at-kopiere-test.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Jeres egen flade modsiger p&#xE5;standen</h3><span class="chip c-nej">H&#xE5;rdt pres</span></div>
+      <p>UX-rapporten (PostHog, 27/7&#x2013;21/8): over halvdelen af alle download-fors&#xF8;g gennemf&#xF8;res ikke (56 % frafald i dialogen); 8.970 frustrationsklik p&#xE5; 16 dage; reaktionstid 504&#x2013;536 ms i mappe- og filvisning &#x2014; dobbelt s&#xE5; langsomt som Googles gr&#xE6;nse. At &#xBB;vide hvad der er i billedet&#xAB; konverterer ikke, hvis fladen taber brugeren mellem s&#xF8;gning og download. Forst&#xE5;else skal m&#xE5;les i gennemf&#xF8;rte downloads, ikke i tags.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Datakredsl&#xF8;bet er ikke instrumenteret</h3><span class="chip c-pres">Pres</span></div>
+      <p>Modellens bevis er s&#xF8;g-til-download-raten &#x2014; men den kan i dag ikke opg&#xF8;res p&#xE5;lideligt: 8 dages datahul i m&#xE5;lingen, ingen custom events, 70 % st&#xF8;j i fejloverv&#xE5;gningen og 0 svar p&#xE5; 92 viste feedback-surveys. Branchen har i &#xF8;vrigt <em>ingen</em> offentlige benchmarks for s&#xF8;g-til-download<a class="rf" href="#kilder">46</a> &#x2014; den, der f&#xF8;rst m&#xE5;ler ordentligt, ejer fort&#xE6;llingen. Lige nu er kredsl&#xF8;bet en p&#xE5;stand uden telemetri.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Dansk sprogkvalitet er kanten &#x2014; uafpr&#xF8;vet</h3><span class="chip c-info">Mulighed</span></div>
+      <p>&#xC5;bne modeller halter fortsat p&#xE5; dansk i forhold til frontier (Danoliteracy-evalueringen), og EuroEval-benchmarken &#x2014; bygget i Danmark &#x2014; findes netop til at afg&#xF8;re det.<a class="rf" href="#kilder">74</a> S&#xF8;gning der forst&#xE5;r <em>dansk</em> hverdagssprog plus kundens egne ord (tenant-vokabular, brandtermer, personregister med samtykke) er den version af Forst&#xE5;else, der faktisk er sv&#xE6;r at kopiere. Den skal bare bygges og bevises.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:16px"><b style="color:var(--ink)">Hvad der skal v&#xE6;re sandt:</b></p>
+  <ul class="tight">
+    <li>Telemetrien repareres f&#xF8;rst: p&#xE5;lidelig s&#xF8;g-til-download-m&#xE5;ling, custom events i download-flowet, st&#xF8;jfri fejloverv&#xE5;gning. Uden det kan hverken kompetencen eller kredsl&#xF8;bet bevises.</li>
+    <li>Berigelsen flyttes fra generiske tags til tenant-forst&#xE5;else: kundens ordbog, brandelementer og samtykkekoblede personer.</li>
+    <li>Dansk s&#xF8;gekvalitet m&#xE5;les mod EuroEval og mod frontier &#x2014; og forskellen lukkes eller kommunikeres &#xE6;rligt.</li>
+  </ul>
+  <div class="dom">
+    <span class="chip c-nej">Dom: Holder ikke (i dag)</span>
+    <p>Forst&#xE5;else er i 2026 en feature, alle har. Kun tenant-dataloopet &#x2014; kundens egne ord, personer og brug &#x2014; kan g&#xF8;re den til en kompetence igen.</p>
+    <p class="bevis">Bevis der afg&#xF8;r det: s&#xF8;g-til-download m&#xE5;lt f&#xF8;r/efter tenant-berigelse hos 10 kunder.</p>
+  </div>
+</section>
+
+<section class="panel" id="rettigheder">
+  <span class="dash" style="background:var(--k3)"></span>
+  <p class="kick k3">Stresstest &#xB7; Kernekompetence 03 &#xB7; Rettigheder</p>
+  <h2 style="margin-top:8px">&#xBB;Vi kan bevise at det m&#xE5; bruges&#xAB;</h2>
+  <p class="steel"><b>Modellen siger:</b> licens, samtykke, udl&#xF8;b, geografi og anvendelse pr. aktiv; samme rettighedslag p&#xE5; k&#xF8;bt og eget indhold; dokumentation der holder i en revision. <b>St&#xE6;rkeste udgave:</b> eftersp&#xF8;rgslen er reguleringsdrevet og voksende. Datatilsynet h&#xE5;ndh&#xE6;ver dokumentationspligten aktivt (alvorlig kritik af 51 kommuner i januar 2026<a class="rf" href="#kilder">22</a>), samtykke skal kunne tr&#xE6;kkes tilbage med kaskadevirkning<a class="rf" href="#kilder">52</a> &#x2014; og samtykkemodulet er allerede et betalt produkt (499&#x2013;1.300 kr./md.).<a class="rf" href="#kilder">38</a> Det her er den kompetence, kunderne faktisk kan m&#xE6;rkes p&#xE5;.</p>
+  <div class="g2">
+    <div class="card">
+      <div class="hd"><h3>&#xBB;Kun os&#xAB;-fort&#xE6;llingen er falsk</h3><span class="chip c-pres">Pres</span></div>
+      <p>FotoWare, Mediaflow, QBank og Kontainer s&#xE6;lger alle samtykke-/GDPR-moduler i Norden.<a class="rf" href="#kilder">44, 45, 41</a> Differencen er ikke <em>eksistensen</em> af rettighedsstyring, men dybden &#x2014; og det unikke greb: samme rettighedslag hen over k&#xF8;bt <em>og</em> eget indhold. Det har reelt kun Adobe i enterprise-klassen. Fort&#xE6;llingen skal sk&#xE6;rpes til d&#xE9;t.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Bevis-hullet er selve risikoen</h3><span class="chip c-nej">H&#xE5;rdt pres</span></div>
+      <p><mark class="gap">[Andel af kundeaktiver med fuld rettighedsstatus]</mark> er stadig et tomt felt &#x2014; og branchens erfaring er, at metadata-disciplin er lav. V&#xE6;rre: jeres eget rettighedstjek i produktion fejler med 403 &#x2014; 20.540 gange p&#xE5; 30 dage &#x2014; som st&#xF8;j, ingen reagerer p&#xE5; (UX-rapporten). Hvis rettigheds-<em>infrastrukturen</em> har ubem&#xE6;rkede huller, kan p&#xE5;standen &#xBB;vi kan bevise det&#xAB; punktere ved f&#xF8;rste revision hos en storkunde. Kompetencen skal instrumenteres, f&#xF8;r den m&#xE5; s&#xE6;lges h&#xE5;rdt.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Rettigheder uden kroner bagved er et halvt argument</h3><span class="chip c-pres">Pres</span></div>
+      <p>Enterprise-indk&#xF8;b overs&#xE6;tter rettigheder til penge: skadesl&#xF8;sholdelse. Getty tilbyder uncapped p&#xE5; enterprise-licenser, Shutterstock 10.000&#x2013;250.000 $ pr. aktiv.<a class="rf" href="#kilder">32, 33</a> Modellen n&#xE6;vner ikke indemnitet med &#xE9;t ord. &#xBB;Vi kan bevise det&#xAB; + &#xBB;og vi st&#xE5;r bag det &#xF8;konomisk&#xAB; er dobbelt s&#xE5; st&#xE6;rkt &#x2014; og prisen for at tilbyde det er lav, hvis dokumentationen faktisk er i orden.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Nyt lag: AI-status og proveniens</h3><span class="chip c-info">Mulighed</span></div>
+      <p>Siden 2. august 2026 kr&#xE6;ver artikel 50 maskinl&#xE6;sbar m&#xE6;rkning af AI-genereret indhold; m&#xE6;rknings-kodekset med EU-ikons&#xE6;t er f&#xE6;rdigt, og legacy-fristen er 2. december 2026.<a class="rf" href="#kilder">15, 18</a> Rettigheder anno 2026 er alts&#xE5; blevet fire-dimensionelle: licens + samtykke + <em>AI-status</em> + <em>proveniens</em>. Ingen stock-akt&#xF8;r har C2PA end-to-end<a class="rf" href="#kilder">34</a> &#x2014; men bem&#xE6;rk: Kontainer markedsf&#xF8;rer allerede AI Act-m&#xE6;rkning og C2PA-vandm&#xE6;rkning.<a class="rf" href="#kilder">41</a> Vinduet er &#xE5;bent og bevogtet.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:16px"><b style="color:var(--ink)">Hvad der skal v&#xE6;re sandt:</b></p>
+  <ul class="tight">
+    <li>Rettighedsd&#xE6;kningen m&#xE5;les og offentligg&#xF8;res internt: andel aktiver med fuld status hos top-50-kunder &#x2014; m&#xE5;let s&#xE6;ttes til <mark class="gap">[X %]</mark> inden bestyrelsen ser modellen.</li>
+    <li>403-fejlen i rettighedstjekket rettes, og rettighedsmotoren f&#xE5;r overv&#xE5;gning som kritisk infrastruktur &#x2014; ikke som st&#xF8;j.</li>
+    <li>Datamodellen udvides med AI-status og C2PA, s&#xE5; m&#xE6;rkningsvagten kan s&#xE6;lges som compliance-feature inden legacy-fristen 2/12-26.</li>
+    <li>En indemnitetspolitik defineres: <mark class="gap">[cap pr. aktiv / uncapped p&#xE5; enterprise]</mark>.</li>
+  </ul>
+  <div class="dom">
+    <span class="chip c-ok">Dom: Holder</span>
+    <p>Den &#xE6;gte kernekompetence &#x2014; sv&#xE6;r at kopiere, direkte m&#xE6;rkbar, reguleringsdrevet. Men den er i dag underbevist og under-instrumenteret, og den skal udvides med AI-m&#xE6;rkning, proveniens og indemnitet for at blive uindhentelig.</p>
+    <p class="bevis">Bevis der afg&#xF8;r det: rettighedsd&#xE6;kning &#x2265; <mark class="gap">[X %]</mark> hos top-50 + m&#xE6;rkningsvagt i drift inden 2. december 2026.</p>
+  </div>
+</section>
+
+<section class="panel" id="kontrol">
+  <span class="dash" style="background:var(--k4)"></span>
+  <p class="kick k4">Stresstest &#xB7; Kernekompetence 04 &#xB7; Kontrol</p>
+  <h2 style="margin-top:8px">&#xBB;Vi kan tr&#xE6;kke det tilbage igen&#xAB;</h2>
+  <p class="steel"><b>Modellen siger:</b> &#xE9;t sted at erstatte, sp&#xE6;rre eller opdatere et aktiv efter publicering; adgang styret pr. rolle, afdeling og land. <b>St&#xE6;rkeste udgave:</b> med embed-/CDN-links er reel tilbagetr&#xE6;kning faktisk mulig i forbundne kanaler &#x2014; og samtykke-tilbagetr&#xE6;kning (kompetence 03) er v&#xE6;rdil&#xF8;s uden en kontrol-mekanisme, der kan eksekvere den. Kontrol er rettighedernes h&#xE6;nder.</p>
+  <div class="g2">
+    <div class="card">
+      <div class="hd"><h3>Tilbagetr&#xE6;kning udenfor forbundne kanaler er en illusion</h3><span class="chip c-nej">H&#xE5;rdt pres</span></div>
+      <p>En downloadet fil, et print, et opslag p&#xE5; sociale medier kan ingen DAM kalde tilbage. L&#xF8;ftet &#xBB;vi kan tr&#xE6;kke det tilbage&#xAB; punkterer i f&#xF8;rste kritiske sp&#xF8;rgsm&#xE5;l fra en revisor eller journalist, hvis det ikke scopes &#xE6;rligt: <em>kontrol i forbundne kanaler + dokumenteret varsling udenfor</em>. &#xC6;rlig scoping er ikke en sv&#xE6;kkelse &#x2014; det er foruds&#xE6;tningen for at kunne s&#xE6;lge l&#xF8;ftet til folk, der t&#xE6;nker sig om.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Kontrol skalerer med integrationer &#x2014; og &#xF8;kosystemet er lille</h3><span class="chip c-pres">Pres</span></div>
+      <p>Bynder markedsf&#xF8;rer 120+ integrationer, Cloudinary 300+.<a class="rf" href="#kilder">11, 13</a> Skyfish har PowerPoint-add-in, AD/SSO, API og FTP.<a class="rf" href="#kilder">36</a> Kontrol-l&#xF8;ftet er kun s&#xE5; stort som antallet af flader, indholdet faktisk lever i via sp&#xE6;rbare links. Embed-first distribution er derfor ikke en feature blandt mange &#x2014; det er kontrolkompetencens v&#xE6;kststrategi.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Adgangsstyring er table stakes</h3><span class="chip c-pres">Pres</span></div>
+      <p>Roller, afdelinger og g&#xE6;steadgang har alle modne DAM'er &#x2014; modellens egen matrix giver da ogs&#xE5; DAM-leverand&#xF8;rerne flueben her. Kolonnen b&#xE6;rer kun som differentiator i <em>kombinationen</em>: adgangsstyring + samtykkekaskade + k&#xF8;bt-og-eget i samme rettighedslag. Alene er den hygiejne.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Agent-&#xE6;raen omdefinerer kontrol</h3><span class="chip c-info">Nyt vilk&#xE5;r</span></div>
+      <p>Der findes nu ~20.000 MCP-servere; Canva, Figma og Atlassian skibber officielle; Deloitte forudser at 35 % af punkt-SaaS absorberes af agent-&#xF8;kosystemer inden 2030.<a class="rf" href="#kilder">66, 67</a> Morgendagens kontrolsp&#xF8;rgsm&#xE5;l er ikke &#xBB;hvem kan logge ind&#xAB;, men &#xBB;kan kundens Copilot hente aktivet &#x2014; og h&#xE5;ndh&#xE6;ves rettighederne, n&#xE5;r den g&#xF8;r?&#xAB; En rettigheds-h&#xE5;ndh&#xE6;vende agent-adgang er en &#xE5;ben position i hele Norden. Uden den bliver DAM'en et lager bag andres assistenter.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:16px"><b style="color:var(--ink)">Hvad der skal v&#xE6;re sandt:</b></p>
+  <ul class="tight">
+    <li>L&#xF8;ftet omformuleres: &#xBB;fuld kontrol i forbundne kanaler, dokumenteret varsling udenfor&#xAB; &#x2014; og s&#xE6;lges p&#xE5; embed-first distribution.</li>
+    <li>Andel af distributioner via sp&#xE6;rbare links m&#xE5;les: i dag <mark class="gap">[aktiver under aktiv styring hos top-50]</mark>.</li>
+    <li>Der bygges en rettigheds-h&#xE5;ndh&#xE6;vende agent-adgang (MCP), f&#xF8;r Kontainer, Bynder eller Microsoft definerer standarden i Norden.</li>
+  </ul>
+  <div class="dom">
+    <span class="chip c-del">Dom: Delvist</span>
+    <p>Holder som styring og eksekvering af samtykkekaskader i forbundne kanaler &#x2014; ikke som generelt tilbagekaldelsesl&#xF8;fte. Og kompetencen skal genopfindes til agent-&#xE6;raen, mens positionen stadig er ledig.</p>
+    <p class="bevis">Bevis der afg&#xF8;r det: andel af top-50-kundernes distributioner, der sker via sp&#xE6;rbare links.</p>
+  </div>
+</section>
+
+<section class="panel t-yellow" id="blinde">
+  <p class="kick">02 &#xB7; Det, modellen ikke ser</p>
+  <h2 style="margin-top:8px">Fem blinde vinkler &#x2014; og en &#xE6;rlig matrix 2.0</h2>
+  <p class="sub" style="margin-top:10px">Modellens matrix gav os fire flueben og de andre nul. Den version holder ikke i et bestyrelseslokale &#x2014; der mangler tre r&#xE6;kker og to kolonner.</p>
+  <div class="g3">
+    <div class="card">
+      <div class="hd"><h3>Adobe har begge sider af stregen</h3><span class="chip c-nej">Alvorlig</span></div>
+      <p>Adobe Stock (800+ mio. aktiver) + AEM Assets/Content Hub + Firefly + GenStudio er pr&#xE6;cis &#xBB;&#xE9;n konto, to indholdsstr&#xF8;mme&#xAB; &#x2014; i enterprise-klassen.<a class="rf" href="#kilder">7, 40</a> P&#xE5;standen &#xBB;konkurrenterne har den ene side af stregen&#xAB; er falsk opadtil. Forsvaret er pris, sprog og suver&#xE6;nitet &#x2014; ikke eksklusivitet.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Canva har begge sider i lav-enden</h3><span class="chip c-pres">Reel</span></div>
+      <p>240 mio. brugere, eget gratisbibliotek (Pexels/Pixabay), brand-styring og gen-AI i samme flade.<a class="rf" href="#kilder">8</a> Canva definerer, hvad &#xBB;godt nok&#xAB; koster for SMB'er og kommunikationsafdelinger &#x2014; og det er t&#xE6;t p&#xE5; nul.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Kontainer st&#xE5;r 40 km fra R&#xE5;dhuspladsen</h3><span class="chip c-nej">Alvorlig</span></div>
+      <p>Den n&#xE6;rmeste trussel er ikke Bynder &#x2014; det er Kontainer (Kbh.): DAM+PIM, 350+ kunder, AI-tagging, ansigtsgenkendelse, samtale-s&#xF8;gning i beta, MCP-integration, AI Act-m&#xE6;rkning, C2PA og en lokal LLM p&#xE5; Gemma 3, hvor data ikke forlader deres infrastruktur.<a class="rf" href="#kilder">41, 42</a> De mangler kun stock-benet. De skal st&#xE5; i matrixen.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>SharePoint &#xE6;der entry-segmentet</h3><span class="chip c-pres">Reel</span></div>
+      <p>Knowledge Agent auto-tagger billeder og filer inden for Copilot-licensen (nov. 2025), og Copilot finder brand-billeder direkte i PowerPoint.<a class="rf" href="#kilder">14, 48</a> &#xBB;Hvorfor k&#xF8;be entry-DAM?&#xAB; bliver et standardsp&#xF8;rgsm&#xE5;l i netop det prissegment, Skyfish Business (&#x20AC;139/md.) lever i.<a class="rf" href="#kilder">36</a></p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Video og gen-AI er frav&#xE6;rende</h3><span class="chip c-pres">Reel</span></div>
+      <p>Freepik henter nu halvdelen af 230 mio. $ ARR fra AI-video.<a class="rf" href="#kilder">6</a> Modellen n&#xE6;vner hverken video-workflows eller en holdning til genereret indhold (producere det? m&#xE6;rke det? forbyde det?). &#xBB;Ingen holdning&#xAB; er ogs&#xE5; en holdning &#x2014; den forkerte.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>St&#xF8;rrelsen er selv en vinkel</h3><span class="chip c-info">Vilk&#xE5;r</span></div>
+      <p>Organisationen bag platformen er lille (20 medarbejdere, beskeden indtjening<a class="rf" href="#kilder">39</a>). Det er ikke en svaghed at skjule &#x2014; det er begrundelsen for at v&#xE6;lge <em>&#xE9;n</em> kile og lade v&#xE6;re med at f&#xF8;re krig p&#xE5; seks fronter. Modellen skal derfor ogs&#xE5; svare p&#xE5;: hvad g&#xF8;r vi <em>ikke</em>?</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:26px; font-size:17px">Matrix 2.0 &#x2014; som en skeptisk bestyrelse ville tegne den</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Akt&#xF8;r</th><th>Forsyning</th><th>Forst&#xE5;else</th><th>Rettigheder</th><th>Kontrol</th><th>Suver&#xE6;n EU-AI</th><th>Agent-adgang (MCP)</th></tr></thead>
+      <tbody>
+        <tr class="hero-row"><th>Colourbox + Skyfish</th><td class="ja">Ja &#x2014; som niche</td><td class="delv">Delvist</td><td class="ja">Ja &#x2014; underbevist</td><td class="delv">Delvist</td><td class="delv">Mulig &#x2014; ikke bygget</td><td class="nej">Nej &#x2014; endnu</td></tr>
+        <tr><th>Getty / Shutterstock</th><td class="ja">Ja &#x2014; volumen</td><td class="delv">Delvist</td><td class="delv">Eget katalog + indemnitet</td><td class="nej">Nej</td><td class="nej">Nej</td><td class="nej">Nej</td></tr>
+        <tr><th>Adobe (Stock + AEM + Firefly)</th><td class="ja">Ja</td><td class="ja">Ja</td><td class="ja">Ja</td><td class="ja">Ja</td><td class="nej">Nej (US)</td><td class="delv">Delvist &#x2014; agent-orkestrering</td></tr>
+        <tr><th>Bynder / Aprimo (DAM-ledere)</th><td class="delv">Via connectors</td><td class="ja">Ja</td><td class="delv">Delvist</td><td class="ja">Ja</td><td class="nej">Nej (US-modeller)</td><td class="ja">Ja (Bynder MCP)</td></tr>
+        <tr><th>Canva</th><td class="ja">Ja &#x2014; gratisenden</td><td class="ja">Ja</td><td class="nej">Nej</td><td class="delv">Delvist</td><td class="nej">Nej</td><td class="ja">Ja</td></tr>
+        <tr><th>Kontainer (DK)</th><td class="nej">Nej</td><td class="ja">Ja</td><td class="delv">Delvist (samtykke)</td><td class="ja">Ja</td><td class="delv">Delvist &#x2014; lokal LLM</td><td class="ja">Ja</td></tr>
+        <tr><th>FotoWare / Mediaflow (Norden)</th><td class="nej">Nej</td><td class="delv">Delvist</td><td class="delv">Delvist (samtykke)</td><td class="ja">Ja</td><td class="delv">EU-hosting</td><td class="nej">Nej</td></tr>
+        <tr><th>SharePoint + Copilot</th><td class="nej">Nej</td><td class="ja">Ja &#x2014; generisk</td><td class="nej">Nej</td><td class="delv">Delvist</td><td class="delv">EU Data Boundary</td><td class="ja">Ja &#x2014; Copilot</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co warn"><b>L&#xE6;sningen:</b> Modellens kolonne 1-pointe st&#xE5;r stadig &#x2014; forsyning kan DAM-spillerne ikke bygge, og kombinationen k&#xF8;bt + eget under samme rettighedslag har kun Adobe, til enterprise-priser i en amerikansk sky. Men de to <em>nye</em> kolonner er de eneste, hvor n&#xE6;sten alle felter i Norden stadig er &#xE5;bne: suver&#xE6;n EU-AI og rettigheds-h&#xE5;ndh&#xE6;vet agent-adgang. Det er d&#xE9;r, forspringet kan bygges &#x2014; og Kontainer er t&#xE6;ttest p&#xE5; at tage det. Vinduet m&#xE5;les i kvartaler.</div>
+</section>
+
+<section class="panel t-purple" id="kredsloeb">
+  <p class="kick">03 &#xB7; Kredsl&#xF8;bene &#x2014; og broen til Del 2</p>
+  <h2 style="margin-top:8px">Kredsl&#xF8;bene er det rigtige svar. De k&#xF8;rer bare ikke.</h2>
+  <p class="sub" style="margin-top:10px">&#xBB;En feature kan kopieres p&#xE5; et kvartal, et kredsl&#xF8;b skal k&#xF8;res i &#xE5;r&#xAB; &#x2014; den s&#xE6;tning overlever stresstesten som modellens bedste. Problemet er, at ingen af de tre kredsl&#xF8;b i dag er instrumenteret.</p>
+  <div class="g3">
+    <div class="card">
+      <div class="hd"><h3>Forsyningskredsl&#xF8;bet</h3><span class="chip c-pres">Sv&#xE6;kket</span></div>
+      <p>Mekanikken er rigtig, men motoren er presset udefra (fotograf-&#xF8;konomien i frit fald branchen over<a class="rf" href="#kilder">5</a>) og udokumenteret indefra: hvor mange af de 31.627 daglige filer er kurateret nordisk forsyning? M&#xE5;les p&#xE5;: <mark class="gap">[nye fotografer og kuraterede aktiver pr. kvartal]</mark>.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Datakredsl&#xF8;bet</h3><span class="chip c-nej">Ikke i drift</span></div>
+      <p>Den reelle voldgrav &#x2014; mere brug &#x2192; bedre metadata &#x2192; bedre s&#xF8;gning. Men UX-rapporten viser, at m&#xE5;lek&#xE6;den er brudt: datahul, ingen events, 70 % fejlst&#xF8;j, 0/92 feedback-svar. Et kredsl&#xF8;b uden telemetri er en tegning. M&#xE5;les p&#xE5;: <mark class="gap">[s&#xF8;g-til-download over tid]</mark> &#x2014; n&#xE5;r det kan m&#xE5;les.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Kontokredsl&#xF8;bet</h3><span class="chip c-pres">Upr&#xF8;vet</span></div>
+      <p>K&#xF8;bt + eget i samme konto &#x2192; skifteomkostning &#x2192; NRR. Mekanikken er dokumenteret i markedet (Intercoms NRR steg fra 112 til 146 % p&#xE5; AI-outcome<a class="rf" href="#kilder">59</a>), men her er den upr&#xF8;vet: <mark class="gap">[andel kunder med b&#xE5;de Colourbox og Skyfish]</mark> er stadig et tomt felt. Broen i dag er et PowerPoint-add-in.</p>
+    </div>
+  </div>
+  <div class="co"><b>Broen:</b> Alle tre kredsl&#xF8;b mangler det samme: en flade, der driver brugen op, opsamler dataene undervejs og g&#xF8;r rettighederne synlige ved hver eneste handling. En bedre s&#xF8;geboks g&#xF8;r det ikke &#x2014; den m&#xE5;ler ikke intention, den forklarer ikke rettigheder, og den eksekverer ikke tilbagetr&#xE6;kning. Det g&#xF8;r en <em>agent</em>: den taler kundens sprog (Forst&#xE5;else), svarer med dokumentation (Rettigheder), handler i kanalerne (Kontrol) og fort&#xE6;ller forsyningen, hvad der mangler (Forsyning). Ikke en femte kompetence &#x2014; motoren i de fire. Resten af analysen handler om, hvorvidt den motor ogs&#xE5; er en forretning.</div>
+</section>
+
+<div class="delbanner" id="del2">
+  <p class="kick">Del 2 &#xB7; Forretningsanalysen</p>
+  <h2>White-label AI-agenten p&#xE5; europ&#xE6;isk open source</h2>
+  <p>Konceptet findes allerede p&#xE5; tegnebr&#xE6;ttet: en GDPR-compliant, white-label chat-motor p&#xE5; suver&#xE6;n EU-infrastruktur &#x2014; konceptrapport v1.0 (23/7), &#xF8;konomiark, konceptnotat v2 og et routing-lag, der k&#xF8;rer i kode. Sp&#xF8;rgsm&#xE5;let er ikke <em>om</em> den kan bygges. Det er, i hvilken konfiguration den bliver en forretning &#x2014; og hvad DAM/stock-platformen har med sagen at g&#xF8;re. Svaret p&#xE5; det sidste: alt.</p>
+</div>
+
+<section class="panel" id="koncept">
+  <p class="kick">04 &#xB7; Konceptet, pr&#xE6;cist</p>
+  <h2 style="margin-top:8px">Hvad &#xBB;white-label AI-agent (EU open source)&#xAB; faktisk betyder</h2>
+  <p class="sub" style="margin-top:10px">Tre ord, tre pr&#xE6;ciseringer &#x2014; for hvert af dem gemmer der sig et strategisk valg.</p>
+  <div class="g3">
+    <div class="card">
+      <h3>White-label = kunden er ikke slutbrugeren</h3>
+      <p>Motoren s&#xE6;lges B2B2B: partneren (et bureau, et konsulenthus, et SaaS-produkt &#x2014; eller DAM-platformen selv) brander den som sin egen, med eget dom&#xE6;ne, egen priss&#xE6;tning og egen kunderelation. Produktet er derfor ikke &#xBB;endnu en EU-chatbot&#xAB;, men motoren, compliance-pakken og afregningslaget bagved. Det krav &#xE6;ndrer alt i arkitekturen: h&#xE5;rd multi-tenant-isolation, partnerportal, engros-afregning og en DPA-k&#xE6;de, der er en del af produktet.</p>
+    </div>
+    <div class="card">
+      <h3>Agent = handlinger, ikke kun svar</h3>
+      <p>En chatbot svarer. En agent sl&#xE5;r op i strukturerede data, kalder v&#xE6;rkt&#xF8;jer (s&#xF8;g, tjek rettigheder, gener&#xE9;r embed-link, sp&#xE6;r aktiv) og logger hver beslutning revisionssikkert. Det er forskellen p&#xE5; &#xBB;sp&#xF8;rg om GDPR&#xAB; og &#xBB;eksekv&#xE9;r samtykke-tilbagetr&#xE6;kningen&#xAB;. Og det er d&#xE9;t, der g&#xF8;r motoren relevant for stresstestens konklusion: kredsl&#xF8;bene mangler en flade, der <em>handler</em>.</p>
+    </div>
+    <div class="card">
+      <h3>EU open source = tre niveauer af suver&#xE6;nitet</h3>
+      <p><b>Niveau 1 &#x2014; pragmatisk:</b> &#xE5;bne v&#xE6;gte p&#xE5; EU-inferens (GLM-5.2 MIT, Qwen 3.5 Apache, gpt-oss-120B p&#xE5; Scaleway/OVH): data forlader aldrig EU, ingen telemetri til modeludbyderne.<a class="rf" href="#kilder">25&#x2013;27</a> <b>Niveau 2 &#x2014; politisk robust:</b> europ&#xE6;isk udbyder med &#xE5;bne v&#xE6;gte (Mistral 3, Apache 2.0).<a class="rf" href="#kilder">24</a> <b>Niveau 3 &#x2014; dansk:</b> DFM Mimir v1 fra Odense &#x2014; endnu kun 1B parametre, men et signal om, hvor historien er p&#xE5; vej hen.<a class="rf" href="#kilder">29</a> Anbefaling: byg p&#xE5; niveau 1 med niveau 2 som omskiftelig option pr. kunde &#x2014; pr&#xE6;cis d&#xE9;t, routing-laget allerede kan.</p>
+    </div>
+  </div>
+  <div class="co ok"><b>Status p&#xE5; byggeriet:</b> Det her er ikke et blankt stykke papir. Routing-laget v0 k&#xF8;rer i kode (politik-regler &#x2192; &#xBB;godt nok&#xAB;-pr&#xE6;diktor &#x2192; kaskade-verifikation, med beslutningslog og eval-gate som kerne-IP), &#xF8;konomiarket er regnet igennem, og konceptnotat v2 har et trial-tilbud klar til testkunder. Konceptrapportens hovedkonklusion &#x2014; teknisk lavrisiko, marginal COGS, risikoen ligger i go-to-market &#x2014; bekr&#xE6;ftes af denne research p&#xE5; alle tre punkter. Det &#xE5;bne sp&#xF8;rgsm&#xE5;l er konfigurationen.</div>
+</section>
+
+<section class="panel" id="konfig">
+  <p class="kick">05 &#xB7; Det strategiske valg</p>
+  <h2 style="margin-top:8px">Tre konfigurationer &#x2014; og hvorfor den vertikale vinder</h2>
+  <p class="sub" style="margin-top:10px">Samme motor, tre forretninger. De udelukker ikke hinanden &#x2014; men r&#xE6;kkef&#xF8;lgen afg&#xF8;r, om man starter med distribution eller med kold kanvas.</p>
+  <div class="g3">
+    <div class="card">
+      <div class="hd"><h3>A &#xB7; Platform-agenten</h3><span class="chip c-del">N&#xF8;dvendig</span></div>
+      <p>Motoren som agent-lag i Skyfish/Colourbox: find p&#xE5; kundens egne ord, svar med rettighedsdokumentation, eksekv&#xE9;r distribution og tilbagetr&#xE6;kning. <b>Styrke:</b> l&#xF8;ser Del 1's bevis-huller direkte, og distributionen findes allerede &#x2014; kommuner (Odense, Roskilde, Kalundborg m.fl.), universiteter (SDU, KU, AU) og brands i Maersk/Arla/Nordea-klassen.<a class="rf" href="#kilder">37</a> <b>Svaghed:</b> alene er det en feature i &#xE9;t produkt &#x2014; ikke en selvst&#xE6;ndig forretning, og organisationen bag er lille.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>B &#xB7; Horisontal B2B2B</h3><span class="chip c-pres">Horisonten</span></div>
+      <p>White-label til bureauer og konsulenthuse + &#xBB;AI i en kasse&#xAB; til 5&#x2013;20-mands-virksomheder (flad pris 1.000&#x2013;1.500 kr./md.). <b>Styrke:</b> nichen er dokumenteret ubesat &#x2014; ingen EU-akt&#xF8;r har white-label som kerneprodukt, og Langdocks v&#xE6;kst (15 &#x2192; 42 mio. $ ARR p&#xE5; et halvt &#xE5;r) beviser eftersp&#xF8;rgslens tempo.<a class="rf" href="#kilder">55, 56</a> Amerikanske agency-platforme viser 70&#x2013;98 % partnermarginer.<a class="rf" href="#kilder">57</a> <b>Svaghed:</b> konceptrapportens egen risiko nr. 1 &#x2014; partnernes salgsevne &#x2014; og en kold start uden fyrt&#xE5;rnsreference.</p>
+    </div>
+    <div class="card" style="border-color:var(--k1); border-width:1.5px">
+      <div class="hd"><h3>C &#xB7; Vertikal white-label</h3><span class="chip c-ok">Anbefalet kile</span></div>
+      <p>DAM/stock som <em>f&#xF8;rste vertikal</em>: platformen bliver design-partner nr. 1 og distributionskanal; agenten f&#xE5;r det, horisontale konkurrenter aldrig f&#xE5;r &#x2014; dom&#xE6;nedata (rettigheder, samtykke, metadata) og en kundebase at bevise sig p&#xE5;. Platformen f&#xE5;r omvendt et agent-lag uden selv at skulle bygge modelinfrastruktur &#x2014; og forsvarer sig mod at ende som lager bag andres assistenter.<a class="rf" href="#kilder">67</a> <b>A er C's f&#xF8;rste instans. B &#xE5;bnes af C's referencer.</b></p>
+    </div>
+  </div>
+  <div class="co"><b>Hvorfor vertikal-f&#xF8;rst sl&#xE5;r horisontal-f&#xF8;rst:</b> De horisontale EU-spillere (Langdock, GreenPT, Mistral) konkurrerer p&#xE5; generisk chat, hvor Copilot er gratis-nok og priskrigen allerede k&#xF8;rer (&#x20AC;4,50&#x2013;17,50/s&#xE6;de<a class="rf" href="#kilder">56</a>). En vertikal agent konkurrerer p&#xE5; noget andet: den <em>kan</em> noget dom&#xE6;nespecifikt (bevise rettigheder, eksekvere tilbagetr&#xE6;kning), som hverken Copilot eller en horisontal chatbot kan efterligne uden dataene. Det er samme logik som stresstestens konklusion om moats: data og workflow, ikke software. <b>Styringsnote:</b> konfigurationen kr&#xE6;ver en ren armsl&#xE6;ngde &#x2014; platformen k&#xF8;ber agent-laget p&#xE5; engros-vilk&#xE5;r <mark class="gap">[vilk&#xE5;r defineres]</mark>, IP-gr&#xE6;nsen ligger ved rettighedsmotoren (platformens) vs. orkestrering/routing (motorens).</div>
+</section>
+
+<section class="panel t-blue" id="usecases">
+  <p class="kick">06 &#xB7; Hvad agenten laver</p>
+  <h2 style="margin-top:8px">Ni use cases &#x2014; hver med en kompetence at bevise</h2>
+  <p class="sub" style="margin-top:10px">Sorteret efter hvor hurtigt de skaber m&#xE5;lbar v&#xE6;rdi. Badge = den kernekompetence, use casen operationaliserer.</p>
+  <div class="g3">
+    <div class="card">
+      <div class="hd"><h3>1 &#xB7; Sprogs&#xF8;gning der konverterer</h3><span class="kick k2">Forst&#xE5;else</span></div>
+      <p>&#xBB;Find tre efter&#xE5;rsbilleder til en LinkedIn-post &#x2014; uden mennesker, i vores farver.&#xAB; Agenten s&#xF8;ger hybrid (tekst + billed-embeddings), afklarer med &#xE9;t modsp&#xF8;rgsm&#xE5;l og leverer klar-til-brug formater. Angriber direkte de 56 % download-frafald og m&#xE5;les p&#xE5; s&#xF8;g-til-download &#x2014; modellens eget bevis.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>2 &#xB7; Rettighedssvar med dokumentation</h3><span class="kick k3">Rettigheder</span></div>
+      <p>&#xBB;M&#xE5; jeg bruge det her billede i en annonce i Tyskland i 2027?&#xAB; Svaret kommer fra den deterministiske rettighedsmotor &#x2014; licens, samtykke, udl&#xF8;b, geografi &#x2014; med kildehenvisning til dokumentet. Sproget formulerer; motoren afg&#xF8;r. Det er kompetence 03 gjort til en flade, alle medarbejdere t&#xF8;r bruge.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>3 &#xB7; Samtykke-vagten</h3><span class="kick k4">Kontrol</span></div>
+      <p>Et samtykke udl&#xF8;ber eller tr&#xE6;kkes tilbage &#x2192; agenten finder alle brug, foresl&#xE5;r erstatninger, sp&#xE6;rrer embed-links og genererer varslingsliste for det, der ikke kan sp&#xE6;rres. Datatilsynets h&#xE5;ndh&#xE6;velsespraksis g&#xF8;r netop dette til kommunernes &#xF8;mmeste punkt.<a class="rf" href="#kilder">22</a></p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>4 &#xB7; Metadata-interviewet</h3><span class="kick k3">Rettigheder</span></div>
+      <p>Ved upload interviewer agenten: Hvem er p&#xE5; billedet? Hvilken aftale? Den l&#xE6;ser kontrakter og modelreleases (OCR + LLM) og udfylder licens, samtykke og AI-status. Lukker bevis-hullet &#x2014; <mark class="gap">[andel med fuld rettighedsstatus]</mark> &#x2014; som ingen udfylder manuelt.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>5 &#xB7; AI-m&#xE6;rkningsvagten</h3><span class="kick k3">Rettigheder</span></div>
+      <p>Skanner biblioteket, identificerer AI-genereret indhold, p&#xE5;f&#xF8;rer maskinl&#xE6;sbar m&#xE6;rkning og EU-ikoner, l&#xE6;ser/bevarer C2PA. Artikel 50 er i kraft nu, og legacy-fristen er 2. december 2026<a class="rf" href="#kilder">15, 18</a> &#x2014; en compliance-feature med indbygget deadline-salgstryk.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>6 &#xB7; Brand-guiden</h3><span class="kick k2">Forst&#xE5;else</span></div>
+      <p>&#xBB;Er det her on-brand?&#xAB; Agenten holder aktivet op mod brandguide og eksempler. Frontify-territorium &#x2014; v&#xE6;lges til, n&#xE5;r brand-reglerne findes som data. Sekund&#xE6;r: prioriteres efter 1&#x2013;5.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>7 &#xB7; Distributions-handlinger</h3><span class="kick k4">Kontrol</span></div>
+      <p>Crop/format til kanal, gener&#xE9;r sp&#xE6;rbart embed-link, push til CMS. Hver distribution via agenten er en distribution, der <em>kan</em> tr&#xE6;kkes tilbage &#x2014; embed-first-strategien eksekveret i praksis.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>8 &#xB7; Kurator-copiloten</h3><span class="kick k1">Forsyning</span></div>
+      <p>Dubletter, arkiveringsforslag, huller i biblioteket: &#xBB;I mangler vinterbilleder med gyldigt samtykke &#x2014; her er tre fotografer, der kan levere.&#xAB; Eftersp&#xF8;rgselsdata sendt tilbage til fotografmilj&#xF8;et = forsyningskredsl&#xF8;bet med motor i.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>9 &#xB7; MCP-endpointet</h3><span class="kick k4">Kontrol</span></div>
+      <p>Kundens egne agenter (Copilot, ChatGPT Enterprise, interne) s&#xF8;ger og henter via motoren &#x2014; med rettighedsfilteret h&#xE5;ndh&#xE6;vet p&#xE5; hvert kald. G&#xF8;r DAM'en til et f&#xF8;rsteklasses v&#xE6;rkt&#xF8;j i agent-&#xF8;kosystemet i stedet for et offer for det.<a class="rf" href="#kilder">66, 67</a></p>
+    </div>
+  </div>
+  <div class="co risk"><b>Ufravigeligt designprincip &#x2014; agenten g&#xE6;tter aldrig om rettigheder:</b> Alle rettigheds- og samtykkesvar kommer fra struktureret data med citat; sprogmodellen overs&#xE6;tter kun sp&#xF8;rgsm&#xE5;l og formulerer svar. Kan motoren ikke sl&#xE5; svaret op, siger agenten &#xBB;det ved jeg ikke &#x2014; her er hvad der mangler&#xAB;. &#xC9;t hallucineret &#xBB;ja, det m&#xE5; du godt&#xAB; hos en kommune er produktd&#xF8;d. Princippet er samtidig salgsargumentet: en agent, der kan <em>bevise</em> sine svar, findes ikke p&#xE5; hylden hos nogen konkurrent.</div>
+</section>
+
+<section class="panel" id="marked">
+  <p class="kick">07 &#xB7; Markedet</p>
+  <h2 style="margin-top:8px">Eftersp&#xF8;rgslen er bevist. Nichen er ubesat. Vinduet er bevogtet.</h2>
+  <div class="g4">
+    <div class="tile"><div class="n">+83<small> %</small></div><p>V&#xE6;kst i europ&#xE6;isk sovereign-cloud-forbrug i 2026 (6,9 &#x2192; 12,6 mia. $, Gartner)<a class="rf" href="#kilder">20</a></p></div>
+    <div class="tile"><div class="n">42<small> %</small></div><p>af danske virksomheder brugte AI i 2025 &#x2014; n&#xE6;sten tredoblet p&#xE5; to &#xE5;r<a class="rf" href="#kilder">69</a></p></div>
+    <div class="tile"><div class="n">~45<small> %</small></div><p>af medarbejdere bruger ikke-godkendte AI-v&#xE6;rkt&#xF8;jer (shadow AI) &#x2014; compliance-smerten, motoren s&#xE6;lger p&#xE5;<a class="rf" href="#kilder">70</a></p></div>
+    <div class="tile"><div class="n">3,3<small> %</small></div><p>Copilot-attach af Microsofts installerede base &#x2014; kompleks per-seat-AI s&#xE6;lger d&#xE5;rligt i bredden; flad og f&#xE6;rdig vinder i SMB<a class="rf" href="#kilder">60</a></p></div>
+  </div>
+  <h3 style="margin-top:24px; font-size:17px">Hvem har hvad &#x2014; agent-audit, medio 2026</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Akt&#xF8;r</th><th>Hvad de har</th><th>Hvad de ikke har</th></tr></thead>
+      <tbody>
+        <tr><th>Langdock (DE)</th><td>Enterprise-AI-arbejdsplads, ~42 mio. $ ARR, ~&#x20AC;25/s&#xE6;de<a class="rf" href="#kilder">55</a></td><td>Ikke white-label, ikke SMB, ingen vertikal dom&#xE6;nemotor</td></tr>
+        <tr><th>GreenPT / Mistral Le Chat / EUrouter</th><td>EU-chat direkte til slutkunder, &#x20AC;4,50&#x2013;17,50/s&#xE6;de<a class="rf" href="#kilder">56</a></td><td>Ingen partnermodel, ingen rettighedsvertikal, svag DK-tilstedev&#xE6;relse</td></tr>
+        <tr><th>Aleph Alpha (DE)</th><td>Sovereign on-prem, offentlig sektor DE</td><td>Dyrt, ikke partner-drevet, ikke SMB</td></tr>
+        <tr><th>Bynder / Cloudinary / Aprimo</th><td>DAM-agenter + MCP i produktion<a class="rf" href="#kilder">12, 13, 40</a></td><td>US-cloud og udisclosede US-modeller &#x2014; ingen suver&#xE6;n historie; intet stock-ben</td></tr>
+        <tr><th>Kontainer (DK)</th><td>Samtale-s&#xF8;gning (beta), MCP, C2PA, AI Act-m&#xE6;rkning, lokal LLM<a class="rf" href="#kilder">41</a></td><td>Intet stock-ben, ingen white-label-motor, ingen deterministisk rettigheds-agent</td></tr>
+        <tr><th>Microsoft Copilot / SharePoint</th><td>Distribution og gratis-nok generisk AI<a class="rf" href="#kilder">14</a></td><td>Kender ikke rettigheder, samtykke eller licenser &#x2014; og kommer aldrig til det pr. kunde</td></tr>
+        <tr class="hero-row"><th>Den &#xE5;bne position</th><td colspan="2"><b>White-label agent-motor &#xD7; EU-&#xE5;ben stak &#xD7; rettighedsvertikal &#xD7; dansk/nordisk marked.</b> Ingen af de otte ovenfor kombinerer mere end to af de fire.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co warn"><b>Segmenterne, i r&#xE6;kkef&#xF8;lge:</b> (1) Dansk offentlig sektor &#x2014; Datatilsynets 51-kommuner-kritik<a class="rf" href="#kilder">22</a> har gjort dokumenteret databehandling til et direktionssp&#xF8;rgsm&#xE5;l, og 8+ kommuner er allerede Skyfish-kunder; (2) regulerede brands (finans, energi, sundhed) med DACH-udvidelse, hvor EU-hosting og audit-log forkorter Betriebsrat-godkendelsen; (3) bureauer og konsulenthuse som white-label-partnere &#x2014; kanalen findes, men er h&#xE5;ndv&#xE6;rkspr&#xE6;get og uden platform bag sig.<a class="rf" href="#kilder">57</a></div>
+</section>
+
+<section class="panel" id="model">
+  <p class="kick">08 &#xB7; Forretningsmodellen</p>
+  <h2 style="margin-top:8px">Priss&#xE6;tning: flad og f&#xE6;rdig sl&#xE5;r smart og kompliceret</h2>
+  <p class="sub" style="margin-top:10px">Markedet har testet AI-priss&#xE6;tning for os i to &#xE5;r. L&#xE6;ren er entydig: i SMB og mid-market vinder enkelhed; outcome-pricing kr&#xE6;ver volumen; ren bundling &#xE6;der s&#xE6;der.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Spor</th><th>Model</th><th>Pris</th><th>Benchmark-bel&#xE6;g</th></tr></thead>
+      <tbody>
+        <tr><th>Platform-add-on (konfig. A/C)</th><td>Flad pris pr. konto/md. oven p&#xE5; Skyfish-abonnementet, fair-use-loft p&#xE5; samtaler</td><td class="num">Business +&#x20AC;49&#x2013;99 &#xB7; Professional +&#x20AC;149&#x2013;249 &#xB7; Enterprise <mark class="gap">[forhandlet]</mark></td><td>Copilots 3,3 % attach viser, at kompleks per-seat bremser<a class="rf" href="#kilder">60</a>; Notion flyttede AI fra add-on til tier-driver med prisl&#xF8;ft<a class="rf" href="#kilder">63</a>; Agentforce-forbrugsmodellen gav kun ~6 % betalende attach<a class="rf" href="#kilder">61</a></td></tr>
+        <tr><th>Engros til partnere (konfig. B/C)</th><td>Pr. s&#xE6;de engros; partneren fakturerer selv videre med egen margin</td><td class="num">&#x20AC;8&#x2013;12 engros &#x2192; &#x20AC;15&#x2013;25 videresalg</td><td>Eget &#xF8;konomiark; GreenPT-sp&#xE6;ndet &#x20AC;4,50&#x2013;17,50 bekr&#xE6;fter slutpris-niveauet<a class="rf" href="#kilder">56</a>; US-agency-platforme viser 70&#x2013;98 % partnermarginer som normen<a class="rf" href="#kilder">57</a></td></tr>
+        <tr><th>SMB-kassen (konfig. B)</th><td>Flad m&#xE5;nedspris pr. virksomhed (op til 20 brugere), alt inkluderet</td><td class="num">1.000&#x2013;1.500 kr./md. &#xB7; trial 500&#x2013;1.000 kr. i 10 uger</td><td>Konceptnotat v2; flad pris fjerner &#xBB;t&#xF8;r jeg sp&#xF8;rge&#xAB;-barrieren og matcher ICONIQ-fundet om, at hybrid/enkel priss&#xE6;tning dominerer under 5 mio. $ ARR<a class="rf" href="#kilder">64, 65</a></td></tr>
+        <tr><th>Senere: outcome-lag</th><td>Pr. l&#xF8;st henvendelse for support-deflection (fase 3+)</td><td class="num">&#x20AC;0,50&#x2013;1,00/l&#xF8;sning</td><td>Intercom Fin: 0,99 $/l&#xF8;sning, 100+ mio. $ ARR, NRR 112 &#x2192; 146 %<a class="rf" href="#kilder">59</a> &#x2014; men kr&#xE6;ver volumen, SMB har ikke</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="co warn"><b>HubSpot-advarslen:</b> Q2 2026 viste rekord-agentadoption og NRR, der alligevel <em>faldt</em> til 102 % &#x2014; AI bundlet gratis ind i s&#xE6;der &#xE6;der s&#xE6;deekspansionen.<a class="rf" href="#kilder">62</a> Konsekvens her: agenten er aldrig gratis. Den er enten et betalt add-on (platformen) eller hele produktet (kassen/white-label) &#x2014; og den m&#xE5;les p&#xE5; NRR-l&#xF8;ft: m&#xE5;l <mark class="gap">[+3&#x2013;8 pp. p&#xE5; konti med agent]</mark>.</div>
+
+  <h3 style="margin-top:24px; font-size:17px">Scenarier &#x2014; regnet pr. 100 Skyfish-konti (basen inds&#xE6;ttes, n&#xE5;r <mark class="gap">[antal konti]</mark> foreligger)</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Scenario</th><th>Attach-rate</th><th>ARPA-l&#xF8;ft/md.</th><th>ARR-l&#xF8;ft pr. 100 konti</th><th>COGS pr. agent-konto/md.</th><th>Bruttomargin p&#xE5; add-on</th></tr></thead>
+      <tbody>
+        <tr><th>Forsigtigt</th><td class="num">10 %</td><td class="num">&#x20AC;79</td><td class="num">&#x20AC;9.480</td><td class="num">~&#x20AC;6</td><td class="num">&#x2248; 92 %</td></tr>
+        <tr><th>Basis</th><td class="num">25 %</td><td class="num">&#x20AC;99</td><td class="num">&#x20AC;29.700</td><td class="num">~&#x20AC;6</td><td class="num">&#x2248; 94 %</td></tr>
+        <tr><th>Optimistisk</th><td class="num">40 %</td><td class="num">&#x20AC;129</td><td class="num">&#x20AC;61.920</td><td class="num">~&#x20AC;8</td><td class="num">&#x2248; 94 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small" style="margin-top:10px">COGS-antagelse: ~25 aktive brugere pr. konto &#xD7; &#x20AC;0,25/bruger/md. (routing-mixet fra &#xF8;konomiarket). Referencepunkter for attach: Copilot 3,3 % (kompleks, horisontal)<a class="rf" href="#kilder">60</a> &#x2014; HubSpot &gt;55 % af Pro+-kunder p&#xE5; agenter (indbygget, vertikal)<a class="rf" href="#kilder">62</a>. En vertikal agent med indbygget compliance-v&#xE6;rdi b&#xF8;r lande markant over Copilot-niveauet.</p>
+</section>
+
+<section class="panel" id="economics">
+  <p class="kick">09 &#xB7; Unit economics</p>
+  <h2 style="margin-top:8px">Marginen er strukturel &#x2014; routing + &#xE5;bne v&#xE6;gte er 13&#x2013;45&#xD7; billigere end frontier</h2>
+  <div class="g4">
+    <div class="tile"><div class="n">&#x20AC;0,25<small>/bruger/md.</small></div><p>COGS for en typisk dagligbruger med model-routing (70/30-mix) &#x2014; &#xF8;konomiarkets tal, bekr&#xE6;ftet af aktuelle Scaleway/OVH-priser<a class="rf" href="#kilder">26, 27</a></p></div>
+    <div class="tile"><div class="n">71&#x2192;95<small> %</small></div><p>Bruttomargin ved 100 &#x2192; 5.000 slutbrugere (fast infra &#x20AC;250/md., serverless &#x2014; GPU-eje f&#xF8;rst relevant &gt;5.000 brugere)</p></div>
+    <div class="tile"><div class="n">52<small> %</small></div><p>Gennemsnitlig bruttomargin p&#xE5; AI-produkter i SaaS (ICONIQ, jan. 2026); inferens &#xE6;der typisk 23 % af oms&#xE6;tningen<a class="rf" href="#kilder">64</a> &#x2014; motoren ligger strukturelt i en anden klasse</p></div>
+    <div class="tile"><div class="n">13&#x2013;45<small>&#xD7;</small></div><p>Prisforskel pr. RAG-svar: EU-hostede &#xE5;bne modeller (&#x20AC;0,0003&#x2013;0,005) vs. frontier-API'er ($0,008&#x2013;0,0225)<a class="rf" href="#kilder">27, 79</a></p></div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Model (EU-v&#xE6;rt)</th><th>&#x20AC;/M input</th><th>&#x20AC;/M output</th><th>Pris pr. svar*</th><th>Rolle i routingen</th></tr></thead>
+      <tbody>
+        <tr><th>gpt-oss-120B (OVH)</th><td class="num">0,08</td><td class="num">0,40</td><td class="num">&#x20AC;0,0003</td><td>Billig arbejdshest &#x2014; 60&#x2013;70 % af trafikken</td></tr>
+        <tr><th>gpt-oss-120B (Scaleway)</th><td class="num">0,15</td><td class="num">0,60</td><td class="num">&#x20AC;0,0005</td><td>Samme, sekund&#xE6;r leverand&#xF8;r (failover)</td></tr>
+        <tr><th>Qwen 3.5 / 3.6-klassen (Scaleway)</th><td class="num">0,25&#x2013;0,60</td><td class="num">1,50&#x2013;3,60</td><td class="num">&#x20AC;0,001&#x2013;0,004</td><td>Mellemklasse &#x2014; gr&#xE5;zone-trafik</td></tr>
+        <tr><th>GLM-5.2 (Scaleway)</th><td class="num">1,80</td><td class="num">5,50</td><td class="num">&#x20AC;0,005</td><td>Topmodel &#x2014; tunge og agentiske opgaver</td></tr>
+        <tr><th>Mistral 3-familien (EU-udbyder)</th><td class="num">0,15&#x2013;1,50</td><td class="num">0,60&#x2013;7,50</td><td class="num">&#x20AC;0,0005&#x2013;0,006</td><td>Ren-europ&#xE6;isk option pr. tenant (offentlig sektor, finans)</td></tr>
+        <tr><th>Frontier-API (reference)</th><td class="num">~4,6</td><td class="num">~23&#x2013;28</td><td class="num">$0,008&#x2013;0,0225</td><td>Benchmark &#x2014; ikke i den suver&#xE6;ne sti</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small" style="margin-top:10px">*Typisk RAG-svar &#x2248; 1.500 input- + 500 output-tokens. Priser afl&#xE6;st august 2026.<a class="rf" href="#kilder">26, 27, 79</a></p>
+  <div class="g3" style="margin-top:18px">
+    <div class="card">
+      <h3>Hvad der allerede er bygget</h3>
+      <p>Routing-lag v0 i drift (politikregler + 70/30-heuristik, beslutningslog i Postgres, LiteLLM-gateway); v1-pr&#xE6;diktoren (GBDT + eval-gate) er designet og delvist implementeret. MVP-flade kan accelereres med moden open source-UI (LibreChat/Open WebUI). Motoren er ikke en id&#xE9; &#x2014; den er et halvf&#xE6;rdigt produkt.</p>
+    </div>
+    <div class="card">
+      <h3>Hvad DAM-vertikalen kr&#xE6;ver oveni</h3>
+      <p>Integration mod Skyfish-API'et, den deterministiske rettighedsmotor som opslagsv&#xE6;rkt&#xF8;j, billed-embeddings (SigLIP2-klassen) i s&#xF8;gestien, samt evals p&#xE5; dansk (EuroEval som gate f&#xF8;r modelvalg<a class="rf" href="#kilder">74</a>). Estimat: <mark class="gap">[6&#x2013;9 md., 2&#x2013;4 personer, &#x20AC;300&#x2013;600k]</mark> til partner-klar v1. Bem&#xE6;rk licensf&#xE6;lden: InsightFace-modellerne til ansigtsgenkendelse er ikke-kommercielle uden betalt licens.<a class="rf" href="#kilder">77</a></p>
+    </div>
+    <div class="card">
+      <h3>F&#xF8;lsomheder</h3>
+      <p>(1) Kimi K3's oms&#xE6;tningstrappe-licens<a class="rf" href="#kilder">72</a> &#x2014; routing-laget er forsikringen: ingen afh&#xE6;ngighed af &#xE9;n model. (2) EU-GPU-kapacitet (Scaleway har udsolgt-perioder) &#x2014; multi-udbyder fra dag &#xE9;t (OVH/IONOS). (3) Tokenpriser falder fortsat &#x2014; med engros pr. s&#xE6;de er faldende COGS ren margin-medvind. (4) Storforbruger-mix: overv&#xE5;ges pr. tenant med forbrugsloft.</p>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="arkitektur">
+  <p class="kick">10 &#xB7; Arkitekturen</p>
+  <h2 style="margin-top:8px">Fem lag &#x2014; alt kan udskiftes undtagen to</h2>
+  <p class="sub" style="margin-top:10px">Bygger direkte oven p&#xE5; det eksisterende routing-lag. Modellerne er bevidst gjort udskiftelige; forretningen ligger i orkestreringen og dataene.</p>
+  <div class="stack">
+    <div class="layer">
+      <h4>Kanaler</h4>
+      <p>White-label webapp og embedbar widget (eget dom&#xE6;ne pr. partner) &#xB7; Skyfish-fladen &#xB7; Teams/Slack &#xB7; MCP-endpoint til kundens egne agenter &#x2014; rettighedsfilteret h&#xE5;ndh&#xE6;ves ens i alle kanaler.</p>
+    </div>
+    <div class="arrow">&#x25BC;</div>
+    <div class="layer core">
+      <h4>Orkestrering &#x2014; kerne-IP nr. 1</h4>
+      <p>Tenant-isolation &#xB7; auth/SSO &#xB7; samtalestyring &#xB7; v&#xE6;rkt&#xF8;jskald &#xB7; <b>den deterministiske rettighedsmotor</b> (licens, samtykke, udl&#xF8;b, geografi pr. aktiv &#x2014; svar altid med kildehenvisning; LLM'en formulerer, motoren afg&#xF8;r) &#xB7; guardrails &#xB7; artikel 50-disclosure &#xB7; revisionssikker audit-log.</p>
+    </div>
+    <div class="arrow">&#x25BC;</div>
+    <div class="layer">
+      <h4>Viden</h4>
+      <p>Hybrid s&#xF8;gning (BM25 + vektor + reranking) &#xB7; billede-tekst-embeddings (SigLIP 2 / jina-clip-klassen) &#xB7; metadata og brandregler som struktureret data &#xB7; vektorbase i EU: Qdrant (Berlin) eller pgvector.<a class="rf" href="#kilder">75</a></p>
+    </div>
+    <div class="arrow">&#x25BC;</div>
+    <div class="layer core">
+      <h4>Modeller via routing-laget &#x2014; kerne-IP nr. 2</h4>
+      <p>Billig arbejdshest (gpt-oss-120B) &#x2192; mellemklasse (Qwen 3.5) &#x2192; topmodel (GLM-5.2 &#x2192; Kimi K3) &#x2192; ren-EU-option (Mistral 3) pr. tenant. Hver beslutning logges med begrundelse; ugentlig retrain gennem eval-gaten &#x2014; <b>beslutningsloggen er tr&#xE6;ningsdataene, ingen konkurrent kan k&#xF8;be</b>. Dansk kvalitet gates mod EuroEval f&#xF8;r hvert modelskifte.<a class="rf" href="#kilder">74</a></p>
+    </div>
+    <div class="arrow">&#x25BC;</div>
+    <div class="layer">
+      <h4>Drift &#x2014; suver&#xE6;nitet i tre trin</h4>
+      <p>Serverless EU-inferens (Scaleway Generative APIs, ingen telemetri til modeludbydere)<a class="rf" href="#kilder">26</a> &#x2192; dedikeret Managed Inference ved skala &#x2192; on-prem-SKU til regulerede kunder (84 % af organisationer forventer on-prem/edge i mixet<a class="rf" href="#kilder">78</a>) &#x2014; og p&#xE5; sigt dansk hosting som premium-fort&#xE6;lling (Gefion-&#xF8;kosystemet, DFM Mimir-sporet<a class="rf" href="#kilder">29, 83</a>). Observability: Langfuse (Berlin, open source).<a class="rf" href="#kilder">76</a></p>
+    </div>
+  </div>
+  <div class="co"><b>Udskiftelighedsprincippet:</b> Modeller, vektorbaser, UI-komponenter og cloud-udbydere er commodities, der skiftes med config. De to ting, der ikke kan k&#xF8;bes af en konkurrent, er (1) rettighedsmotoren koblet p&#xE5; kundernes faktiske licens- og samtykkedata og (2) beslutningsloggen + eval-historikken, der g&#xF8;r routingen klogere uge for uge. Det er dem, der er forretningen &#x2014; resten er montage.</div>
+</section>
+
+<section class="panel" id="jura">
+  <p class="kick">11 &#xB7; Jura &amp; compliance</p>
+  <h2 style="margin-top:8px">Agentens regulatoriske position er us&#xE6;dvanligt god &#x2014; hvis fire ting g&#xF8;res rigtigt</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Regel</th><th>Hvad den kr&#xE6;ver</th><th>Status / handling</th></tr></thead>
+      <tbody>
+        <tr><th>AI-forordningen &#xB7; klassifikation</th><td>DAM-/kontor-agenten er begr&#xE6;nset risiko &#x2014; ikke Annex III-h&#xF8;jrisiko. H&#xF8;jrisiko-regimet er desuden udskudt til dec. 2027.<a class="rf" href="#kilder">16, 17</a></td><td class="ja">Gunstig &#x2014; dokument&#xE9;r klassifikationsvurderingen skriftligt</td></tr>
+        <tr><th>Artikel 50(1) &#xB7; chatbot-transparens</th><td>Brugeren skal vide, at der tales med AI &#x2014; designet ind i produktet, i kraft siden 2/8-26.<a class="rf" href="#kilder">15</a></td><td class="ja">Indbygget som default i motoren (allerede i konceptnotatet)</td></tr>
+        <tr><th>Artikel 50(2) &#xB7; m&#xE6;rkning</th><td>Maskinl&#xE6;sbar m&#xE6;rkning af genereret indhold; legacy-systemer senest 2/12-26; kodeks med EU-ikoner er f&#xE6;rdigt.<a class="rf" href="#kilder">15, 18</a></td><td class="delv">Byg m&#xE6;rkningsvagten &#x2014; og s&#xE6;lg den som feature (use case 5)</td></tr>
+        <tr><th>Deployer-pligter (kundens)</th><td>Deepfake-/AI-tekst-disclosure ligger hos kunden som deployer.<a class="rf" href="#kilder">15</a></td><td class="delv">Kontraktpakken allokerer pligterne + agenten hj&#xE6;lper kunden med at opfylde dem &#x2014; det er salgsargumentet, ikke byrden</td></tr>
+        <tr><th>GPAI-pligter</th><td>Ligger hos modeludbyderne (Mistral, Zhipu m.fl.). Finjustering g&#xF8;r f&#xF8;rst motoren til &#xBB;udbyder&#xAB; ved &gt;1/3 af original tr&#xE6;ningscompute &#x2014; praktisk uopn&#xE5;eligt.<a class="rf" href="#kilder">49</a></td><td class="ja">Ingen GPAI-byrde &#x2014; indsaml blot upstream-dokumentation pr. model</td></tr>
+        <tr><th>GDPR &#xB7; ansigter og personer</th><td>Ansigts-klyngning i kundens eget arkiv = biometrisk data (art. 9): eksplicit samtykke + DPIA. Match mod eksterne referencedatabaser undg&#xE5;s helt (Annex III-risiko fra dec. 2027).<a class="rf" href="#kilder">50, 51, 53</a></td><td class="delv">Consent-first-design: personregisteret bygges p&#xE5; samtykkemodulets data &#x2014; aldrig p&#xE5; scraping eller eksterne registre</td></tr>
+        <tr><th>DPA-k&#xE6;den</th><td>Motoren er databehandler for partneren; Scaleway dokumenteret underdatabehandler; ingen tredjelandsoverf&#xF8;rsler.</td><td class="ja">Allerede designet ind (rapport v1.0) &#x2014; standard-DPA-pakken er en del af produktet</td></tr>
+        <tr><th>Produktansvar (PLD 2024/2853)</th><td>Software og AI omfattet af objektivt produktansvar fra dec. 2026 &#x2014; med bevisfreml&#xE6;ggelsespligt.<a class="rf" href="#kilder">19</a></td><td class="delv">Dokumentationsdisciplin (eval-gates, beslutningslog er allerede designet til det) + produktansvarsforsikring <mark class="gap">[indhent tilbud]</mark></td></tr>
+        <tr><th>EU-US-dataoverf&#xF8;rsler</th><td>DPF best&#xE5;r formelt, men eroderer: EDPB bad 31/7-26 om fornyet vurdering; Latombe-appellen ligger ved EU-Domstolen.<a class="rf" href="#kilder">21, 54</a></td><td class="ja">S&#xE6;lg forsikring, ikke dommedag: &#xBB;uanset hvad domstolen siger, er jeres AI-stak up&#xE5;virket&#xAB;</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small" style="margin-top:12px">Analysen her er ikke juridisk r&#xE5;dgivning &#x2014; DPA-pakke, art. 50-implementering og klassifikationsvurdering valideres af jurist inden fase 1 (samme forbehold som rapport v1.0).</p>
+</section>
+
+<section class="panel t-green" id="gtm">
+  <p class="kick">12 &#xB7; Vejen ud i markedet</p>
+  <h2 style="margin-top:8px">Fire faser &#x2014; hver med en gate og et kill-kriterium</h2>
+  <p class="sub" style="margin-top:10px">Ingen fase kr&#xE6;ver mere end en h&#xE5;ndfuld mennesker. Hver fase producerer det bevis, den n&#xE6;ste s&#xE6;lges p&#xE5; &#x2014; og de tal, kernekompetencemodellen mangler.</p>
+  <div class="g4">
+    <div class="card">
+      <div class="hd"><h3>Fase 0 &#xB7; Beviset</h3><span class="kick">Uge 0&#x2013;6</span></div>
+      <p>RAG-agent oven p&#xE5; Skyfish-API'et i pilotdrift hos <mark class="gap">[2&#x2013;3 venligtsindede kunder]</mark>. F&#xF8;rst: repar&#xE9;r telemetrien (PostHog-fundamentet findes allerede), m&#xE5;l baseline: 56 % download-frafald, s&#xF8;g-til-download, INP.</p>
+      <p style="margin-top:8px"><b style="color:var(--ink)">Gate:</b> agent-s&#xF8;gning l&#xF8;fter gennemf&#xF8;rte downloads &#x2265; <mark class="gap">[15 %]</mark> i pilotgruppen.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Fase 1 &#xB7; Design-partnere</h3><span class="kick">Md. 2&#x2013;4</span></div>
+      <p>Tre betalende partnere: &#xE9;n kommune (samtykke-vagten &#x2014; Datatilsynet-momentum<a class="rf" href="#kilder">22</a>), &#xE9;n brand-kunde (rettighedssvar + m&#xE6;rkningsvagt), &#xE9;t bureau (white-label-trial, 500&#x2013;1.000 kr./md., jf. konceptnotat v2).</p>
+      <p style="margin-top:8px"><b style="color:var(--ink)">Gate:</b> betalingsvilje efter trial + 100 % citatd&#xE6;kning p&#xE5; rettighedssvar i eval &#x2014; &#xE9;t g&#xE6;t er dumpekarakter.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Fase 2 &#xB7; Platform-GA</h3><span class="kick">Md. 4&#x2013;9</span></div>
+      <p>Agenten som betalt add-on p&#xE5; alle Skyfish-tiers + partnerportal, engros-afregning og DPA-pakke. M&#xE6;rkningsvagten lanceres <em>inden</em> legacy-fristen 2/12-26.<a class="rf" href="#kilder">15</a> MCP-endpoint i beta.</p>
+      <p style="margin-top:8px"><b style="color:var(--ink)">Gate:</b> attach &#x2265; <mark class="gap">[10 %]</mark> af aktive konti &#xB7; COGS pr. agent-konto &#x2264; &#x20AC;<mark class="gap">[8]</mark>/md.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>Fase 3 &#xB7; Kanalen</h3><span class="kick">Md. 9&#x2013;18</span></div>
+      <p>White-label bredt til bureauer/konsulenthuse; Norden + DACH med suver&#xE6;nitet som spydspids (Betriebsrat-pakken: EU-hosting, audit-log, ingen tr&#xE6;ning p&#xE5; kundedata). MCP-endpoint GA. SMB-kassen skaleres p&#xE5; branchepakker.</p>
+      <p style="margin-top:8px"><b style="color:var(--ink)">Gate:</b> &#x2265; <mark class="gap">[5]</mark> partnere med &#x2265; <mark class="gap">[250]</mark> s&#xE6;der samlet &#xB7; m&#xE5;lbart NRR-l&#xF8;ft p&#xE5; agent-konti.</p>
+    </div>
+  </div>
+  <div class="co ok"><b>Fasernes dobbeltrolle:</b> Hver gate er samtidig et af de tal, kernekompetencemodellen mangler i sine <mark class="gap">[kantede parenteser]</mark>. Fase 0 leverer s&#xF8;g-til-download. Fase 1 leverer rettighedsd&#xE6;kningen. Fase 2 leverer attach og kontokredsl&#xF8;bets tal. Agenten er med andre ord ikke bare et produkt &#x2014; den er m&#xE5;leinstrumentet, der g&#xF8;r modellen bestyrelsesklar.</div>
+</section>
+
+<section class="panel" id="redteam">
+  <p class="kick">13 &#xB7; Red team</p>
+  <h2 style="margin-top:8px">Otte ting, der kan sl&#xE5; id&#xE9;en ihjel &#x2014; og modtr&#xE6;kkene</h2>
+  <div class="g2">
+    <div class="card">
+      <div class="hd"><h3>1 &#xB7; Copilot sluger use casen</h3><span class="chip c-nej">H&#xF8;j impact</span></div>
+      <p>Microsoft er allerede i alles hverdag, og SharePoint tagger billeder gratis-nok.<a class="rf" href="#kilder">14</a> <b>Modtr&#xE6;k:</b> konkurr&#xE9;r aldrig p&#xE5; generisk chat. Alt s&#xE6;lges p&#xE5; det, Copilot strukturelt ikke kan: kundens rettigheds- og samtykkedata, deterministiske svar med citat, suver&#xE6;n stak. MCP-endpointet g&#xF8;r oven i k&#xF8;bet Copilot til distributionskanal i stedet for fjende.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>2 &#xB7; &#xC9;t hallucineret rettighedssvar</h3><span class="chip c-nej">H&#xF8;j impact</span></div>
+      <p>&#xBB;Agenten sagde, vi m&#xE5;tte bruge billedet&#xAB; efterfulgt af et erstatningskrav er produktd&#xF8;d i offentlig sektor. <b>Modtr&#xE6;k:</b> arkitekturprincippet (motoren afg&#xF8;r, sproget formulerer), 100 % citatkrav i eval-gaten, &#xBB;ved ikke&#xAB;-svar som succes-kriterium, ansvarsallokering i vilk&#xE5;r &#x2014; og PLD-klar dokumentationsdisciplin fra dag &#xE9;t.<a class="rf" href="#kilder">19</a></p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>3 &#xB7; Kontainer eller Bynder n&#xE5;r det f&#xF8;rst</h3><span class="chip c-pres">Reel</span></div>
+      <p>Kontainer har allerede samtale-s&#xF8;gning i beta og MCP; Bynders agent-abonnementer tredobles i kvartalet.<a class="rf" href="#kilder">41, 12</a> <b>Modtr&#xE6;k:</b> vinduet er kvartaler &#x2014; derfor fase 0 <em>nu</em>, og derfor vertikal dybde (deterministisk rettighedsmotor + stock-ben), som begge mangler og er &#xE5;revis om at bygge datagrundlaget til.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>4 &#xB7; &#xC5;bne modeller er for svage p&#xE5; dansk</h3><span class="chip c-pres">Reel</span></div>
+      <p>Frontier-modeller f&#xF8;rer fortsat p&#xE5; dansk sprogkvalitet.<a class="rf" href="#kilder">74</a> <b>Modtr&#xE6;k:</b> EuroEval-gate f&#xF8;r hvert modelvalg; dansk-tone-LoRA hvis gabet best&#xE5;r; Mistral-optionen pr. tenant; og &#xE6;rlig framing &#x2014; agentens v&#xE6;rdi er opslag + handling, ikke essayistik.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>5 &#xB7; Kinesiske v&#xE6;gte skr&#xE6;mmer offentlige kunder</h3><span class="chip c-pres">Reel</span></div>
+      <p>GLM/Qwen/Kimi p&#xE5; EU-jern sender ingen data til Kina &#x2014; men sp&#xF8;rgsm&#xE5;let kommer i hvert eneste udbud.<a class="rf" href="#kilder">25</a> <b>Modtr&#xE6;k:</b> Mistral 3-sporet som &#xE9;t klik pr. tenant (Apache 2.0, fransk<a class="rf" href="#kilder">24</a>); dokumenteret modelk&#xE6;de i DPA-pakken; DFM Mimir-sporet som dansk fremtidsfort&#xE6;lling.<a class="rf" href="#kilder">29</a></p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>6 &#xB7; Partnerne kan ikke s&#xE6;lge</h3><span class="chip c-pres">Rapportens nr. 1</span></div>
+      <p>B2B2B st&#xE5;r og falder med kanalens salgsevne &#x2014; og de danske AI-bureauer er sm&#xE5; h&#xE5;ndv&#xE6;rkere uden platform.<a class="rf" href="#kilder">57</a> <b>Modtr&#xE6;k:</b> konfiguration C l&#xF8;ser koldstarten: platformen er partner nr. 1 med eksisterende kundebase, s&#xE5; motoren har oms&#xE6;tning og referencer, <em>f&#xF8;r</em> bureau-kanalen skal performe.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>7 &#xB7; Organisationen er for lille til to krige</h3><span class="chip c-pres">Reel</span></div>
+      <p>20 personer kan ikke drive platformsdrift, UX-g&#xE6;lden fra UX-rapporten <em>og</em> et agent-byggeri p&#xE5; &#xE9;n gang. <b>Modtr&#xE6;k:</b> armsl&#xE6;ngden er svaret &#x2014; motoren bygges og driftes af Stanmiro-sporet med egen bemanding <mark class="gap">[2&#x2013;4 personer]</mark>; platformen leverer API, rettighedsdata og pilotkunder. Og fase 0's telemetri-reparation er samtidig UX-arbejdets f&#xF8;rste skridt &#x2014; samme investering, to form&#xE5;l.</p>
+    </div>
+    <div class="card">
+      <div class="hd"><h3>8 &#xB7; DPF overlever, og suver&#xE6;nitet mister momentum</h3><span class="chip c-del">Mulig</span></div>
+      <p>Falder Latombe-appellen ud til DPF's fordel, sv&#xE6;kkes panik-argumentet.<a class="rf" href="#kilder">54</a> <b>Modtr&#xE6;k:</b> s&#xE6;lg aldrig dommedag &#x2014; s&#xE6;lg forsikring + kontrol + pris. De 13&#x2013;45&#xD7; lavere svar-omkostninger og den flade pris st&#xE5;r, uanset hvad EU-Domstolen siger. Suver&#xE6;nitet er argument nr. 2, ikke nr. 1.</p>
+    </div>
+  </div>
+</section>
+
+<section class="panel t-pink" id="beslutning">
+  <p class="kick">14 &#xB7; Det ledelsesgruppen skal afg&#xF8;re</p>
+  <h2 style="margin-top:8px">Tre sp&#xF8;rgsm&#xE5;l &#x2014; og &#xE9;n anbefaling</h2>
+  <p class="sub" style="margin-top:10px">Samme disciplin som i modellen: svarene skrives ned, med navn og dato, f&#xF8;r noget bygges stort.</p>
+  <div class="g3">
+    <div class="card">
+      <p class="kick" style="color:var(--pink-kick)">01</p>
+      <h3 style="margin-top:6px">Hvilket bevis-hul lukker agenten f&#xF8;rst &#x2014; og hvem ejer tallet?</h3>
+      <p style="margin-top:6px">Stresstesten viste, at n&#xE6;sten alle modellens <mark class="gap">[felter]</mark> stadig er tomme, og at telemetrien er brudt. V&#xE6;lg &#xE9;t tal (anbefaling: s&#xF8;g-til-download) og g&#xF8;r det til fase 0's eneste succes-kriterium.</p>
+    </div>
+    <div class="card">
+      <p class="kick" style="color:var(--pink-kick)">02</p>
+      <h3 style="margin-top:6px">K&#xF8;ber platformen agent-laget p&#xE5; engros-vilk&#xE5;r &#x2014; eller bygger den selv?</h3>
+      <p style="margin-top:6px">Konfiguration C kr&#xE6;ver en ren armsl&#xE6;ngde: engros-pris, IP-gr&#xE6;nse ved rettighedsmotoren, exit-klausuler. Alternativet &#x2014; selv at bygge p&#xE5; en amerikansk stak &#x2014; skal priss&#xE6;ttes &#xE6;rligt, f&#xF8;r der v&#xE6;lges.</p>
+    </div>
+    <div class="card">
+      <p class="kick" style="color:var(--pink-kick)">03</p>
+      <h3 style="margin-top:6px">Hvad er kill-kriteriet for fase 1 &#x2014; hvilket tal, hvilken dato?</h3>
+      <p style="margin-top:6px">Uden et nedskrevet kill-kriterium bliver piloter til zombieprojekter i en 20-personers organisation. Forslag: ingen betalende design-partner senest <mark class="gap">[dato]</mark> &#x2192; sporet lukkes, og l&#xE6;ringen f&#xF8;res tilbage til kerneproduktet.</p>
+    </div>
+  </div>
+  <div class="co ok"><b>Anbefalingen, samlet:</b> Betinget go p&#xE5; konfiguration C. (1) Kernekompetencemodellen strammes efter stresstestens domme &#x2014; Forsyning som kurateret niche, Forst&#xE5;else som tenant-dataloop, Rettigheder udvidet med m&#xE6;rkning/proveniens/indemnitet, Kontrol &#xE6;rligt scopet og agent-rettet. (2) Agenten bygges som motoren, der beviser modellen: fase 0 starter med telemetri og pilot p&#xE5; platformen &#x2014; de eksisterende byggesten (routing-lag, &#xF8;konomiark, konceptnotat) g&#xF8;r startomkostningen us&#xE6;dvanligt lav. (3) Det deterministiske rettighedsprincip er ufravigeligt. (4) Alle <mark class="gap">[kantede parenteser]</mark> i modellen erstattes af agent-telemetri, inden bestyrelsen ser den. Vinduet &#x2014; suver&#xE6;n AI &#xD7; rettigheds-agent &#xD7; Norden &#x2014; er reelt, ubesat og bevogtet af mindst &#xE9;n konkurrent 40 km v&#xE6;k. Det m&#xE5;les i kvartaler.</div>
+</section>
+
+<footer id="kilder">
+  <h2 style="font-size:19px">Metode &amp; kilder</h2>
+  <p class="small" style="margin-top:8px; max-width:88ch">Research gennemf&#xF8;rt 23. august 2026 med syv parallelle spor og ~90 daterede kilder; de mest tidsf&#xF8;lsomme fakta (fusionens kollaps, artikel 50-status, omnibus-datoerne) er krydsverificeret mod flere uafh&#xE6;ngige kilder. Bel&#xF8;b i USD/EUR som i kilderne. Felter i <mark class="gap">[kantede parenteser]</mark> er bevidst tomme: det er tallene, organisationen selv skal levere. Analysen er ikke juridisk eller finansiel r&#xE5;dgivning.</p>
+  <p class="small" style="margin-top:10px"><b style="color:var(--ink)">Internt materiale:</b> Kernekompetencemodellen &#xBB;Hvorfor os&#xAB; (udkast) &#xB7; UX-rapporten &#xBB;Fejl og d&#xE5;rlige brugeroplevelser p&#xE5; app.skyfish.com&#xAB; (PostHog, 21/8-26) &#xB7; &#xBB;GDPR-compliant white-label chat-motor&#xAB; konceptrapport v1.0 (23/7-26) &#xB7; &#xBB;GDPR Chat &#x2014; &#xF8;konomioversigt&#xAB; (23/7-26) &#xB7; Model-routing-laget v1 (arkitektur + kodebase) &#xB7; Konceptnotat v2 &#xBB;AI i en kasse&#xAB; (juli 2026) &#xB7; Scope-dokumentet &#xBB;Sammenkoblet Stock Photo &amp; DAM Platform&#xAB; &#xB7; Synopsis &#xBB;Hvor er SaaS p&#xE5; vej hen?&#xAB;.</p>
+  <ol class="kilder">
+    <li><a href="https://www.gov.uk/cma-cases/getty-images-slash-shutterstock-merger-inquiry">CMA: Getty/Shutterstock merger inquiry (jul. 2026)</a></li>
+    <li><a href="https://www.stocktitan.net/sec-filings/GETY/425-getty-images-holdings-inc-business-combination-communication-1ace60e9c657.html">Getty Form 425: fusionen opgives (jul. 2026)</a></li>
+    <li><a href="https://www.cepic.org/post/getty-images-and-shutterstock-terminate-planned-3-7-billion-merger">CEPIC: fusionen p&#xE5; 3,7 mia. $ termineret (jul. 2026)</a></li>
+    <li><a href="https://www.globenewswire.com/news-release/2026/08/10/3342236/0/en/getty-images-reports-second-quarter-2026-results.html">Getty Images Q2 2026-regnskab (10/8-26)</a></li>
+    <li><a href="https://investor.shutterstock.com/news-releases/news-release-details/shutterstock-reports-second-quarter-2026-financial-results">Shutterstock Q2 2026-regnskab (aug. 2026)</a></li>
+    <li><a href="https://fortune.com/2026/04/28/freepik-magnific-joaquin-cuenca-abela-230-million-arr-video-generation-ai-pivot/">Fortune: Freepik/Magnific 230 mio. $ ARR (28/4-26)</a></li>
+    <li><a href="https://news.adobe.com/news/2026/04/adobe-new-creative-agent">Adobe: creative agent + 800 mio.+ Stock-aktiver (apr. 2026)</a></li>
+    <li><a href="https://www.stylefactoryproductions.com/blog/canva-statistics">Style Factory: Canva-statistik (2026)</a></li>
+    <li><a href="https://newsroom.gettyimages.com/en/getty-images/nearly-90-of-consumers-want-transparency-on-ai-images-finds-getty-images-report">Getty: Building Trust in the Age of AI</a></li>
+    <li><a href="https://www.mayerbrown.com/en/insights/publications/2025/11/getty-images-v-stability-ai-what-the-high-courts-decision-means-for-rights-holders-and-ai-developers">Mayer Brown: Getty v Stability &#x2014; UK-dommen (nov. 2025)</a></li>
+    <li><a href="https://www.bynder.com/en/press-media/bynder-launches-ai-agents/">Bynder: AI Agents (25/3-25)</a></li>
+    <li><a href="https://finance.yahoo.com/technology/ai/articles/bynder-announces-record-h1-2026-141500464.html">Bynder H1 2026: MCP + agent-v&#xE6;kst (28/7-26)</a></li>
+    <li><a href="https://www.businesswire.com/news/home/20250617855668/en/Cloudinary-Introduces-Cloudinary-Model-Context-Protocol-MCP-Server-and-AI-ready-Documentation">Cloudinary: MCP-server (17/6-25) og AI Agents (5/5-26)</a></li>
+    <li><a href="https://gokan.studio/2025/11/29/sharepoint-ai-the-death-of-image-taxonomy-tagger-part-ii/">SharePoint Knowledge Agent og billedtagging (29/11-25)</a></li>
+    <li><a href="https://www.goodwinlaw.com/en/insights/publications/2026/08/alerts-technology-dpc-eu-ai-act-transparency-obligations-now-in-force">Goodwin: art. 50 i kraft &#x2014; ikke udskudt (3/8-26)</a></li>
+    <li><a href="https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/">Gibson Dunn: AI-Omnibus, udskudt h&#xF8;jrisiko (27/5-26)</a></li>
+    <li><a href="https://digital-strategy.ec.europa.eu/en/news/ai-omnibus-enters-force">EU-Kommissionen: AI Omnibus enters force (27/7-26)</a></li>
+    <li><a href="https://digital-strategy.ec.europa.eu/en/policies/code-practice-ai-generated-content">EU-Kommissionen: Code of Practice, AI-genereret indhold (10/6-26)</a></li>
+    <li><a href="https://eur-lex.europa.eu/eli/dir/2024/2853/oj/eng">EUR-Lex: Produktansvarsdirektivet 2024/2853</a></li>
+    <li><a href="https://www.gartner.com/en/newsroom/press-releases/2026-02-09-gartner-says-worldwide-sovereign-cloud-iaas-spending-will-total-us-dollars-80-billion-in-2026">Gartner: sovereign cloud-forbrug (9/2-26)</a></li>
+    <li><a href="https://iapp.org/news/a/edpb-requests-review-of-eu-us-data-privacy-framework-following-trump-v-slaughter">IAPP: EDPB beder om DPF-genvurdering (31/7-26)</a></li>
+    <li><a href="https://www.datatilsynet.dk/afgoerelser/afgoerelser/2026/jan/datatilsynet-giver-51-kommuner-alvorlig-kritik-i-chromebook-sag">Datatilsynet: alvorlig kritik af 51 kommuner (29/1-26)</a></li>
+    <li><a href="https://digst.dk/media/xkxfgl34/digital-suveraenitet_casekatalog-2801206.pdf">Digitaliseringsstyrelsen: casekatalog, digital suver&#xE6;nitet (jan. 2026)</a></li>
+    <li><a href="https://mistral.ai/news/mistral-3/">Mistral 3-familien, Apache 2.0 (2/12-25)</a></li>
+    <li><a href="https://venturebeat.com/technology/z-ais-open-weights-glm-5-2-beats-gpt-5-5-on-multiple-long-horizon-coding-benchmarks-for-1-6th-the-cost">VentureBeat: GLM-5.2 open weights (16/6-26)</a></li>
+    <li><a href="https://www.scaleway.com/en/generative-apis/">Scaleway Generative APIs: modeller og priser (afl&#xE6;st 23/8-26)</a></li>
+    <li><a href="https://www.ovhcloud.com/en/public-cloud/ai-endpoints/catalog/">OVHcloud AI Endpoints: katalog og priser (afl&#xE6;st 23/8-26)</a></li>
+    <li><a href="https://ioplus.nl/en/posts/european-union-excluded-from-llama-4-multimodal-models">ioplus: Llama 4 multimodal lukket for EU</a></li>
+    <li><a href="https://via.ritzau.dk/pressemeddelelse/15096602/">Ritzau: DFM Mimir v1 &#x2014; dansk sprogmodel (14/8-26)</a></li>
+    <li><a href="https://www.mordorintelligence.com/industry-reports/stock-photography-market">Mordor: stock photography-markedet (2026)</a></li>
+    <li><a href="https://www.rappler.com/technology/features/inside-big-tech-underground-race-buy-ai-training-data/">Reuters/Rappler: priser p&#xE5; AI-tr&#xE6;ningsdata (2024)</a></li>
+    <li><a href="https://photutorial.com/shutterstock-vs-getty-images/">Photutorial: indemnitetsniveauer (2026)</a></li>
+    <li><a href="https://newsroom.gettyimages.com/en/getty-images/getty-images-launches-commercially-safe-generative-ai-offering">Getty: uncapped indemnification (25/9-23)</a></li>
+    <li><a href="https://editorsweblog.org/2026/04/12/c2pa-adoption-tracker-platforms-content-credentials-2026">C2PA adoption tracker (24/4-26)</a></li>
+    <li><a href="https://www.colourbox.dk/education/index">Colourbox: 26,9 mio. aktiver (afl&#xE6;st aug. 2026)</a></li>
+    <li><a href="https://www.skyfish.com/pricing">Skyfish: priser og add-ons (afl&#xE6;st aug. 2026)</a></li>
+    <li><a href="https://www.skyfish.com/da/om-os">Skyfish: om os &#x2014; kunder (afl&#xE6;st aug. 2026)</a></li>
+    <li><a href="https://www.skyfish.com/da/digitalt-samtykke">Skyfish: digitalt samtykke (afl&#xE6;st aug. 2026)</a></li>
+    <li><a href="https://www.proff.dk/firma/colourbox-aps/odense-n/forlag/GQCDP7I00FH">Proff.dk: Colourbox ApS &#x2014; n&#xF8;gletal (afl&#xE6;st aug. 2026)</a></li>
+    <li><a href="https://www.aprimo.com/blog/aprimo-leader-forrester-wave-dam-2026">Forrester Wave DAM Q1 2026 &#x2014; ledere (17/2-26)</a></li>
+    <li><a href="https://kontainer.com/ai-features">Kontainer: AI-funktioner &#x2014; MCP, C2PA, lokal LLM (afl&#xE6;st aug. 2026)</a></li>
+    <li><a href="https://www.capterra.com/p/143730/Kontainer/pricing/">Capterra: Kontainer-priser (2026)</a></li>
+    <li><a href="https://www.fotoware.com/blog/fotoware-alto-and-fotoware-veloz-new-names-dam-solutions">FotoWare: Veloz &amp; Alto (28/11-25)</a></li>
+    <li><a href="https://www.mediaflow.com/en/platform/modules/gdpr/">Mediaflow: GDPR-modul</a></li>
+    <li><a href="https://knowledge.qbankdam.com/knowledge/get-started-with-the-consent-process">QBank: consent-proces</a></li>
+    <li><a href="https://www.getmasset.com/resources/blog/dam-pricing-2026">Masset/Vendr: DAM-prisbenchmarks (7/7-26)</a></li>
+    <li><a href="https://www.mordorintelligence.com/industry-reports/digital-asset-management-dam-market">Mordor: DAM-markedet 2025-31</a></li>
+    <li><a href="https://learn.microsoft.com/en-us/microsoft-365/copilot/microsoft-365-copilot-search-image-tagging-integration">Microsoft Learn: Copilot-billedtagging (3/9-25)</a></li>
+    <li><a href="https://www.wilmerhale.com/en/insights/blogs/wilmerhale-privacy-and-cybersecurity-law/20250724-european-commission-issues-guidelines-for-providers-of-general-purpose-ai-models">WilmerHale: GPAI-guidelines, 1/3-compute (24/7-25)</a></li>
+    <li><a href="https://ai-act-service-desk.ec.europa.eu/en/biometrics">EU AI Act Service Desk: biometri</a></li>
+    <li><a href="https://www.edpb.europa.eu/news/news/2024/edpb-opinion-ai-models-gdpr-principles-support-responsible-ai_en">EDPB: Opinion 28/2024 (17/12-24)</a></li>
+    <li><a href="https://www.datatilsynet.dk/presse-og-nyheder/nyhedsarkiv/2019/sep/aendret-praksis-i-forhold-til-billeder-paa-internettet">Datatilsynet: praksis om billeder (2019)</a></li>
+    <li><a href="https://www.aoshearman.com/en/insights/ao-shearman-on-data/netherlands-the-dutch-data-protection-authority-publishes-guidance-on-facial-recognition-may-2-2024">A&amp;O Shearman: ansigtsgenkendelses-vejledning (2/5-24)</a></li>
+    <li><a href="https://www.wilmerhale.com/en/insights/blogs/wilmerhale-privacy-and-cybersecurity-law/20251201-european-court-of-justice-to-review-challenge-to-eu-us-data-privacy-framework">WilmerHale: Latombe ved EU-Domstolen (1/12-25)</a></li>
+    <li><a href="https://sacra.com/c/langdock/">Sacra: Langdock ARR-estimater (jun. 2026)</a></li>
+    <li><a href="https://medium.com/@robertkeus/the-10-best-eu-ai-chat-platforms-in-2026-privacy-first-alternatives-to-chatgpt-and-claude-56e2bc69fb76">Keus: 10 bedste EU AI-chatplatforme 2026 (feb. 2026)</a></li>
+    <li><a href="https://pickaxe.co/post/white-label-ai-tools-for-agencies">Pickaxe: white-label-v&#xE6;rkt&#xF8;jer og bureaumarginer (2026)</a></li>
+    <li><a href="https://stripe.com/customers/chatbase">Chatbase: 10 mio. $ ARR, bootstrapped (2026)</a></li>
+    <li><a href="https://sacra.com/c/intercom/">Sacra: Intercom/Fin &#x2014; ARR og NRR (2026)</a></li>
+    <li><a href="https://www.directionsonmicrosoft.com/microsoft-claims-15-million-paid-m365-copilot-seats/">Directions on Microsoft: 15 mio. Copilot-s&#xE6;der (29/1-26)</a></li>
+    <li><a href="https://ivristech.com/salesforce-q1-fy27-agentforce-arr-adoption-gap/">ivristech: Agentforce &#x2014; ARR vs. attach (maj 2026)</a></li>
+    <li><a href="https://finance.biggo.com/news/US_HUBS_2026-08-05">HubSpot Q2 2026: agenter og NRR (5/8-26)</a></li>
+    <li><a href="https://felloai.com/notion-ai-pricing/">FelloAI: Notions AI-bundling (2026)</a></li>
+    <li><a href="https://www.saastr.com/iconiqs-latest-state-of-ai-report-the-10-most-important-data-points-for-saas-founders">ICONIQ: State of AI &#x2014; marginer (jan. 2026)</a></li>
+    <li><a href="https://www.growthunhinged.com/p/the-state-of-b2b-monetization-in-2026">Growth Unhinged: B2B-monetarisering 2026 (13/5-26)</a></li>
+    <li><a href="https://tooldirectory.ai/blog/state-of-mcp-servers-2026">State of MCP Servers 2026</a></li>
+    <li><a href="https://www.deloitte.com/us/en/insights/industry/technology/technology-media-and-telecom-predictions/2026/saas-ai-agents.html">Deloitte: TMT Predictions 2026 &#x2014; SaaS og agenter</a></li>
+    <li><a href="https://www.dst.dk/da/Statistik/udgivelser/NytHtml?cid=55352">Danmarks Statistik: AI-brug i virksomheder (12/3-25)</a></li>
+    <li><a href="https://digst.dk/nyheder/nyhedsarkiv/2025/september/brug-af-ai-er-naesten-tredoblet/">Digitaliseringsstyrelsen: AI-brug tredoblet &#x2014; 42 % (22/9-25)</a></li>
+    <li><a href="https://www.techtimes.com/articles/318438/20260615/shadow-ai-cybersecurity-risk-spikes-45-workers-use-unsanctioned-tools.htm">TechTimes: shadow AI &#x2014; 45 % (15/6-26)</a></li>
+    <li><a href="https://www.frankx.ai/blog/gpt-oss-analysis-2026">frankx.ai: gpt-oss-status (5/6-26)</a></li>
+    <li><a href="https://www.unite.ai/moonshot-opens-kimi-k3-weights-under-a-revenue-tiered-license/">Unite.ai: Kimi K3-licensen (jul. 2026)</a></li>
+    <li><a href="https://codersera.com/blog/qwen-3-5-complete-guide-2026/">Codersera: Qwen 3.5-guide (2026)</a></li>
+    <li><a href="https://euroeval.com/leaderboards">EuroEval: skandinaviske leaderboards + Danoliteracy (arXiv 2410.22839)</a></li>
+    <li><a href="https://www.kalviumlabs.ai/blog/vector-databases-compared-pgvector-pinecone-qdrant-weaviate/">Kalvium Labs: vektorbaser sammenlignet (2/4-26)</a></li>
+    <li><a href="https://github.com/langfuse/langfuse">Langfuse: open source LLM-observability</a></li>
+    <li><a href="https://www.insightface.ai/solutions/face-recognition-licensing">InsightFace: kommerciel licens p&#xE5;kr&#xE6;vet</a></li>
+    <li><a href="https://iternal.ai/best-private-ai-appliances">iternal/IDC: 84 % forventer on-prem/edge-AI (5/6-26)</a></li>
+    <li><a href="https://devtk.ai/en/blog/ai-api-pricing-comparison-2026/">devtk: AI API-priser 2026 (17/8-26)</a></li>
+    <li><a href="https://press.aboutamazon.com/aws/2026/1/aws-launches-aws-european-sovereign-cloud-and-announces-expansion-across-europe">AWS European Sovereign Cloud (15/1-26)</a></li>
+    <li><a href="https://www.version2.dk/artikel/digitaliseringsministeriet-maner-til-ro-vil-ikke-droppe-microsoft">Version2: ministeriet og Microsoft-exit (24/6-25)</a></li>
+    <li><a href="https://pro.ing.dk/digitech/artikel/aarhus-kommune-saetter-turbo-paa-microsoft-udskiftning-hver-fjerde-kontorpakke-skal-vaere-open">Ing/PRO: Aarhus' Microsoft-udskiftning (3/10-25)</a></li>
+    <li><a href="https://netcompany.com/denmark-leads-the-way-in-sovereign-ai-unlocking-billion-euro-potential-and-freeing-up-time-for-thousands-of-public-sector-workers/">Netcompany: EASLEY p&#xE5; Gefion (5/12-25)</a></li>
+    <li><a href="https://www.cloudflare.com/press/press-releases/2025/cloudflare-just-changed-how-ai-crawlers-scrape-the-internet-at-large/">Cloudflare: AI-crawlere blokeret som standard (1/7-25)</a></li>
+    <li><a href="https://www.nice.com/press-releases/nice-to-acquire-cognigy-advancing-the-leading-cx-ai-platform-to-accelerate-ai-first-customer-experience">NICE k&#xF8;ber Cognigy, 955 mio. $ (2025)</a></li>
+    <li><a href="https://agentmarketcap.ai/blog/2026/04/13/bessemer-ai-agent-pricing-monetization-playbook-2026">Bessemer/AgentMarketCap: agent-priss&#xE6;tning (13/4-26)</a></li>
+    <li><a href="https://www.lorikeetcx.ai/articles/customer-service-cost-per-ticket">Lorikeet: cost per ticket-benchmarks</a></li>
+    <li><a href="https://www.freshfields.com/en/our-thinking/blogs/technology-quotient/eu-ai-act-unpacked-34-the-final-digital-omnibus-on-ai-key-amendments-to-the-a-102nber">Freshfields: den endelige AI-omnibus (10/7-26)</a></li>
+    <li><a href="https://www.fortunebusinessinsights.com/digital-asset-management-dam-market-104914">Fortune Business Insights: DAM-markedet</a></li>
+    <li><a href="https://arcticstartup.com/digizuite-is-acquired-by-luxion-group/">Luxion k&#xF8;ber Digizuite (2023)</a></li>
+    <li><a href="https://www.stocktitan.net/news/SSTK/shutterstock-reports-first-quarter-2026-financial-pw6bmu0k4mf3.html">Shutterstock Q1 2026 (maj 2026)</a></li>
+    <li><a href="https://www.slaughterandmay.com/insights/new-insights/competition-and-regulatory-newsletter-getty-shutterstock-receives-conditional-clearance-from-the-cma/">Slaughter and May: CMA's betingede godkendelse (15/5-26)</a></li>
+  </ol>
+  <p class="mantra" style="margin-top:30px">Forsyn det &#xB7; Forst&#xE5; det &#xB7; Bevis det &#xB7; Kontroll&#xE9;r det &#x2014; og m&#xE5;l det med agenten</p>
+  <p class="small" style="margin-top:10px">Stresstesten &amp; agenten &#xB7; udarbejdet 23. august 2026 &#xB7; opf&#xF8;lger p&#xE5; kernekompetencemodellen &#xBB;Hvorfor os&#xAB;</p>
+</footer>
+
+</div>
