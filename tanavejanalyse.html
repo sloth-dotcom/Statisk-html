@@ -1,0 +1,1176 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tanavej 18 — Køberanalyse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@80..100,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..700;1,8..60,400..600&display=swap">
+
+<style>
+:root{
+  --ground:#EBEEED;
+  --ground-2:#E1E6E4;
+  --surface:#FFFFFF;
+  --surface-2:#F5F7F6;
+  --line:#C9D2CF;
+  --line-soft:#DBE2E0;
+  --ink:#14201E;
+  --ink-2:#3A4744;
+  --ink-soft:#5B6864;
+  --accent:#0E6A61;
+  --accent-2:#0A4F49;
+  --accent-wash:#E0EBE8;
+  --crit:#AC2A22;
+  --crit-wash:#F7E4E2;
+  --warn:#9C6B00;
+  --warn-wash:#F6EBD5;
+  --minor:#6F7E78;
+  --minor-wash:#E7ECEA;
+  --probe:#454BA0;
+  --probe-wash:#E5E6F4;
+  --shadow:0 1px 2px rgba(20,32,30,.06),0 8px 24px -16px rgba(20,32,30,.22);
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1615;
+    --ground-2:#141E1C;
+    --surface:#182321;
+    --surface-2:#1E2A28;
+    --line:#2F403C;
+    --line-soft:#26332F;
+    --ink:#E6EDEB;
+    --ink-2:#C0CCC8;
+    --ink-soft:#93A29D;
+    --accent:#5FC4B5;
+    --accent-2:#8AD8CB;
+    --accent-wash:#16302C;
+    --crit:#F08C82;
+    --crit-wash:#3A1E1C;
+    --warn:#E0B15C;
+    --warn-wash:#33280F;
+    --minor:#9AAAA4;
+    --minor-wash:#222E2B;
+    --probe:#A3A7EE;
+    --probe-wash:#1F2140;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1615;
+  --ground-2:#141E1C;
+  --surface:#182321;
+  --surface-2:#1E2A28;
+  --line:#2F403C;
+  --line-soft:#26332F;
+  --ink:#E6EDEB;
+  --ink-2:#C0CCC8;
+  --ink-soft:#93A29D;
+  --accent:#5FC4B5;
+  --accent-2:#8AD8CB;
+  --accent-wash:#16302C;
+  --crit:#F08C82;
+  --crit-wash:#3A1E1C;
+  --warn:#E0B15C;
+  --warn-wash:#33280F;
+  --minor:#9AAAA4;
+  --minor-wash:#222E2B;
+  --probe:#A3A7EE;
+  --probe-wash:#1F2140;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px -18px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:17px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px 96px}
+@media (max-width:640px){ body{font-size:16px} .wrap{padding:0 16px 72px} }
+
+/* ---------- type ---------- */
+h1,h2,h3,h4,.eyebrow,.stat-n,.chip,th,.btn,.nav a{font-family:var(--display)}
+h1{
+  font-size:clamp(2.1rem,5.2vw,3.5rem);
+  font-weight:800;
+  font-stretch:88%;
+  letter-spacing:-.022em;
+  line-height:1.02;
+  margin:0 0 .5rem;
+  text-wrap:balance;
+}
+h2{
+  font-size:clamp(1.4rem,2.9vw,1.95rem);
+  font-weight:700;
+  font-stretch:90%;
+  letter-spacing:-.014em;
+  line-height:1.12;
+  margin:0;
+  text-wrap:balance;
+}
+h3{
+  font-size:1.08rem;
+  font-weight:700;
+  font-stretch:92%;
+  letter-spacing:-.006em;
+  line-height:1.25;
+  margin:0 0 .35rem;
+  text-wrap:balance;
+}
+h4{
+  font-size:.78rem;
+  font-weight:700;
+  font-stretch:96%;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--ink-soft);
+  margin:0 0 .6rem;
+}
+p{margin:0 0 1rem}
+p:last-child{margin-bottom:0}
+a{color:var(--accent);text-decoration-thickness:1px;text-underline-offset:2px}
+strong{font-weight:700;color:var(--ink)}
+.lede{font-size:1.12rem;color:var(--ink-2);max-width:64ch}
+.prose{max-width:68ch}
+.eyebrow{
+  font-size:.72rem;font-weight:700;font-stretch:96%;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--accent);
+  display:block;margin-bottom:.7rem;
+}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.small{font-size:.9rem;color:var(--ink-soft)}
+.xsmall{font-size:.8rem;color:var(--ink-soft);line-height:1.5}
+
+/* ---------- header ---------- */
+header.masthead{
+  border-bottom:1px solid var(--line);
+  background:var(--ground-2);
+  margin-bottom:0;
+}
+.masthead-inner{max-width:1120px;margin:0 auto;padding:52px 24px 40px}
+@media (max-width:640px){.masthead-inner{padding:36px 16px 30px}}
+.kicker{
+  font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-soft);display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:1.6rem;
+}
+.kicker span{white-space:nowrap}
+.kicker .dot{width:4px;height:4px;border-radius:50%;background:var(--line);flex:none}
+.verdict{
+  margin-top:1.8rem;padding:18px 20px;border-radius:3px;
+  background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--crit);
+  max-width:70ch;box-shadow:var(--shadow);
+}
+.verdict h4{color:var(--crit);margin-bottom:.4rem}
+
+/* ---------- meta grid ---------- */
+.meta{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));
+  gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);
+  margin-top:2.2rem;border-radius:2px;overflow:hidden;
+}
+.meta div{background:var(--ground-2);padding:12px 14px}
+.meta dt{
+  font-family:var(--display);font-size:.68rem;font-weight:700;font-stretch:96%;
+  letter-spacing:.11em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 3px;
+}
+.meta dd{margin:0;font-family:var(--mono);font-size:.86rem;color:var(--ink);line-height:1.4}
+
+/* ---------- nav ---------- */
+nav.toc{
+  position:sticky;top:0;z-index:20;
+  background:color-mix(in srgb,var(--ground) 92%,transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  margin-bottom:0;
+}
+.toc-inner{
+  max-width:1120px;margin:0 auto;padding:0 24px;
+  display:flex;gap:0;overflow-x:auto;scrollbar-width:thin;
+}
+@media (max-width:640px){.toc-inner{padding:0 16px}}
+.toc a{
+  flex:none;padding:13px 15px;font-size:.79rem;font-weight:600;font-stretch:94%;
+  letter-spacing:.01em;color:var(--ink-soft);text-decoration:none;white-space:nowrap;
+  border-bottom:2px solid transparent;
+}
+.toc a:hover,.toc a:focus-visible{color:var(--accent);border-bottom-color:var(--accent)}
+.toc a:first-child{padding-left:0}
+
+/* ---------- sections ---------- */
+section{padding-top:64px}
+section > .head{margin-bottom:1.6rem;max-width:70ch}
+section > .head p{margin-top:.7rem;color:var(--ink-2)}
+hr.rule{border:0;border-top:1px solid var(--line);margin:0}
+
+/* ---------- stats ---------- */
+.stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:14px;margin-top:2.2rem;
+}
+.stat{
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:16px 18px 18px;box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.stat::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.stat.is-crit::before{background:var(--crit)}
+.stat.is-warn::before{background:var(--warn)}
+.stat.is-probe::before{background:var(--probe)}
+.stat-n{
+  font-size:2.05rem;font-weight:800;font-stretch:86%;letter-spacing:-.03em;
+  line-height:1;display:block;margin-bottom:.3rem;font-variant-numeric:tabular-nums;
+}
+.stat.is-crit .stat-n{color:var(--crit)}
+.stat.is-warn .stat-n{color:var(--warn)}
+.stat.is-probe .stat-n{color:var(--probe)}
+.stat-l{font-family:var(--display);font-size:.85rem;font-weight:600;font-stretch:94%;line-height:1.3;display:block}
+.stat-s{font-size:.78rem;color:var(--ink-soft);display:block;margin-top:.35rem;line-height:1.45}
+
+/* ---------- severity bar ---------- */
+.sevbar{margin-top:2.4rem;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.sevbar-item{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:16px 18px 18px;box-shadow:var(--shadow)}
+.bar{display:flex;height:26px;border-radius:2px;overflow:hidden;margin:.9rem 0 .7rem;border:1px solid var(--line-soft)}
+.bar span{display:block;position:relative}
+.bar b{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-family:var(--mono);font-size:.72rem;font-weight:600;color:#fff;
+}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.78rem;color:var(--ink-2);font-family:var(--display);font-weight:500}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:baseline}
+
+/* ---------- chips ---------- */
+.chip{
+  display:inline-flex;align-items:center;gap:5px;flex:none;
+  font-size:.68rem;font-weight:700;font-stretch:96%;letter-spacing:.075em;text-transform:uppercase;
+  padding:3px 8px;border-radius:2px;border:1px solid transparent;white-space:nowrap;
+}
+.chip.crit{color:var(--crit);background:var(--crit-wash);border-color:color-mix(in srgb,var(--crit) 28%,transparent)}
+.chip.warn{color:var(--warn);background:var(--warn-wash);border-color:color-mix(in srgb,var(--warn) 28%,transparent)}
+.chip.minor{color:var(--minor);background:var(--minor-wash);border-color:color-mix(in srgb,var(--minor) 32%,transparent)}
+.chip.probe{color:var(--probe);background:var(--probe-wash);border-color:color-mix(in srgb,var(--probe) 28%,transparent)}
+.chip.acc{color:var(--accent);background:var(--accent-wash);border-color:color-mix(in srgb,var(--accent) 26%,transparent)}
+
+/* ---------- theme cards ---------- */
+.themes{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(288px,1fr));margin-top:.5rem}
+.theme{
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:.6rem;
+}
+.theme-top{display:flex;align-items:center;gap:10px;justify-content:space-between}
+.theme .ref{font-family:var(--mono);font-size:.74rem;color:var(--ink-soft);padding-top:.5rem;border-top:1px dashed var(--line);margin-top:auto}
+.theme p{font-size:.95rem;color:var(--ink-2)}
+
+/* ---------- ledger ---------- */
+.ledger{margin-top:1.2rem;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.lgroup{border-top:1px solid var(--line)}
+.lgroup:first-child{border-top:0}
+.lgroup > .lhead{
+  display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;
+  padding:11px 16px;background:var(--surface-2);border-bottom:1px solid var(--line-soft);
+}
+.lgroup > .lhead h3{margin:0;font-size:.92rem}
+.lgroup > .lhead .cnt{font-family:var(--mono);font-size:.76rem;color:var(--ink-soft)}
+.row{display:grid;grid-template-columns:66px 96px 1fr;gap:14px;padding:14px 16px;border-top:1px solid var(--line-soft);align-items:start}
+.row:first-of-type{border-top:0}
+.row .no{font-family:var(--mono);font-size:.78rem;color:var(--ink-soft);padding-top:2px}
+.row .txt{font-size:.96rem}
+.row .txt em{color:var(--ink-soft);font-style:italic;display:block;margin-top:.25rem;font-size:.88rem}
+.row .txt .why{display:block;margin-top:.4rem;font-size:.88rem;color:var(--ink-2)}
+.row .txt .why::before{content:"→ ";color:var(--accent);font-family:var(--mono)}
+@media (max-width:640px){
+  .row{grid-template-columns:1fr;gap:7px}
+  .row .no{padding-top:0}
+}
+
+/* ---------- generic cards / boxes ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:20px 22px;box-shadow:var(--shadow)}
+.card + .card{margin-top:14px}
+.grid2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.note{
+  border-left:3px solid var(--accent);background:var(--accent-wash);
+  padding:14px 18px;border-radius:0 3px 3px 0;margin-top:1.4rem;
+}
+.note.crit{border-left-color:var(--crit);background:var(--crit-wash)}
+.note.warn{border-left-color:var(--warn);background:var(--warn-wash)}
+.note p{font-size:.95rem}
+blockquote{
+  margin:.7rem 0 0;padding-left:14px;border-left:2px solid var(--line);
+  font-style:italic;color:var(--ink-2);font-size:.93rem;
+}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:3px;background:var(--surface);box-shadow:var(--shadow);margin-top:1.2rem}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.93rem}
+th{
+  text-align:left;font-size:.7rem;font-weight:700;font-stretch:96%;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);padding:11px 14px;background:var(--surface-2);border-bottom:1px solid var(--line);
+  white-space:nowrap;vertical-align:bottom;
+}
+td{padding:12px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+tbody.band th[scope="rowgroup"]{
+  background:var(--ground-2);color:var(--ink);font-size:.74rem;letter-spacing:.12em;
+  border-top:1px solid var(--line);
+}
+tr.total td{font-weight:700;background:var(--surface-2);border-top:1px solid var(--line)}
+tr.total td.num{font-family:var(--mono)}
+
+/* ---------- checklist ---------- */
+.checks{display:grid;gap:12px;counter-reset:ck;margin-top:1.2rem}
+.check{
+  display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:14px 18px;box-shadow:var(--shadow);
+}
+.check::before{
+  counter-increment:ck;content:counter(ck,decimal-leading-zero);
+  font-family:var(--mono);font-size:.8rem;color:var(--accent);padding-top:2px;
+}
+.check h3{font-size:.98rem;margin-bottom:.2rem}
+.check p{font-size:.9rem;color:var(--ink-2);margin:0}
+.check .who{align-self:center}
+@media (max-width:560px){
+  .check{grid-template-columns:auto 1fr}
+  .check .who{grid-column:2;justify-self:start;margin-top:.5rem}
+}
+
+/* ---------- timeline ---------- */
+.tl{margin-top:1.4rem;background:var(--surface);border:1px solid var(--line);border-radius:3px;padding:22px;box-shadow:var(--shadow)}
+.tl-track{position:relative;height:8px;border-radius:4px;background:var(--minor-wash);margin:34px 0 30px;border:1px solid var(--line-soft)}
+.tl-fill{position:absolute;left:0;top:0;bottom:0;width:66.7%;background:var(--accent);border-radius:4px 0 0 4px}
+.tl-mark{position:absolute;top:50%;transform:translate(-50%,-50%);width:11px;height:11px;border-radius:50%;background:var(--surface);border:2.5px solid var(--accent)}
+.tl-mark.now{border-color:var(--warn);background:var(--warn);width:13px;height:13px}
+.tl-mark.end{border-color:var(--crit)}
+.tl-lab{position:absolute;transform:translateX(-50%);text-align:center;width:110px;font-family:var(--mono);font-size:.74rem;line-height:1.3;color:var(--ink-soft)}
+.tl-lab b{display:block;font-size:.86rem;color:var(--ink);font-weight:600}
+.tl-lab.above{bottom:22px}
+.tl-lab.below{top:22px}
+
+/* ---------- footer ---------- */
+footer{margin-top:72px;padding-top:26px;border-top:1px solid var(--line);font-size:.85rem;color:var(--ink-soft)}
+footer p{max-width:74ch;margin-bottom:.7rem}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="kicker">
+      <span>Køberanalyse</span><i class="dot"></i>
+      <span>Tilstandsrapport H-26-04155-0198</span><i class="dot"></i>
+      <span>Elinstallationsrapport E-1466468</span>
+    </div>
+    <h1>Tanavej 18, 2770 Kastrup</h1>
+    <p class="lede">Et gennemrenoveret hus fra 1961 med en veldokumenteret række skader. De to rapporter registrerer <strong>19 skader</strong> og <strong>37 el-fejl</strong> — og ingen af dem er dækket af ejerskifteforsikringen. Alt, du kan læse her, bliver din regning fra overtagelsesdagen.</p>
+
+    <div class="verdict">
+      <h4>Hovedkonklusion</h4>
+      <p style="margin:0">Huset er ikke i dårlig stand for sin alder, men det har <strong>tre badeværelser med aktive vandindtrængningsrisici</strong>, <strong>et 20 år gammelt eternittag med begyndende utætheder</strong> og <strong>en elinstallation med 14 registrerede brandrisici</strong>. Dertil 62 m² bebyggelse, der ikke findes i BBR. De økonomiske konsekvenser er reelle og bør indgå i prisen — men de tre vigtigste tal kender ingen endnu, fordi loftrummet, kloakken og etageadskillelsen under 1. sals bad ikke er blevet undersøgt.</p>
+    </div>
+
+    <dl class="meta">
+      <div><dt>Byggeår</dt><dd>1961</dd></div>
+      <div><dt>Bolig, brutto</dt><dd>189 m²</dd></div>
+      <div><dt>Bebygget areal</dt><dd>149 m²</dd></div>
+      <div><dt>Udnyttet tagetage</dt><dd>40 m²</dd></div>
+      <div><dt>Ejet siden</dt><dd>1982</dd></div>
+      <div><dt>Tilbygget</dt><dd>1987 · 2006</dd></div>
+      <div><dt>Tag lagt</dt><dd>2006</dd></div>
+      <div><dt>Varme</dt><dd>Luft/vand + solceller</dd></div>
+    </dl>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Indhold">
+  <div class="toc-inner">
+    <a href="#overblik">Overblik</a>
+    <a href="#temaer">Fem risikotemaer</a>
+    <a href="#skader">19 skader</a>
+    <a href="#el">37 el-fejl</a>
+    <a href="#huller">Det uundersøgte</a>
+    <a href="#saelger">Sælgers svar</a>
+    <a href="#bbr">BBR &amp; lovlighed</a>
+    <a href="#tag">Tagets restlevetid</a>
+    <a href="#oekonomi">Økonomi</a>
+    <a href="#tjekliste">Tjekliste</a>
+    <a href="#forhandling">Forhandling</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<!-- ============ OVERBLIK ============ -->
+<section id="overblik">
+  <div class="head">
+    <span class="eyebrow">01 — Overblik</span>
+    <h2>Hvad rapporterne faktisk siger</h2>
+    <p>De to rapporter er grundige. Netop derfor er de dyre for dig: ejerskifteforsikringen dækker udtrykkeligt <em>ikke</em> de forhold, der står nævnt i dem. Jo mere de sagkyndige har fundet, jo mere overtager du selv.</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat is-crit">
+      <span class="stat-n">8</span>
+      <span class="stat-l">Kritiske skader (rød)</span>
+      <span class="stat-s">Funktionssvigt inden for ca. 2 år. Syv af dem handler om vand.</span>
+    </div>
+    <div class="stat is-crit">
+      <span class="stat-n">14</span>
+      <span class="stat-l">El-fejl med brandrisiko</span>
+      <span class="stat-s">Heraf 5 indbygningsspots for tæt på isolering og 3 steder med 0,75 mm² som fast installation.</span>
+    </div>
+    <div class="stat is-warn">
+      <span class="stat-n">3 / 3</span>
+      <span class="stat-l">Badeværelser med fejl</span>
+      <span class="stat-s">Alle tre vådrum har registrerede skader. To har røde skader i selve brusenichen.</span>
+    </div>
+    <div class="stat is-probe">
+      <span class="stat-n">62 m²</span>
+      <span class="stat-l">Bebyggelse uden for BBR</span>
+      <span class="stat-s">Carport, udestue og skur er ikke anført i registret. Arealerne er skønnede.</span>
+    </div>
+    <div class="stat">
+      <span class="stat-n">10 år</span>
+      <span class="stat-l">Statistisk restlevetid, tag</span>
+      <span class="stat-s">Eternitbølgeplader fra 2006, tabelleret udløb 2036 — men der er skader nu.</span>
+    </div>
+    <div class="stat is-probe">
+      <span class="stat-n">4</span>
+      <span class="stat-l">Væsentlige blinde vinkler</span>
+      <span class="stat-s">Loftrum, kloak, etageadskillelse under 1. sals bad, termoruder.</span>
+    </div>
+  </div>
+
+  <div class="sevbar">
+    <div class="sevbar-item">
+      <h4 style="margin-bottom:0">Tilstandsrapport — 19 skader</h4>
+      <div class="bar" role="img" aria-label="8 kritiske, 4 alvorlige, 7 mindre alvorlige skader">
+        <span style="flex:8;background:var(--crit)"><b>8</b></span>
+        <span style="flex:4;background:var(--warn)"><b>4</b></span>
+        <span style="flex:7;background:var(--minor)"><b>7</b></span>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--crit)"></i>Kritisk (rød)</span>
+        <span><i style="background:var(--warn)"></i>Alvorlig (gul)</span>
+        <span><i style="background:var(--minor)"></i>Mindre alvorlig (grå)</span>
+      </div>
+    </div>
+    <div class="sevbar-item">
+      <h4 style="margin-bottom:0">Elinstallationsrapport — 37 fejl</h4>
+      <div class="bar" role="img" aria-label="14 med brandrisiko, 4 med stødrisiko, 17 ulovlige, 2 der bør undersøges">
+        <span style="flex:14;background:var(--crit)"><b>14</b></span>
+        <span style="flex:4;background:var(--warn)"><b>4</b></span>
+        <span style="flex:17;background:var(--minor)"><b>17</b></span>
+        <span style="flex:2;background:var(--probe)"><b>2</b></span>
+      </div>
+      <div class="legend">
+        <span><i style="background:var(--crit)"></i>Brandrisiko</span>
+        <span><i style="background:var(--warn)"></i>Stødrisiko</span>
+        <span><i style="background:var(--minor)"></i>Ulovlig</span>
+        <span><i style="background:var(--probe)"></i>Undersøges</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="note crit">
+    <h4 style="color:var(--crit)">Det vigtigste at forstå om dækning</h4>
+    <p style="margin:0">Ejerskifteforsikringen dækker <strong>skjulte</strong> skader. Begge rapporter skriver det direkte i indledningen til deres oversigter — tilstandsrapporten: <em>»Vær opmærksom på, at ejerskifteforsikringen ikke dækker de registrerede skader«</em> (s. 11), elinstallationsrapporten: <em>»Vær opmærksom på, at ejerskifteforsikringen ikke dækker de anførte fejl«</em> (s. 6). De 19 skader og 37 el-fejl er dermed flyttet fra sælgers 10-årige ansvar over på dig i det øjeblik, du skriver under. Det er derfor de skal prisfastsættes, ikke forsikres.</p>
+  </div>
+</section>
+
+<!-- ============ TEMAER ============ -->
+<section id="temaer">
+  <div class="head">
+    <span class="eyebrow">02 — Mønstre</span>
+    <h2>Fem risikotemaer, ikke 56 løsrevne fejl</h2>
+    <p>Rapporterne lister fund rum for rum. Læser man dem på tværs, falder de i fem grupper — og det er grupperne, ikke de enkelte punkter, der bestemmer, hvad huset kommer til at koste dig.</p>
+  </div>
+
+  <div class="themes">
+    <div class="theme">
+      <div class="theme-top"><h3>Vand ovenfra</h3><span class="chip crit">Højeste risiko</span></div>
+      <p>Hul i en tagplade ved skotrenden mod nordøst. Udfaldne tætninger ved rygningen nær skorstenen. Overfladerevner i flere plader. På skuret langs køkkengavlen er der bagfald, tagpap der ikke klæber — og <strong>indvendige fugtaftegninger på væggene</strong>, altså en skade der er i gang.</p>
+      <p>Det tag er 20 år gammelt med statistisk 10 år tilbage. Sælger oplyser, at det er sprøjtet mod mos ca. hvert andet år; rapportens egen hustypebeskrivelse advarer om, at mosafrensning kræver, at taget kan holde til det. Overfladerevnerne kan hænge sammen med den behandling.</p>
+      <div class="ref">Skade 1, 2, 5, 16, 19 · Tag lagt 2006</div>
+    </div>
+
+    <div class="theme">
+      <div class="theme-top"><h3>Vand indefra</h3><span class="chip crit">Højeste risiko</span></div>
+      <p>Alle tre badeværelser har fejl. I to brusenicher har både gulv- og vægfliser <strong>mangelfuld vedhæftning</strong> — vand kan komme bag flisen, hvor der ikke er sikret afdræning. I det store bad er der monteret forhøjerrammer i et gulvafløb, der ikke er godkendt til dem.</p>
+      <p>Det farligste ligger på 1. sal: gulvafløbsristen ligger løs og klemmer ikke vinylen tæt. Under det gulv er der efter materialeoversigten en <strong>etageadskillelse af bjælkekonstruktion</strong> — altså træ. Vand herfra ses ikke, før det har stået i konstruktionen i årevis.</p>
+      <div class="ref">Skade 7–15 · 3 vådrum, 6 røde skader</div>
+    </div>
+
+    <div class="theme">
+      <div class="theme-top"><h3>Elinstallationen</h3><span class="chip crit">14 brandrisici</span></div>
+      <p>37 fejl er meget for et hus af denne størrelse. De falder i genkendelige mønstre: indbygningsspots for tæt på isoleringen, 0,75 mm² brugt som fast installation tre steder, kabler uden aflastning i dåser overalt, og en eltavle der er svær at komme til, mangler opmærkning og tillader for store sikringer.</p>
+      <p>Installatøren bemærker, at <em>»dele af installationen er af nyere ukendt årstal«</em> — mens sælger svarer nej til, at der er udført reparationer eller ændringer. Mønsteret (for tynde ledninger, ufastgjorte armaturbøjler) peger typisk på arbejde, der ikke er udført fagmæssigt.</p>
+      <div class="ref">Fejl 1–37 · 14 brand · 4 stød · 17 ulovlige</div>
+    </div>
+
+    <div class="theme">
+      <div class="theme-top"><h3>Lovlighed og BBR</h3><span class="chip warn">Sælgers ansvar</span></div>
+      <p>Carport (37 m²), udestue (18 m²) og skur langs køkkengavl (7 m²) er <strong>ikke anført i BBR</strong>. Den bygningssagkyndige har skønnet arealerne. Udestuen er opført i massivt murværk, carporten er 37 m² — begge i en størrelse, hvor kommunen normalt vil kræve dokumentation.</p>
+      <p>Dette er det ene punkt, hvor ansvaret <em>ikke</em> flytter til dig: sælgeransvaret består netop for <em>»ulovligheder — eksempelvis bygninger eller bygningsdele, der er opført i strid med gældende regler«</em>. Det er derfor sælgers opgave at bringe orden i det.</p>
+      <div class="ref">Rapportens s. 10 · 62 m² i alt</div>
+    </div>
+
+    <div class="theme">
+      <div class="theme-top"><h3>Det, ingen har set</h3><span class="chip probe">Ukendt omfang</span></div>
+      <p>Loftrummet er kun besigtiget i begrænset omfang på grund af opmagasinerede effekter — det står i <em>begge</em> rapporter. Det er præcis det rum, hvor følgeskaderne fra de utætte tætninger ved skorstenen og hullet i tagpladen ville vise sig.</p>
+      <p>Dertil: ingen kloakinspektion (og der har været rotter), ingen fugtmåling i etageadskillelsen, punkterede termoruder kunne ikke konstateres visuelt, og facaden mod vej var dækket af plantebevoksning.</p>
+      <div class="ref">Bemærkninger s. 9 · El-rapport s. 5</div>
+    </div>
+
+    <div class="theme">
+      <div class="theme-top"><h3>Det, der ser fornuftigt ud</h3><span class="chip acc">Aktiver</span></div>
+      <p>Ikke alt er risiko. Huset har luft/vand-varmepumpe, solceller, gulvvarme og en stueetage der blev renoveret fra bunden i 2006 med opgravning af gulve til isolering — udført af fagfolk, oplyser sælger. Taget er asbestfrit. Inddækninger har statistisk levetid til 2066.</p>
+      <p>Der er ingen registrerede skader på ydervægge, vinduer, døre, indervægge, lofter eller trapper i beboelsen. Fundamentet har kun revner i sokkelpudsen. Sælger har boet i huset siden 1982, hvilket normalt betyder løbende vedligehold frem for udskudte problemer.</p>
+      <div class="ref">Materialeoversigt s. 26 · Sælgeroplysninger 3.1–3.3</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SKADER ============ -->
+<section id="skader">
+  <div class="head">
+    <span class="eyebrow">03 — Tilstandsrapporten</span>
+    <h2>Alle 19 skader, grupperet efter hvad de gør</h2>
+    <p>Numrene svarer til skadesoversigten i tilstandsrapporten, så du kan slå hvert punkt op. Pilen forklarer, hvorfor punktet betyder noget ud over sin egen ordlyd.</p>
+  </div>
+
+  <div class="ledger">
+    <div class="lgroup">
+      <div class="lhead"><h3>Tagpakken — vandindtrængning udefra</h3><span class="cnt">5 skader · 3 røde</span></div>
+      <div class="row">
+        <span class="no">Skade 1</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Hul i enkelt tagplade ved skotrende mod nordøst.
+          <em>Rapportens risiko: vandindtrængning, som kan give skader på de underliggende bygningsdele.</em>
+          <span class="why">Skotrender er tagets mest belastede punkt. Et hul her leder vand direkte ind i en konstruktion, du ikke har kunnet se, fordi loftrummet var fyldt. Skal udbedres straks, uanset pris.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 5</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Tætninger ved rygning nær skorsten er udfaldet.
+          <em>Rapportens risiko: vandindtrængen ved blæst, nedbør og fygesne.</em>
+          <span class="why">Registreret <strong>inde i tagrummet</strong> — den sagkyndige har altså set konsekvensen indefra. Sammen med skade 1 betyder det, at der er to aktive indtrængningsveje i et tagrum, der kun er delvist besigtiget.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 19</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Bagfald og lunker på tagfladen af skuret langs køkkengavlen, og tagpap der ikke klæber ved fodblikket.
+          <em>Rapportens bemærkning: indvendigt ses der fugtaftegninger på væggene.</em>
+          <span class="why">Den eneste skade, hvor rapporten dokumenterer en <strong>igangværende</strong> fugtskade. Bagfald betyder, at vandet står stille — det bliver ikke bedre af sig selv. Undersøg om trækonstruktionen bag er angrebet.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 2</span>
+        <span><span class="chip warn">Alvorlig</span></span>
+        <span class="txt">Enkelte tagplader med overfladerevner — under tagvindue mod vest og ved skotrende mod sydvest.
+          <span class="why">På et 20-årigt eternittag er overfladerevner et tidligt signal om, at pladerne nærmer sig enden. Kombinationen med gentagen mosafrensning er værd at spørge sælger om.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 16</span>
+        <span><span class="chip warn">Alvorlig</span></span>
+        <span class="txt">Enkelte tynde revner i tagrygninger på udhuset.
+          <span class="why">Lille beløb, men samme mekanisme som på hovedhuset. Bør med i den samlede tagvurdering.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Vådrum — tre badeværelser, alle med fejl</h3><span class="cnt">9 skader · 4 røde</span></div>
+      <div class="row">
+        <span class="no">Skade 8</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Enkelte gulvklinker med mangelfuld vedhæftning til underlaget i brusenichen. <span class="mono small">(Bad 1, lille — stueplan)</span>
+          <em>Rapportens risiko: gulv med direkte vandbelastning, risiko for skader på omkringliggende konstruktioner og installationer.</em>
+          <span class="why">»Mangelfuld vedhæftning« i en bruseniche betyder i praksis, at fliselaget ikke længere er en sammenhængende flade. Om der er en intakt membran under, ved ingen — det kan ikke ses uden at bryde op.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 9</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Enkelte vægfliser med mangelfuld vedhæftning i samme bruseniche.
+          <span class="why">Gulv <em>og</em> væg i samme niche. Det peger på, at problemet er nichen som helhed, ikke enkelte fliser — og dermed mod en omflisning frem for en lapning.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 11</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Enkelte vægfliser med mangelfuld vedhæftning i brusenichen. <span class="mono small">(Bad 2, stor — stueplan)</span>
+          <span class="why">Samme billede i det andet badeværelse. To uafhængige brusenicher med samme svigt tyder på systematik i udførelsen, formentlig fra 2006-renoveringen.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 12</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Der er monteret forhøjerrammer mellem afløbsskål og rist i gulvafløbet. Gulvafløbet er ikke godkendt til forhøjerrammer.
+          <em>Rapportens risiko: afløbet er vandbelastet fra gulvoverfladen, risiko for fugtindtrængen og skader på underliggende konstruktioner og installationer.</em>
+          <span class="why">Den dyreste af vådrumsskaderne. En forhøjerramme på et afløb, der ikke er godkendt til det, bryder overgangen mellem membran og afløb — netop det sted, hvor alt vandet samles. At rette det kræver reelt at bryde gulvet op omkring afløbet, dvs. ny membran og ny flisebelægning i zonen.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 14</span>
+        <span><span class="chip crit">Kritisk</span></span>
+        <span class="txt">Rist til gulvafløb er ikke monteret korrekt, ligger løs og klemmer ikke vinylen tæt. <span class="mono small">(Bad, 1. sal)</span>
+          <em>Rapportens risiko: fugtindtrængen og skader på de underliggende konstruktioner.</em>
+          <span class="why"><strong>Den skade med det største skjulte potentiale.</strong> Vinylgulv, der ikke er klemt tæt ved afløbet, lækker ved hver brug. Det ligger over en etageadskillelse af træbjælker. Kræver fugtmåling, ikke gætværk.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 13</span>
+        <span><span class="chip minor">Mindre</span></span>
+        <span class="txt">Bagfald på gulvet i badeværelset på 1. sal.
+          <em>Rapportens bemærkning: gulvet er ikke vandbelastet ved besigtigelsen.</em>
+          <span class="why">Vurderet som mindre alvorlig, fordi der ikke var vand på gulvet den dag. Men bagfald + løs afløbsrist (skade 14) i samme rum er ikke to uafhængige forhold — vandet løber væk fra afløbet og hen mod utætheden.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 15</span>
+        <span><span class="chip minor">Mindre</span></span>
+        <span class="txt">Vægoverflader i det vandbelastede område er ikke egnet/godkendt til hyppig vandpåvirkning. <span class="mono small">(Bad, 1. sal)</span>
+          <em>Rapportens bemærkning: badeværelset er klargjort for lukket brusekabine, hvorfor forholdet ikke skønnes at medføre risiko.</em>
+          <span class="why">Vurderingen hviler på en forudsætning: at der <em>er</em> en lukket brusekabine, og at den holdes tæt. Fjerner du kabinen, eller utætnes den, er væggen ikke godkendt til brug. Værd at kende, hvis du planlægger at ændre rummet.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 7</span>
+        <span><span class="chip minor">Mindre</span></span>
+        <span class="txt">Enkelte gulvklinker med begrænset vedhæftning under vasken. <span class="mono small">(Bad 1, lille)</span>
+          <span class="why">Uden for det vandbelastede område, derfor grå. Men det er den tredje forekomst af samme fænomen i samme rum.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 10</span>
+        <span><span class="chip minor">Mindre</span></span>
+        <span class="txt">Enkelte vægklinker med begrænset vedhæftning, f.eks. venstre for døren. <span class="mono small">(Bad 2, stor)</span>
+          <span class="why">Samme mønster igen. Fem af de ni vådrumsskader handler om fliser, der er ved at slippe underlaget.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Konstruktion, fundament og murværk</h3><span class="cnt">3 skader · 0 røde</span></div>
+      <div class="row">
+        <span class="no">Skade 3</span>
+        <span><span class="chip warn">Alvorlig</span></span>
+        <span class="txt">Revner i sokkelpudsen ved terrassedøren mod vest, i den oprindelige bygning.
+          <em>Rapportens risiko: skaden kan udvikle sig på længere sigt med afskalning.</em>
+          <span class="why">Kosmetisk i første omgang. Men det er også netop dér, hvor 1987-tilbygningen møder det oprindelige hus — spørg om der er tale om bevægelse i samlingen mellem to fundamenter fra forskellige årtier.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 18</span>
+        <span><span class="chip warn">Alvorlig</span></span>
+        <span class="txt">Murværket har større forsætning ved læmuren mod naboskellet. <span class="mono small">(Udestue)</span>
+          <span class="why">»Større forsætning« i massivt murværk er ikke en revne — det er en forskydning. På en fritstående læmur mod skel bør stabiliteten vurderes, både af sikkerhedshensyn og fordi naboskel gør det til en fælles sag.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 4</span>
+        <span><span class="chip minor">Mindre</span></span>
+        <span class="txt">Borebiller enkelte steder i tagkonstruktionens træværk, f.eks. nær skunkdøren til tagrummet.
+          <em>Rapportens bemærkning: omfanget er begrænset, borebiller er almindeligt i ældre træværk og giver sjældent anledning til styrkesvækkelser i fulde trædimensioner.</em>
+          <span class="why">Vurderingen er rimelig — men den er lavet i et tagrum, der kun blev besigtiget delvist. Når loftet ryddes, bør omfanget kontrolleres, især i det fugtbelastede område nær skorstenen (skade 5).</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Øvrige</h3><span class="cnt">2 skader · kosmetiske</span></div>
+      <div class="row">
+        <span class="no">Skade 6</span>
+        <span><span class="chip minor">Mindre</span></span>
+        <span class="txt">Enkelte revnede gulvklinker ved døren til værelset i entréen.
+          <span class="why">Kosmetisk. Nævnes her, fordi sælger har svaret nej til kendskab til revnede fliser (se afsnit 06).</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">Skade 17</span>
+        <span><span class="chip minor">Mindre</span></span>
+        <span class="txt">Revnet glasrude i dør. <span class="mono small">(Udhus)</span>
+          <span class="why">Ubetydeligt beløb. Ryd det op sammen med resten af udhuset.</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EL ============ -->
+<section id="el">
+  <div class="head">
+    <span class="eyebrow">04 — Elinstallationsrapporten</span>
+    <h2>37 fejl i syv mønstre</h2>
+    <p>Rapporten lister fejlene rum for rum, hvilket får dem til at se tilfældige ud. De er de ikke. Sorteret efter årsag bliver det tydeligt, hvad der skal laves — og at flere af mønstrene går igen i hele huset.</p>
+  </div>
+
+  <div class="note warn">
+    <p style="margin:0"><strong>37 er et minimumstal.</strong> Installatøren skriver selv i rapporten: <em>»Der kan forekomme samme fejl de steder hvor vi ikke har adskilt, som er ens med de fejl hvor der er adskilt«</em>, og at <em>»flere indbygningslamper/spots er besigtiget ved at tage lyskilde ud af armatur«</em>. Gennemgangen er en stikprøve. De brandkritiske spots er netop dem, der er sværest at se ind i.</p>
+  </div>
+
+  <div class="ledger">
+    <div class="lgroup">
+      <div class="lhead"><h3>Mønster A — Eltavlen</h3><span class="cnt">Fejl 1–6 · 1 brand, 2 stød</span></div>
+      <div class="row">
+        <span class="no">1–3</span>
+        <span><span class="chip minor">Ulovlig</span></span>
+        <span class="txt">Tavlen er ikke let tilgængelig (placeret i bunden af et skab). Mangler mærkning om maks. sikringsstørrelse. Opmærkning mangler for én gruppe.
+          <span class="why">Tilgængelighed er ikke pedanteri: du skal kunne komme til tavlen i en nødsituation. En tavle i bunden af et skab kan sjældent lovliggøres uden at flytte den.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">4–5</span>
+        <span><span class="chip warn">Stød</span></span>
+        <span class="txt">Sikringshoved mangler eller er defekt — der mangler skueglas i sikringshoved, og skruer i tavlefronten. Kapslingen af tavlen er defekt.
+          <span class="why">Manglende skueglas og tavlefront betyder, at spændingsførende dele kan berøres. Enkelt og billigt at rette, og bør rettes med det samme.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">6</span>
+        <span><span class="chip crit">Brand</span></span>
+        <span class="txt">Materiel i eltavlen tillader, at der kan isættes for store sikringer — bundskrue eller pasring mangler.
+          <span class="why">Hele princippet i en sikring er, at den ryger før ledningen bliver for varm. Uden pasring kan man montere en større sikring end kablet kan bære. Sammen med mønster C (0,75 mm² i faste installationer) er det den kombination, der starter brande.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Mønster B — Indbygningsspots og termisk isolering</h3><span class="cnt">Fejl 8, 12, 13, 18, 20, 23, 25, 29, 34 · 5 brand</span></div>
+      <div class="row">
+        <span class="no">12, 18, 23, 29, 34</span>
+        <span><span class="chip crit">Brand</span></span>
+        <span class="txt">For lille afstand til bygningens termiske isolering ved belysningsarmatur. Går igen i bad ved værelse, gang på 1. sal, badeværelse på 1. sal og værelse til højre. Ved nr. 23: <em>»Der mangler fjeder til korrekt fastgørelse«</em>.
+          <span class="why">Fem selvstændige registreringer af samme fejl på tværs af etager. Et spot, der ligger op mod isolering, kan ikke afgive sin varme. Løsningen er som regel at skifte til armaturer, der er godkendt til direkte tildækning — ikke at flytte isoleringen.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">8, 13, 20, 25</span>
+        <span><span class="chip minor">Ulovlig</span></span>
+        <span class="txt">Belysningsarmaturer/armaturer er ikke anvendt korrekt efter fabrikantens anvisninger. Fire steder, med den samme forklaring flere gange: <em>»Bøjle med tilslutningsdåse ikke fastgjort på armatur«</em>.
+          <span class="why">Den gentagne ordlyd afslører, at armaturerne er sat op på samme (forkerte) måde over hele huset — det er samme hånd, samme gang. Det understøtter installatørens bemærkning om installationsdele af »nyere ukendt årstal«.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Mønster C — For tynde ledninger som fast installation</h3><span class="cnt">Fejl 19, 30, 35 · 3 brand</span></div>
+      <div class="row">
+        <span class="no">19, 30, 35</span>
+        <span><span class="chip crit">Brand</span></span>
+        <span class="txt">Der er anvendt for lille ledningstværsnit i installationen — <em>»0,75 mm² er anvendt som fast installation«</em>. Registreret på gangen på 1. sal, i værelset til venstre og i værelset til højre.
+          <span class="why">0,75 mm² er ledningstykkelse til en bordlampe, ikke til fast installation. Tre fund på samme etage betyder sandsynligvis, at hele 1. sals belysningsinstallation er trukket sådan. Kombineret med fejl 6 (for store sikringer kan isættes) er dette rapportens alvorligste el-forhold.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Mønster D — Dåser: manglende aflastning og forkert indføring</h3><span class="cnt">Fejl 7, 9, 10, 11, 14, 17, 26, 28, 31, 32 · alle ulovlige</span></div>
+      <div class="row">
+        <span class="no">7, 9, 26, 31</span>
+        <span><span class="chip minor">Ulovlig</span></span>
+        <span class="txt">Kabler eller rør er ikke ført korrekt ind i dåse bag/over lampeudtag eller stikkontakt. For store åbninger ved dåse. Bryggers, bad ved trappe, tagrum, værelse til højre.
+          <span class="why">Åbne dåser lader varme og gnister ud i konstruktionen, og støv og isolering ind. Billigt at rette hver for sig, men der er mange af dem.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">10, 11, 14, 17, 28, 32</span>
+        <span><span class="chip minor">Ulovlig</span></span>
+        <span class="txt">Kabler mangler fastgørelse, kabler ikke korrekt aflastet i dåser bag stikkontakter og afbrydere, én afbryder/stikkontakt ikke fastgjort. Køkken (kabel til stikkontakt i skab under vask), fordelingsgang, værelse bagerst, gang 1. sal, værelse til venstre og til højre.
+          <span class="why">Seks registreringer af samme fejltype i seks forskellige rum. Aflastning er det, der forhindrer at et træk i ledningen river forbindelsen løs inde i dåsen. Systematisk mangel = systematisk gennemgang nødvendig.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Mønster E — Defekte dåser og samlinger uden kapsling</h3><span class="cnt">Fejl 15, 16, 24, 33 · 2 brand, 2 stød</span></div>
+      <div class="row">
+        <span class="no">15, 24</span>
+        <span><span class="chip crit">Brand</span></span>
+        <span class="txt">Dåse bag stikkontakt eller afbryder er defekt (redskabsrum). Samlinger er ikke foretaget i egnet materiel eller kapsling (bad 1. sal, lavvolt).
+          <span class="why">En samling uden kapsling er en ubeskyttet varmekilde inde i en væg eller et loft. Skal udbedres straks.</span>
+        </span>
+      </div>
+      <div class="row">
+        <span class="no">16, 33</span>
+        <span><span class="chip warn">Stød</span></span>
+        <span class="txt">En ledningssamling er ikke anbragt i dåse (redskabsrum). Dåse, roset eller lampeudtag mangler låg — <em>»dåse på væg til højre for vindue mangler stikkontakt eller dæksel«</em> (værelse til højre, 1. sal).
+          <span class="why">Spændingsførende dele man kan røre. Hvis der kommer børn i huset, er dette et punkt til dag ét.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Mønster F — Kabler i tagrum og skunk</h3><span class="cnt">Fejl 27, 36, 37 · 3 brand</span></div>
+      <div class="row">
+        <span class="no">27, 36, 37</span>
+        <span><span class="chip crit">Brand</span></span>
+        <span class="txt">Flere kabler mangler fastgørelse i tagrummet og i skunkrummet. Kabler er ikke beskyttet mod mekanisk overlast — <em>»kabler mangler beskyttelse mod gulv«</em>.
+          <span class="why">Løse kabler hen over et skunkgulv, hvor man går og opmagasinerer ting, bliver trådt på og trukket i. Bemærk sammenhængen: det er de samme rum, som <strong>ikke kunne besigtiges ordentligt</strong> på grund af opmagasinering — så tre fund er formentlig ikke alle fund.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="lgroup">
+      <div class="lhead"><h3>Mønster G — Lavvoltinstallation i bad på 1. sal</h3><span class="cnt">Fejl 21, 22 · undersøges nærmere</span></div>
+      <div class="row">
+        <span class="no">21, 22</span>
+        <span><span class="chip probe">Undersøges</span></span>
+        <span class="txt">Det bør undersøges nærmere, om strømforsyningen er fastgjort, og om der er anvendt sikringer svarende til installationen — begge med samme begrundelse: <em>»strømforsyning ikke kunne lokaliseres«</em>.
+          <span class="why">En lavvolt-strømforsyning, ingen kan finde, sidder et sted i en konstruktion. Rapporten er tydelig om konsekvensen: <em>»Hvis du vælger at købe ejendommen, uden at forholdet er undersøgt nærmere, bærer du selv risikoen«</em>. Få det afklaret i forbeholdsperioden — det koster nogle timer og lukker en åben risiko.</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HULLER ============ -->
+<section id="huller">
+  <div class="head">
+    <span class="eyebrow">05 — Blinde vinkler</span>
+    <h2>Det, rapporterne ikke har undersøgt</h2>
+    <p>Huseftersynet er en visuel gennemgang. Der er fire steder, hvor det, der ikke er set, kan koste mere end alt det, der er set — og hvor du selv bærer risikoen, hvis du ikke får det afklaret inden underskrift.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Loftrummet — nævnt i begge rapporter</h3>
+      <p class="small">Tilstandsrapporten: <em>»Tagrum/loftsrum er besigtiget i begrænset omfang, pga. opmagasinerede effekter.«</em> Elinstallationsrapporten, uafhængigt: <em>»Loftrum er begrænset efterset grundet opmagasinering.«</em></p>
+      <p class="small">Det er det rum, hvor følgeskaderne fra skade 1 og 5 ville optræde: fugtskjolder, misfarvet træ, skimmel, råd i spær og undertag. Det er også der, borebillerne (skade 4) blev fundet, og der hvor tre el-fejl med brandrisiko sidder.</p>
+      <p class="small"><strong>Gør dette:</strong> bed sælger rydde loftet og få en fugtteknisk gennemgang med fugtmåler og eventuelt termografering, særligt omkring skorsten og skotrende. Alternativt: kræv at det afspejles i prisen.</p>
+    </div>
+
+    <div class="card">
+      <h3>Kloakken — og rotterne</h3>
+      <p class="small">Sælger oplyser under punkt 14.2: rotter er set i terrænet, kommunen har opsat giftkasse, problemet blev anmeldt og løst. Huset er fra 1961; rapportens hustypebeskrivelse noterer, at afløbsinstallationer fra den tid oftest er beton eller glaserede lerrør, og at <em>»er disse ikke udskiftet eller renoveret, har rørene normalt kun ringe restlevetid«</em>.</p>
+      <p class="small">Rapporten er også klar på ansvaret: kloakinspektion er <strong>ikke</strong> en del af huseftersynsordningen, og den bygningssagkyndige har ikke kompetence til at udføre den. Rotter i terræn er ofte netop et symptom på et brud på en stikledning.</p>
+      <p class="small"><strong>Gør dette:</strong> bestil en tv-inspektion hos en autoriseret kloakmester før underskrift. Det er den billigste undersøgelse med det største udfaldsrum.</p>
+    </div>
+
+    <div class="card">
+      <h3>Etageadskillelsen under badet på 1. sal</h3>
+      <p class="small">Materialeoversigten angiver etageadskillelse af <strong>bjælkekonstruktion</strong> — træ. Ovenpå ligger et badeværelse med bagfald i gulvet (skade 13) og en gulvafløbsrist, der ligger løs og ikke klemmer vinylen tæt (skade 14).</p>
+      <p class="small">Ingen har målt fugt i den konstruktion. En langsom utæthed ved et afløb over et træbjælkelag er den klassiske skade, der først opdages, når gulvet giver sig. Den er ikke synlig, og derfor står den ikke i rapporten.</p>
+      <p class="small"><strong>Gør dette:</strong> fugtmåling fra undersiden (loftet i rummet nedenunder) og omkring afløbet. Skal ske før underskrift — bagefter er det din skade.</p>
+    </div>
+
+    <div class="card">
+      <h3>Termoruder, facade og radon</h3>
+      <p class="small">Rapporten tager forbehold: <em>»Der kan forekomme punkterede termoruder, som ikke kunne konstateres visuelt på besigtigelsestidspunktet.«</em> Facaden mod vej på carporten kunne ikke besigtiges på grund af plantebevoksning.</p>
+      <p class="small">Radon: Tårnby Kommune er klasse 2 med et niveau på 1,0–3,0 %. Radonspærre blev først standard i huse opført efter 1998 — dette hus er fra 1961 og har med stor sandsynlighed ingen.</p>
+      <p class="small"><strong>Gør dette:</strong> gå ruderne igennem i tørt, køligt vejr (punkterede ruder ses lettest der), bed om at bevoksningen klippes tilbage, og lav en langtidsradonmåling i vinterhalvåret efter overtagelsen.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SÆLGER ============ -->
+<section id="saelger">
+  <div class="head">
+    <span class="eyebrow">06 — Sammenholdning</span>
+    <h2>Hvor sælgers svar og de sagkyndiges fund ikke mødes</h2>
+    <p>Sælgeroplysningerne har ikke garantivirkning, og forskelle kan have uskyldige forklaringer — spørgsmålene er formuleret snævert, og en ejer kender ikke sit hus som en bygningssagkyndig. Men fire steder er afstanden stor nok til at fortjene et konkret spørgsmål gennem mægleren, skriftligt.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th style="width:22%">Sælgers svar</th><th style="width:30%">Hvad rapporterne fandt</th><th>Sådan vil jeg læse det</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>12.1 Løse eller revnede fliser på gulv eller vægge?</strong><br><span class="mono small">Nej</span></td>
+          <td>Fem skader om fliser med mangelfuld eller begrænset vedhæftning i alle tre badeværelser (skade 7, 8, 9, 10, 11) samt revnede gulvklinker i entréen (skade 6).</td>
+          <td>Den mest markante afstand. Sælger har boet i huset siden 1982. Løse fliser i en bruseniche giver typisk en hul lyd, når man banker — det er ikke skjult viden. Bed om en skriftlig uddybning. <strong>Sælgeransvaret består</strong>, hvis der bevidst eller groft uagtsomt er givet ukorrekte oplysninger.</td>
+        </tr>
+        <tr>
+          <td><strong>El: reparationer, ændringer eller arbejde uden autorisation?</strong><br><span class="mono small">Nej til alle tre</span></td>
+          <td>Installatøren skriver: <em>»Installationen er gennemgået ud fra husets opførelsesår 1961. Dog er dele af installationen af nyere ukendt årstal.«</em> Hertil 0,75 mm² som fast installation tre steder og gentagne ufastgjorte armaturbøjler.</td>
+          <td>Der <em>er</em> lavet nyere el-arbejde, som sælger ikke oplyser om. Det behøver ikke være uærligt — 2006-renoveringen kan være glemt i spørgsmålets snævre ordlyd. Men mønsteret i fejlene ligner ikke autoriseret arbejde. Spørg direkte: hvem lavede el-arbejdet, og findes der en faktura?</td>
+        </tr>
+        <tr>
+          <td><strong>5.1 / 7.1 Revner i ydermur, fundamenter eller sokler?</strong><br><span class="mono small">Nej til begge</span></td>
+          <td>Skade 3: revner i sokkelpudsen ved terrassedøren mod vest. Skade 18: større forsætning i murværket ved læmuren mod naboskel.</td>
+          <td>Her er den uskyldige forklaring nærliggende: sokkel<em>puds</em> er ikke soklen, og en læmur er ikke husets ydermur. Ingen alarm — men nævn det, når du spørger om det øvrige.</td>
+        </tr>
+        <tr>
+          <td><strong>4.1 Er taget eller har det været utæt?</strong><br><span class="mono small">Ja</span> — med kommentaren <em>»Vi har ikke oplevet problemer, hele taget er skiftet i 2006 … løbende vedligeholdt via sprøjtning mod mos, ca. hvert andet år«</em></td>
+          <td>Skade 1 (hul i tagplade ved skotrende), skade 2 (overfladerevner) og skade 5 (udfaldne tætninger ved rygning nær skorsten, set fra tagrummet).</td>
+          <td>Svaret er internt modstridende — »ja« til utæt, men »ingen problemer«. Rapportens egen hustypebeskrivelse advarer desuden om, at mosafrensning kræver, at taget kan holde til det. Bed om at få præciseret: hvad var utæt, hvornår, og hvad blev gjort?</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <p style="margin:0"><strong>Hvad det er værd at vide:</strong> sælger fritages for det 10-årige sælgeransvar, når du får rapporterne og et tilbud om ejerskifteforsikring. Men fritagelsen gælder ikke, hvis sælger <em>»bevidst eller groft uagtsomt har givet ukorrekte oplysninger i forbindelse med huseftersynet«</em> — og ikke for ulovligheder. Netop derfor er det værd at få uklarhederne ovenfor besvaret skriftligt frem for over telefonen.</p>
+  </div>
+</section>
+
+<!-- ============ BBR ============ -->
+<section id="bbr">
+  <div class="head">
+    <span class="eyebrow">07 — Registrering</span>
+    <h2>62 m² bebyggelse, der ikke findes i BBR</h2>
+    <p>Tilstandsrapporten anfører tre afvigelser fra Bygnings- og Boligregistret. Alle tre har den samme ordlyd: bygningen er ikke anført i BBR, arealet er skønnet og beror ikke på en egentlig opmåling.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Bygning</th><th class="num">Areal</th><th>Opført</th><th>Status i BBR</th><th>Hvorfor det betyder noget</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Carport</strong> <span class="mono small">(litra C)</span></td>
+          <td class="num">37 m²</td>
+          <td class="mono">Ukendt</td>
+          <td><span class="chip warn">Ikke anført</span></td>
+          <td>37 m² er over grænsen for, hvad der normalt kan opføres uden tilladelse. Placering i forhold til skel er afgørende.</td>
+        </tr>
+        <tr>
+          <td><strong>Udestue</strong> <span class="mono small">(litra D)</span></td>
+          <td class="num">18 m²</td>
+          <td class="mono">Ukendt</td>
+          <td><span class="chip warn">Ikke anført</span></td>
+          <td>Opført i <strong>massivt murværk med tegl/kalksandsten</strong> og betonfundament — altså en permanent bygning, ikke et lettere haverum.</td>
+        </tr>
+        <tr>
+          <td><strong>Skur langs køkkengavl</strong> <span class="mono small">(litra E)</span></td>
+          <td class="num">7 m²</td>
+          <td class="mono">Ukendt</td>
+          <td><span class="chip warn">Ikke anført</span></td>
+          <td>Lille, men det er også den bygning, der har en igangværende fugtskade (skade 19).</td>
+        </tr>
+        <tr class="total">
+          <td>I alt</td><td class="num">62 m²</td><td colspan="3">Bygningsbeskrivelsen er rettet af den sagkyndige efter de faktiske forhold — men registret er ikke rettet.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="prose" style="margin-top:1.4rem">Tre forhold gør dette til mere end papirarbejde. <strong>Ejerskifteforsikringen dækker ikke ulovligheder</strong> — den dækker skader, ikke manglende tilladelser. <strong>Din husforsikring</strong> kan afvise eller nedsætte dækning på en bygning, der ikke er lovligt opført. Og <strong>ejendomsvurderingen</strong> bygger på BBR, så et rettet register kan ændre din grundskyld.</p>
+
+  <p class="prose">Til gengæld er dette det punkt, hvor du står stærkest: sælgeransvaret består netop for ulovligheder. Bed derfor sælger om at fremskaffe byggetilladelser og ibrugtagningstilladelser for de tre bygninger og for tilbygningerne fra 1987 og 2006 — eller om at lovliggøre forholdene inden overtagelsen. Ved rapportens materialegrundlag findes der plan-, snit- og facadetegninger dateret 1959 og 1986, men ingen fra 2006.</p>
+
+  <div class="note">
+    <p style="margin:0"><strong>Praktisk skridt:</strong> ring til Tårnby Kommunes byggesagsafdeling med BFE-nummer 185-2056317 og spørg, hvad der er registreret og godkendt på ejendommen. Det er gratis, tager en formiddag, og svaret afgør, om dette er et papirproblem eller et forhandlingspunkt.</p>
+  </div>
+</section>
+
+<!-- ============ TAG ============ -->
+<section id="tag">
+  <div class="head">
+    <span class="eyebrow">08 — Levetid</span>
+    <h2>Taget: ti år på papiret, skader i dag</h2>
+    <p>Rapporten angiver tagets restlevetid ud fra Statens Byggeforskningsinstituts levetidstabeller. Det er, som rapporten selv skriver, et tabelopslag — ikke en konkret vurdering af det tag, der ligger på huset.</p>
+  </div>
+
+  <div class="tl">
+    <h4 style="margin-bottom:0">Tagbelægning — eternitbølgeplader uden asbest</h4>
+    <div class="tl-track">
+      <div class="tl-fill"></div>
+      <div class="tl-mark" style="left:0"></div>
+      <div class="tl-lab above" style="left:0;text-align:left;transform:none;width:130px"><b>2006</b>Etableret. Hele taget skiftet ved renoveringen.</div>
+      <div class="tl-mark now" style="left:66.7%"></div>
+      <div class="tl-lab below" style="left:66.7%"><b>2026 — nu</b>3 skader registreret</div>
+      <div class="tl-mark end" style="left:100%"></div>
+      <div class="tl-lab above" style="left:100%;text-align:right;transform:translateX(-100%);width:130px"><b>2036</b>Udløb af statistisk levetid</div>
+    </div>
+    <p class="xsmall" style="margin-top:2.4rem">Inddækninger har til sammenligning statistisk levetid frem til 2066 — de er altså ikke problemet. Det er pladerne.</p>
+  </div>
+
+  <div class="grid2" style="margin-top:1.4rem">
+    <div class="card">
+      <h3>Sådan læser jeg tallet</h3>
+      <p class="small">Ti år er middellevetiden for materialet, ikke en garanti for dette tag. To ting trækker nedad: der er <strong>allerede</strong> tre registrerede skader ved 2/3 af levetiden, og de sidder på de mest belastede steder — skotrende og rygning ved skorsten.</p>
+      <p class="small">Regn derfor med, at du skal budgettere en tagudskiftning inden for ejerskabets første 5–10 år, ikke om 10. Og bemærk, at rapporten skriver, at en tags reelle levetid <em>»kan variere meget, alt efter vind, vejr og vedligeholdelse«</em>.</p>
+    </div>
+    <div class="card">
+      <h3>Mosafrensningen er værd at spørge om</h3>
+      <p class="small">Sælger oplyser sprøjtning mod mos ca. hvert andet år siden 2006 — altså omkring ti behandlinger. Rapportens hustypebeskrivelse advarer i samme åndedrag: <em>»Ved en eventuel afrensning af mos, skal det sikres, at taget kan holde til det«</em>, og at malerbehandling af eternit ikke forlænger levetiden, men kan <em>»ændre på tagets ventilation, så det bliver for tæt«</em>.</p>
+      <p class="small">Spørg konkret: hvilken metode, hvilket firma, og er der brugt højtryk? Højtryksrensning af eternit slider overfladen — det ville forklare overfladerevnerne i skade 2.</p>
+    </div>
+  </div>
+
+  <div class="note">
+    <p style="margin:0"><strong>Om asbest:</strong> taget fra 2006 er bekræftet asbestfrit, og sælger svarer nej til kendskab til asbestholdige materialer. Men huset er fra 1961, og rapportens opmærksomhedspunkt om asbest nævner netop isolering omkring rørinstallationer, vinylgulve, fliseklæb og aftrækskanaler af eternit. Det er relevant, fordi du sandsynligvis skal rive fliser ned i tre badeværelser — få en materialeprøve taget først, det koster nogle hundrede kroner og ændrer hele håndteringen.</p>
+  </div>
+</section>
+
+<!-- ============ ØKONOMI ============ -->
+<section id="oekonomi">
+  <div class="head">
+    <span class="eyebrow">09 — Økonomi</span>
+    <h2>Hvad det kan koste</h2>
+    <p>Tallene nedenfor er mine egne overslag baseret på typiske danske håndværkerpriser. De er <strong>ikke tilbud</strong>, ikke baseret på en besigtigelse, og de kan afvige betydeligt i begge retninger afhængigt af omfang, adgangsforhold og hvad man finder, når man åbner en konstruktion. Brug dem til at afgøre, hvad du skal have prissat af en fagmand — ikke som facit.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Post</th>
+          <th>Grundlag</th>
+          <th class="num">Nedre skøn</th>
+          <th class="num">Øvre skøn</th>
+        </tr>
+      </thead>
+      <tbody class="band">
+        <tr><th scope="rowgroup" colspan="4">Akut — inden for 0–6 måneder</th></tr>
+        <tr><td>Tag: hul i plade, tætninger ved rygning/skorsten, skotrende</td><td class="small">Skade 1, 2, 5</td><td class="num">8.000</td><td class="num">25.000</td></tr>
+        <tr><td>Skur langs køkkengavl: nyt tagpap, fald, evt. rådskadet træ</td><td class="small">Skade 19 — igangværende fugtskade</td><td class="num">15.000</td><td class="num">45.000</td></tr>
+        <tr><td>El: de brandkritiske fejl (spots, 0,75 mm², tavlekapsling, pasringe, samlinger)</td><td class="small">Fejl 6, 12, 15, 18, 19, 23, 24, 27, 29, 30, 34–37</td><td class="num">35.000</td><td class="num">80.000</td></tr>
+        <tr><td>El: stødrisici (sikringshoved, skueglas, tavlefront, manglende låg)</td><td class="small">Fejl 4, 5, 16, 33</td><td class="num">4.000</td><td class="num">10.000</td></tr>
+        <tr><td>Undersøgelser: fugt i loftrum og under 1. sals bad, kloak-tv, asbestprøve</td><td class="small">Blinde vinkler, afsnit 05</td><td class="num">12.000</td><td class="num">28.000</td></tr>
+        <tr class="total"><td colspan="2">Delsum, akut</td><td class="num">74.000</td><td class="num">188.000</td></tr>
+      </tbody>
+      <tbody class="band">
+        <tr><th scope="rowgroup" colspan="4">Inden for 1–2 år — vådrum og lovliggørelse</th></tr>
+        <tr><td>Vådrum, minimumsscenarie: omflisning af to brusenicher, nyt gulvafløb i det store bad, tætning ved afløb på 1. sal</td><td class="small">Skade 8, 9, 11, 12, 14 — forudsætter at membranerne viser sig intakte</td><td class="num">95.000</td><td class="num">210.000</td></tr>
+        <tr><td>Vådrum, fuldt scenarie: tre badeværelser renoveret fra bunden</td><td class="small">Sandsynligt, hvis vedhæftningssvigtet skyldes en utæt eller manglende membran</td><td class="num">280.000</td><td class="num">500.000</td></tr>
+        <tr><td>El: resterende lovliggørelse (dåser, aflastning, opmærkning, tavleplacering)</td><td class="small">Fejl 1–3, 7–11, 13, 14, 17, 20, 21, 22, 25, 26, 28, 31, 32</td><td class="num">25.000</td><td class="num">70.000</td></tr>
+        <tr><td>Sokkelpuds og udestuens læmur</td><td class="small">Skade 3, 18</td><td class="num">15.000</td><td class="num">55.000</td></tr>
+        <tr><td>Udhus: tagrygninger og revnet rude</td><td class="small">Skade 16, 17</td><td class="num">4.000</td><td class="num">12.000</td></tr>
+        <tr><td>BBR-lovliggørelse: opmåling, ansøgning, gebyrer</td><td class="small">Carport, udestue, skur — hvis sælger ikke ordner det</td><td class="num">10.000</td><td class="num">35.000</td></tr>
+        <tr class="total"><td colspan="2">Delsum, 1–2 år (minimumsscenarie for vådrum)</td><td class="num">149.000</td><td class="num">382.000</td></tr>
+        <tr class="total"><td colspan="2">Delsum, 1–2 år (fuldt scenarie for vådrum)</td><td class="num">334.000</td><td class="num">672.000</td></tr>
+      </tbody>
+      <tbody class="band">
+        <tr><th scope="rowgroup" colspan="4">På sigt — 5–10 år</th></tr>
+        <tr><td>Nyt tag på beboelsen: 149 m² plus udhæng, inkl. stillads, undertag, inddækninger og bortskaffelse</td><td class="small">Statistisk udløb 2036, men skader nu</td><td class="num">250.000</td><td class="num">420.000</td></tr>
+        <tr><td>Radonafhjælpning, hvis måling viser behov</td><td class="small">Klasse 2-kommune, hus uden radonspærre</td><td class="num">0</td><td class="num">60.000</td></tr>
+      </tbody>
+      <tbody class="band">
+        <tr><th scope="rowgroup" colspan="4">Risikoposter — ukendte indtil de er undersøgt</th></tr>
+        <tr><td>Råd eller fugtskade i træbjælkelaget under 1. sals bad</td><td class="small">Ingen har målt. Kan være nul.</td><td class="num">0</td><td class="num">250.000</td></tr>
+        <tr><td>Følgeskader i tagkonstruktionen fra utætheder ved skorsten og skotrende</td><td class="small">Loftrummet er kun delvist besigtiget</td><td class="num">0</td><td class="num">120.000</td></tr>
+        <tr><td>Kloak: strømpeforing eller omlægning, hvis tv-inspektionen viser brud</td><td class="small">1961-installation, rotter er set</td><td class="num">0</td><td class="num">150.000</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2" style="margin-top:1.6rem">
+    <div class="card">
+      <h4>Sådan vil jeg regne på det</h4>
+      <p class="small"><strong>Nøgternt budget, de første to år, uden tag:</strong> ca. 223.000–570.000 kr., hvis vådrummene kan klares partielt.</p>
+      <p class="small"><strong>Realistisk budget, de første to år, uden tag:</strong> ca. 408.000–860.000 kr., hvis badeværelserne skal laves om.</p>
+      <p class="small"><strong>Med tag inden for tiåret:</strong> læg 250.000–420.000 kr. oveni.</p>
+      <p class="small">Risikoposterne er bevidst holdt uden for summerne. De er nul, indtil nogen har målt — og det er netop derfor, målingerne skal ske før underskrift, ikke efter.</p>
+    </div>
+    <div class="card">
+      <h4>Forbehold, der betyder noget</h4>
+      <p class="small">Prisintervallerne er brede, fordi vådrumsarbejde er den mest uforudsigelige post i et hus: forskellen mellem »fliserne sidder løst« og »membranen er væk« er hele forskellen mellem 40.000 og 160.000 kr. pr. rum, og den kan ingen se udefra.</p>
+      <p class="small">Overslagene forudsætter almindelige adgangsforhold, autoriserede håndværkere, dansk prisniveau i 2026 og ingen skjulte følgeskader ud over dem, der er nævnt særskilt. De indeholder ikke moms-overraskelser, byggesagsgebyrer ud over det anførte, eller genhusning.</p>
+      <p class="small">Jeg er ikke bygningssagkyndig, håndværker eller jurist. Få mindst to skriftlige tilbud på de store poster, og lad en byggesagkyndig gennemgå huset med dig, inden du lægger dig fast på et bud.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TJEKLISTE ============ -->
+<section id="tjekliste">
+  <div class="head">
+    <span class="eyebrow">10 — Før du skriver under</span>
+    <h2>Tjekliste, prioriteret</h2>
+    <p>Rækkefølgen er efter, hvor stort udfaldsrummet er i forhold til, hvad undersøgelsen koster. De fem første ville jeg ikke skrive under uden.</p>
+  </div>
+
+  <div class="checks">
+    <div class="check">
+      <div><h3>Kloak-tv-inspektion</h3><p>Autoriseret kloakmester. 1961-installation plus rotter i terræn. Ikke en del af huseftersynet, og ingen dækker det for dig bagefter.</p></div>
+      <span class="who"><span class="chip crit">Køber betaler · 3.500–6.500 kr.</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Fugtmåling under badeværelset på 1. sal</h3><p>Fra undersiden og omkring afløbet. Det er den ene skade, der kan koste seks-cifret, uden at nogen har set den.</p></div>
+      <span class="who"><span class="chip crit">Byggesagkyndig · 5.000–12.000 kr.</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Ryd loftrummet og få det gennemgået ordentligt</h3><p>Bed sælger rydde. Fugtmåling og gennemgang omkring skorsten og skotrende, hvor de to røde tagskader sidder. Kontrollér samtidig borebiller og de tre løse kabler.</p></div>
+      <span class="who"><span class="chip crit">Kræv af sælger</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Tilbud fra autoriseret elinstallatør på alle 37 fejl</h3><p>Bed om en samlet pris på lovliggørelse, opdelt i brandkritisk og øvrigt. Få samtidig afklaret fejl 21 og 22 — den lavvolt-strømforsyning, ingen kunne finde.</p></div>
+      <span class="who"><span class="chip crit">Køber betaler · gratis tilbud</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Byggesagsafdelingen i Tårnby Kommune</h3><p>BFE 185-2056317. Spørg om carport, udestue og skur samt tilbygningerne fra 1987 og 2006: er de registreret, og findes der tilladelser? Ansvaret er sælgers, men konsekvensen bliver din.</p></div>
+      <span class="who"><span class="chip crit">Gratis · en formiddag</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Skriftlige svar på de fire uklarheder i sælgeroplysningerne</h3><p>Særligt punkt 12.1 om løse fliser og spørgsmålene om el-arbejde. Skriftligt gennem mægleren — det er det, der har betydning, hvis noget senere skal vurderes.</p></div>
+      <span class="who"><span class="chip warn">Via mægler</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Asbestprøve i badeværelserne</h3><p>Fliseklæb og vinylgulve i et 1961-hus. Prøven koster nogle hundrede kroner og afgør, om nedrivningen er et almindeligt arbejde eller et saneringsarbejde.</p></div>
+      <span class="who"><span class="chip warn">Før renovering</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Ejerskifteforsikring: læs betingelserne, ikke prisen</h3><p>Sælger betaler halvdelen af sit fremlagte tilbud, men du vælger selskab. Sammenlign undtagelserne og se særligt på, om vådrum og skjulte rørskader er dækket, og hvor lang dækningsperioden er (minimum fem år ved lov).</p></div>
+      <span class="who"><span class="chip acc">Før underskrift</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Dokumentation på varmepumpe og solceller</h3><p>Alder, garantier, servicehistorik og produktionsdata. Hverken varmepumpe eller solceller er omfattet af huseftersynet — de kan være husets bedste aktiv eller en udgift, du ikke har regnet med.</p></div>
+      <span class="who"><span class="chip acc">Bed sælger</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Ejendomsdatarapport og jordforureningsstatus</h3><p>Kastrup ligger tæt på lufthavnen og gamle industrigrunde. Forurenet jord er et af de forhold, sælger fortsat hæfter for — men det er billigere at vide det på forhånd.</p></div>
+      <span class="who"><span class="chip acc">Ca. 400 kr.</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Gentag tagvurderingen med en tagmand</h3><p>Ikke en levetidstabel, men et øje på det faktiske tag: hvor mange plader har overfladerevner, og hvad har mosafrensningen gjort? Det afgør, om tagudskiftningen er om 3 eller 10 år.</p></div>
+      <span class="who"><span class="chip acc">Gratis tilbud</span></span>
+    </div>
+    <div class="check">
+      <div><h3>Langtidsradonmåling</h3><p>Kan først laves efter overtagelse, over minimum to måneder i vinterhalvåret. Sæt en påmindelse — Tårnby er klasse 2, og huset har efter alt at dømme ingen radonspærre.</p></div>
+      <span class="who"><span class="chip minor">Efter overtagelse</span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FORHANDLING ============ -->
+<section id="forhandling">
+  <div class="head">
+    <span class="eyebrow">11 — Position</span>
+    <h2>Hvor du står i forhandlingen</h2>
+    <p>Rapporterne er ikke bare en risikoliste. De er også dit stærkeste argument, netop fordi de er så detaljerede.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Det bærende argument</h3>
+      <p class="small">Ejerskifteforsikringen dækker ikke det, der står i rapporterne. Det er ikke en fortolkning — det står i begge rapporter. Derfor er de 19 skader og 37 el-fejl ikke en forsikringssag, men en prissag. Alt, hvad du kan dokumentere med et håndværkertilbud, er et konkret tal at forhandle om.</p>
+      <p class="small">Vær konkret frem for generel. »Huset trænger til noget« flytter ingenting. »Her er tre tilbud på vådrum og el, samlet 480.000 kr., og de forhold står i rapporten« flytter noget.</p>
+    </div>
+    <div class="card">
+      <h3>Hvor sælger er mest udsat</h3>
+      <p class="small"><strong>De 62 m² uden BBR.</strong> Sælgeransvaret består for ulovligheder, uanset rapporterne og forsikringen. Her kan du med rimelighed forlange, at forholdet bringes i orden inden overtagelsen, eller at der gives et afslag, som svarer til risikoen.</p>
+      <p class="small"><strong>Svaret på punkt 12.1.</strong> Fem fliseskader i tre badeværelser, hvor sælger har boet i 44 år og svarer »nej« til kendskab. Ikke som anklage — men som en grund til at få det bekræftet skriftligt, hvilket i sig selv skærper opmærksomheden.</p>
+    </div>
+    <div class="card">
+      <h3>Hvor du er mest udsat</h3>
+      <p class="small"><strong>De uundersøgte forhold.</strong> Rapporten siger det klart om de forhold, der bør undersøges nærmere: køber du uden at undersøge, bærer du selv risikoen. Det gælder loftrum, kloak, etageadskillelse og de to el-fejl mærket »undersøges«. Efter underskrift er dine forhandlingskort brugt.</p>
+      <p class="small"><strong>Tidspresset.</strong> Tilstandsrapporten udløber 20. januar 2027, elinstallationsrapporten 15. juli 2027. Det er rigelig tid — brug den til undersøgelserne frem for at lade den presse dig.</p>
+    </div>
+    <div class="card">
+      <h3>Realistisk vurdering</h3>
+      <p class="small">Det her er ikke et problemhus. Det er et 1961-hus, som er udbygget to gange, renoveret gennemgribende i 2006 og passet af samme ejer i 44 år — med et sæt skader, der er præcis, hvad man skal forvente for alderen, plus en elinstallation, der er dårligere end den burde være.</p>
+      <p class="small">Det, der adskiller det fra gennemsnittet, er koncentrationen af vandrelaterede risici: tre vådrum med fejl, to indtrængningsveje i taget, en igangværende fugtskade i skuret og en etageadskillelse i træ under et bad med løs afløbsrist. Får du de tre målinger lavet — loft, etageadskillelse, kloak — ved du, om du står med et budget på 300.000 eller 900.000. Det er den vigtigste beslutning, du kan tage før underskrift.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <h4>Grundlag og forbehold</h4>
+  <p>Analysen bygger udelukkende på de to vedhæftede rapporter: <strong>Tilstandsrapport H-26-04155-0198</strong> (besigtiget 18.07.2026, gyldig 20.07.2026–20.01.2027, bygningssagkyndig Mathias Stiller Jonasen, TÜV SÜD Domutech A/S) og <strong>Elinstallationsrapport E-1466468</strong> (besigtiget 14.07.2026, gyldig 15.07.2026–15.07.2027, gennemgang ved Benny Broager Posche, samme firma). Ejendommen er Tanavej 18, 2770 Kastrup, BFE 185-2056317, matr. 13t Tømmerup By, Tårnby. Sælger er anført som Freddie Fjeldsted.</p>
+  <p>Jeg har ikke besigtiget ejendommen. Alle vurderinger af sammenhænge, prioritering og økonomi er mine egne fortolkninger af rapporternes indhold og udgør ikke en byggeteknisk, juridisk eller økonomisk rådgivning. Prisoverslag er grove skøn baseret på typiske danske håndværkerpriser og kan afvige væsentligt. Indhent altid tilbud fra autoriserede fagfolk og lad en uvildig byggesagkyndig gennemgå ejendommen, inden du afgiver bud eller skriver under.</p>
+  <p>Bemærk desuden, at den bygningssagkyndige oplyser at have en samarbejdsaftale med Dansk Boligforsikring. Det er lovligt og almindeligt, men værd at kende, når du læser vurderingerne. Klageadgang: <span class="mono">husklage.dk</span> for tilstandsrapporten, <span class="mono">el-vvs-anke.dk</span> for elinstallationsrapporten.</p>
+</footer>
+
+<script>document.documentElement.setAttribute("lang","da");</script>
+
+</div>
