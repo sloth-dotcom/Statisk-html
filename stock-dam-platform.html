@@ -1,0 +1,1315 @@
+<!doctype html>
+<html lang="da">
+<head>
+<meta charset="utf-8" />
+<title>Spine — Sammenkoblet Stock & DAM Platform (designudkast)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Designudkast: Én platform, to surfaces, fælles spine. Stock photo og DAM forenet i ét rights-aware, AI-native, EU-suverænt media-økosystem." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-2: #f2f1ec;
+  --surface-3: #eceae3;
+  --ink: #17181a;
+  --ink-2: #3a3c40;
+  --muted: #73767c;
+  --line: #e4e3dd;
+  --accent: #3d5afe;
+  --accent-soft: rgba(61, 90, 254, 0.08);
+  --accent-ink: #ffffff;
+  --stock: #e24a7a;
+  --stock-soft: rgba(226, 74, 122, 0.09);
+  --dam: #0e8a6d;
+  --dam-soft: rgba(14, 138, 109, 0.09);
+  --amber: #c98a12;
+  --amber-soft: rgba(201, 138, 18, 0.1);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --max: 1280px;
+  --shadow: 0 1px 2px rgba(20, 20, 18, .04), 0 12px 40px rgba(20, 20, 18, .07);
+  --shadow-lg: 0 2px 6px rgba(20, 20, 18, .05), 0 24px 80px rgba(20, 20, 18, .12);
+}
+html[data-theme="dark"] {
+  --bg: #0d0e10;
+  --surface: #141518;
+  --surface-2: #1c1e22;
+  --surface-3: #24262b;
+  --ink: #f3f2ee;
+  --ink-2: #c9c8c3;
+  --muted: #86888d;
+  --line: #25272c;
+  --accent: #7c8dff;
+  --accent-soft: rgba(124, 141, 255, 0.12);
+  --accent-ink: #0d0e10;
+  --stock: #f2729b;
+  --stock-soft: rgba(242, 114, 155, 0.12);
+  --dam: #3cc9a7;
+  --dam-soft: rgba(60, 201, 167, 0.12);
+  --amber: #e8b04b;
+  --amber-soft: rgba(232, 176, 75, 0.13);
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 40px rgba(0,0,0,.4);
+  --shadow-lg: 0 2px 6px rgba(0,0,0,.35), 0 24px 80px rgba(0,0,0,.5);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+  letter-spacing: -0.005em;
+}
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+.mono { font-family: "JetBrains Mono", monospace; }
+h1, h2, h3 { font-family: "Space Grotesk", sans-serif; letter-spacing: -0.03em; margin: 0; }
+
+/* ===== Nav ===== */
+.nav {
+  position: sticky; top: 0; z-index: 60;
+  background: color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+}
+.nav-inner {
+  max-width: var(--max); margin: 0 auto; padding: 0 28px;
+  height: 64px; display: flex; align-items: center; gap: 32px;
+}
+.logo {
+  font-family: "Space Grotesk", sans-serif; font-weight: 700; font-size: 19px;
+  letter-spacing: -0.03em; display: flex; align-items: center; gap: 10px;
+}
+.logo-mark { width: 24px; height: 24px; position: relative; }
+.logo-mark span {
+  position: absolute; border-radius: 50%;
+  width: 15px; height: 15px; mix-blend-mode: multiply;
+}
+html[data-theme="dark"] .logo-mark span { mix-blend-mode: screen; }
+.logo-mark span:nth-child(1) { background: var(--stock); left: 0; top: 4px; }
+.logo-mark span:nth-child(2) { background: var(--dam); right: 0; top: 4px; }
+.logo small {
+  font-family: "JetBrains Mono", monospace; font-weight: 500; font-size: 10px;
+  color: var(--muted); border: 1px solid var(--line); padding: 2px 7px;
+  border-radius: 99px; letter-spacing: .04em;
+}
+.nav-links { display: flex; gap: 2px; font-size: 14px; color: var(--ink-2); }
+.nav-links a { padding: 8px 12px; border-radius: 8px; }
+.nav-links a:hover { background: var(--surface-2); color: var(--ink); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.theme-btn {
+  width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 10px;
+  display: grid; place-items: center; color: var(--muted); font-size: 15px;
+}
+.theme-btn:hover { background: var(--surface-2); color: var(--ink); }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 10px; font-size: 14px; font-weight: 600;
+  border: 1px solid var(--line); transition: transform .12s ease;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn-primary { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.btn-accent { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+/* ===== Hero ===== */
+.hero { padding: 88px 0 64px; position: relative; overflow: hidden; }
+.hero::before {
+  content: ""; position: absolute; inset: -40% -20% auto;
+  height: 120%; pointer-events: none; opacity: .5;
+  background:
+    radial-gradient(640px 360px at 24% 30%, var(--stock-soft), transparent 70%),
+    radial-gradient(640px 360px at 76% 30%, var(--dam-soft), transparent 70%);
+}
+.hero-inner { position: relative; text-align: center; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: "JetBrains Mono", monospace; font-size: 11.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 99px; padding: 7px 14px;
+  background: var(--surface);
+}
+.eyebrow b { color: var(--accent); font-weight: 500; }
+.hero h1 {
+  font-size: clamp(38px, 5.4vw, 64px); line-height: 1.04; font-weight: 700;
+  margin: 28px auto 0; max-width: 880px;
+}
+.hero h1 .hl-stock { color: var(--stock); }
+.hero h1 .hl-dam { color: var(--dam); }
+.hero p.lead {
+  font-size: 18px; line-height: 1.65; color: var(--ink-2);
+  max-width: 660px; margin: 22px auto 0;
+}
+.hero-cta { display: flex; gap: 12px; justify-content: center; margin-top: 32px; }
+.hero-meta {
+  display: flex; gap: 26px; justify-content: center; flex-wrap: wrap;
+  margin-top: 36px; font-size: 13px; color: var(--muted);
+}
+.hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 6px; height: 6px; border-radius: 99px; background: var(--dam); }
+
+/* ===== Section scaffolding ===== */
+section { padding: 84px 0; }
+section.alt { background: var(--surface); border-block: 1px solid var(--line); }
+.sec-head { max-width: 720px; margin-bottom: 48px; }
+.sec-head.center { margin-inline: auto; text-align: center; }
+.kicker {
+  font-family: "JetBrains Mono", monospace; font-size: 11.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--accent); font-weight: 500;
+}
+.sec-head h2 { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.12; margin-top: 14px; }
+.sec-head p { font-size: 16px; line-height: 1.65; color: var(--ink-2); margin: 16px 0 0; }
+
+/* ===== Surface switcher demo ===== */
+.demo-shell {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+  box-shadow: var(--shadow-lg); overflow: hidden;
+}
+.demo-chrome {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--surface-2);
+}
+.traffic { display: flex; gap: 6px; }
+.traffic i { width: 10px; height: 10px; border-radius: 99px; background: var(--line); display: block; }
+.urlbar {
+  flex: 1; max-width: 420px; margin: 0 auto;
+  font-family: "JetBrains Mono", monospace; font-size: 11.5px; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  padding: 6px 12px; text-align: center;
+}
+.surface-tabs {
+  display: inline-flex; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 10px; padding: 3px; gap: 3px;
+}
+.surface-tabs button {
+  padding: 6px 14px; border-radius: 7px; font-size: 12.5px; font-weight: 600;
+  color: var(--muted); display: inline-flex; align-items: center; gap: 7px;
+}
+.surface-tabs button i { width: 7px; height: 7px; border-radius: 99px; display: block; }
+.surface-tabs button[data-s="stock"] i { background: var(--stock); }
+.surface-tabs button[data-s="dam"] i { background: var(--dam); }
+.surface-tabs button.active { background: var(--surface-2); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+.demo-body { min-height: 540px; }
+.demo-pane { display: none; }
+.demo-pane.active { display: block; animation: fadein .35s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+/* — Stock surface mock — */
+.stock-top { padding: 28px 28px 0; }
+.searchbar {
+  display: flex; align-items: center; gap: 12px;
+  border: 1.5px solid var(--line); border-radius: 14px; padding: 14px 18px;
+  background: var(--bg); max-width: 720px; margin: 0 auto;
+  box-shadow: var(--shadow);
+}
+.searchbar .icn { color: var(--muted); flex-shrink: 0; }
+.searchbar .q { font-size: 15px; color: var(--ink); flex: 1; }
+.searchbar .q em { font-style: normal; color: var(--muted); }
+.search-mode {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: .05em;
+  color: var(--accent); background: var(--accent-soft); border-radius: 7px; padding: 5px 10px;
+  white-space: nowrap;
+}
+.chips { display: flex; gap: 8px; justify-content: center; margin: 16px auto 0; flex-wrap: wrap; }
+.chip {
+  font-size: 12.5px; color: var(--ink-2); border: 1px solid var(--line);
+  border-radius: 99px; padding: 6px 13px; background: var(--surface);
+}
+.chip.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.masonry { columns: 4; gap: 14px; padding: 24px 28px 28px; }
+@media (max-width: 980px) { .masonry { columns: 3; } }
+@media (max-width: 700px) { .masonry { columns: 2; } }
+.m-card {
+  break-inside: avoid; margin-bottom: 14px; border-radius: 12px; overflow: hidden;
+  position: relative; border: 1px solid var(--line); background: var(--surface-2);
+}
+.m-img { width: 100%; display: block; }
+.m-card .m-meta {
+  position: absolute; inset: auto 0 0; padding: 26px 12px 10px;
+  background: linear-gradient(transparent, rgba(10,10,12,.62));
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 8px;
+  opacity: 0; transition: opacity .18s ease;
+}
+.m-card:hover .m-meta { opacity: 1; }
+.m-meta .t { color: #fff; font-size: 12px; font-weight: 600; letter-spacing: 0; }
+.badge {
+  font-family: "JetBrains Mono", monospace; font-size: 9.5px; letter-spacing: .05em;
+  padding: 3px 8px; border-radius: 6px; font-weight: 500; white-space: nowrap;
+}
+.badge.lic { background: rgba(255,255,255,.92); color: #17181a; }
+.badge.owned { position: absolute; top: 10px; left: 10px; background: var(--dam); color: #fff; }
+.badge.c2pa { position: absolute; top: 10px; right: 10px; background: rgba(12,12,14,.66); color: #fff; display: inline-flex; align-items: center; gap: 5px; }
+.badge.c2pa i { width: 5px; height: 5px; border-radius: 99px; background: #6ee7b7; display: block; }
+
+/* — DAM surface mock — */
+.dam-grid { display: grid; grid-template-columns: 220px 1fr 270px; min-height: 540px; }
+@media (max-width: 980px) { .dam-grid { grid-template-columns: 1fr; } .dam-side, .dam-insp { display: none; } }
+.dam-side { border-right: 1px solid var(--line); padding: 22px 16px; background: var(--bg); }
+.dam-side .lbl {
+  font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); padding: 0 10px; margin: 18px 0 8px;
+}
+.dam-side .lbl:first-child { margin-top: 0; }
+.tree a {
+  display: flex; align-items: center; gap: 9px; padding: 7px 10px; border-radius: 8px;
+  font-size: 13.5px; color: var(--ink-2);
+}
+.tree a:hover { background: var(--surface-2); }
+.tree a.on { background: var(--dam-soft); color: var(--dam); font-weight: 600; }
+.tree .ico { width: 15px; text-align: center; opacity: .75; font-size: 12px; }
+.tree .cnt { margin-left: auto; font-size: 11px; color: var(--muted); font-family: "JetBrains Mono", monospace; }
+.dam-main { padding: 22px 24px; }
+.dam-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.crumbs { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 7px; }
+.crumbs b { color: var(--ink); font-weight: 600; }
+.dam-toolbar .spacer { flex: 1; }
+.tool-btn {
+  font-size: 12.5px; font-weight: 600; border: 1px solid var(--line); border-radius: 8px;
+  padding: 7px 12px; color: var(--ink-2); background: var(--surface); display: inline-flex; gap: 7px; align-items: center;
+}
+.tool-btn.brand { background: var(--dam); border-color: var(--dam); color: #fff; }
+.asset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 1100px) { .asset-grid { grid-template-columns: repeat(3, 1fr); } }
+.a-card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); position: relative; }
+.a-card .thumb { aspect-ratio: 4/3; }
+.a-card .info { padding: 10px 12px; }
+.a-card .name { font-size: 12.5px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.a-card .sub { font-size: 11px; color: var(--muted); margin-top: 3px; display: flex; align-items: center; gap: 6px; }
+.pill {
+  font-family: "JetBrains Mono", monospace; font-size: 9px; letter-spacing: .04em;
+  padding: 2px 7px; border-radius: 99px; font-weight: 500;
+}
+.pill.lic { background: var(--stock-soft); color: var(--stock); }
+.pill.own { background: var(--dam-soft); color: var(--dam); }
+.pill.exp { background: var(--amber-soft); color: var(--amber); }
+.pill.appr { background: var(--accent-soft); color: var(--accent); }
+.dam-insp { border-left: 1px solid var(--line); padding: 22px 20px; background: var(--bg); }
+.insp-thumb { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); margin-bottom: 16px; }
+.insp-name { font-size: 14px; font-weight: 700; font-family: "Space Grotesk", sans-serif; }
+.insp-sec { margin-top: 18px; }
+.insp-sec .lbl {
+  font-family: "JetBrains Mono", monospace; font-size: 10px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 9px;
+}
+.kv { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding: 6px 0; border-bottom: 1px dashed var(--line); }
+.kv:last-child { border-bottom: 0; }
+.kv .k { color: var(--muted); }
+.kv .v { font-weight: 600; text-align: right; }
+.kv .v.ok { color: var(--dam); }
+.kv .v.warn { color: var(--amber); }
+.tagrow { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 11px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 99px; padding: 4px 10px; color: var(--ink-2); }
+.tag.ai { border-style: dashed; color: var(--accent); }
+.consent-note {
+  margin-top: 8px; font-size: 11px; line-height: 1.5; color: var(--muted);
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px;
+}
+.consent-note b { color: var(--dam); }
+
+/* ===== Bridge flow ===== */
+.bridge { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; position: relative; }
+@media (max-width: 900px) { .bridge { grid-template-columns: 1fr; gap: 18px; } .bridge-arrow { display: none; } }
+.bridge-step {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 28px; position: relative; box-shadow: var(--shadow);
+}
+.bridge-step + .bridge-step { margin-left: 28px; }
+@media (max-width: 900px) { .bridge-step + .bridge-step { margin-left: 0; } }
+.bridge-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 30px; height: 30px; border-radius: 99px; background: var(--ink); color: var(--bg);
+  display: grid; place-items: center; font-size: 13px;
+}
+.step-num {
+  font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted); letter-spacing: .08em;
+}
+.bridge-step h3 { font-size: 19px; margin: 10px 0 0; }
+.bridge-step p { font-size: 14px; line-height: 1.6; color: var(--ink-2); margin: 10px 0 0; }
+.bridge-visual { margin-top: 18px; border-radius: 10px; border: 1px solid var(--line); overflow: hidden; }
+.bv-row { display: flex; align-items: center; gap: 10px; padding: 10px 13px; font-size: 12px; background: var(--bg); }
+.bv-row + .bv-row { border-top: 1px solid var(--line); }
+.bv-sw { width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0; }
+.bv-row .grow { flex: 1; min-width: 0; }
+.bv-row .ttl { font-weight: 600; font-size: 12px; }
+.bv-row .sb { color: var(--muted); font-size: 10.5px; font-family: "JetBrains Mono", monospace; }
+
+/* ===== Spine architecture ===== */
+.spine { display: grid; gap: 14px; }
+.spine-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 800px) { .spine-row { grid-template-columns: 1fr; } }
+.spine-surface {
+  border-radius: var(--radius); padding: 24px; border: 1.5px solid;
+  background: var(--surface);
+}
+.spine-surface.stock { border-color: var(--stock); }
+.spine-surface.dam { border-color: var(--dam); }
+.spine-surface h3 { font-size: 17px; display: flex; align-items: center; gap: 9px; }
+.spine-surface h3 i { width: 9px; height: 9px; border-radius: 99px; display: block; }
+.spine-surface.stock h3 i { background: var(--stock); }
+.spine-surface.dam h3 i { background: var(--dam); }
+.spine-surface ul { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+.spine-surface li { font-size: 13.5px; color: var(--ink-2); display: flex; gap: 9px; line-height: 1.5; }
+.spine-surface li::before { content: "—"; color: var(--muted); flex-shrink: 0; }
+.spine-connector {
+  display: flex; justify-content: center; gap: 60px; height: 34px; align-items: stretch;
+}
+.spine-connector i { width: 1.5px; background: linear-gradient(var(--line), var(--accent)); display: block; }
+.spine-core {
+  border: 1.5px solid var(--accent); border-radius: var(--radius);
+  background: var(--surface); overflow: hidden;
+}
+.spine-core-head {
+  padding: 18px 24px; background: var(--accent-soft); border-bottom: 1px solid var(--line);
+  display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+}
+.spine-core-head h3 { font-size: 17px; color: var(--accent); }
+.spine-core-head span { font-size: 12.5px; color: var(--muted); }
+.core-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 1000px) { .core-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .core-grid { grid-template-columns: 1fr; } }
+.core-cell { padding: 20px 22px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.core-cell:nth-child(4n) { border-right: 0; }
+@media (max-width: 1000px) { .core-cell:nth-child(4n) { border-right: 1px solid var(--line); } .core-cell:nth-child(2n) { border-right: 0; } }
+.core-cell .ico { font-size: 19px; margin-bottom: 10px; display: block; }
+.core-cell h4 { margin: 0; font-size: 13.5px; font-family: "Space Grotesk", sans-serif; letter-spacing: -.01em; }
+.core-cell p { margin: 6px 0 0; font-size: 12px; line-height: 1.55; color: var(--muted); }
+.spine-infra {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  padding: 16px; background: var(--surface-2); border-radius: var(--radius); border: 1px dashed var(--line);
+  font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--muted);
+}
+.spine-infra span { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; }
+.spine-infra i { width: 6px; height: 6px; border-radius: 99px; background: var(--accent); display: block; }
+
+/* ===== Feature cards (AI + services) ===== */
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 980px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .cards { grid-template-columns: 1fr; } }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 26px; transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.card .ico {
+  width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center;
+  font-size: 18px; background: var(--accent-soft); margin-bottom: 16px;
+}
+.card h3 { font-size: 16.5px; }
+.card p { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); margin: 9px 0 0; }
+.card .foot {
+  margin-top: 14px; font-family: "JetBrains Mono", monospace; font-size: 10.5px;
+  letter-spacing: .05em; color: var(--muted);
+}
+
+/* ===== Rights timeline ===== */
+.rights-demo {
+  background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+  box-shadow: var(--shadow); padding: 34px; overflow-x: auto;
+}
+.rt-track { display: flex; align-items: flex-start; min-width: 760px; }
+.rt-node { flex: 1; position: relative; padding-top: 26px; }
+.rt-node::before {
+  content: ""; position: absolute; top: 7px; left: 0; right: 0; height: 1.5px;
+  background: var(--line);
+}
+.rt-node:first-child::before { left: 50%; }
+.rt-node:last-child::before { right: 50%; }
+.rt-node i {
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 15px; height: 15px; border-radius: 99px; background: var(--surface);
+  border: 2.5px solid var(--accent); z-index: 1; display: block;
+}
+.rt-node.start i { background: var(--accent); }
+.rt-node .box { margin: 0 8px; text-align: center; }
+.rt-node h4 { margin: 0; font-size: 13px; font-family: "Space Grotesk", sans-serif; }
+.rt-node p { margin: 5px 0 0; font-size: 11.5px; line-height: 1.5; color: var(--muted); }
+.rt-node .badge-soft {
+  display: inline-block; margin-top: 9px;
+  font-family: "JetBrains Mono", monospace; font-size: 9.5px; letter-spacing: .05em;
+  padding: 4px 9px; border-radius: 6px; background: var(--accent-soft); color: var(--accent);
+}
+
+/* ===== EU sovereignty ===== */
+.sov { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+@media (max-width: 900px) { .sov { grid-template-columns: 1fr; } }
+.sov-list { display: grid; gap: 0; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.sov-item { display: flex; gap: 16px; padding: 20px 22px; }
+.sov-item + .sov-item { border-top: 1px solid var(--line); }
+.sov-item .mk {
+  width: 34px; height: 34px; border-radius: 9px; background: var(--dam-soft); color: var(--dam);
+  display: grid; place-items: center; font-size: 15px; flex-shrink: 0;
+}
+.sov-item h4 { margin: 1px 0 0; font-size: 14.5px; font-family: "Space Grotesk", sans-serif; }
+.sov-item p { margin: 5px 0 0; font-size: 13px; line-height: 1.55; color: var(--ink-2); }
+.sov-card {
+  border: 1px solid var(--line); border-radius: 18px; padding: 30px;
+  background: var(--surface); box-shadow: var(--shadow);
+}
+.sov-card .hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.sov-card .hd h3 { font-size: 16px; }
+.status-ok {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; color: var(--dam);
+  background: var(--dam-soft); padding: 5px 11px; border-radius: 99px;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.status-ok i { width: 6px; height: 6px; border-radius: 99px; background: var(--dam); display: block; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+.sov-rows { display: grid; gap: 0; }
+.sov-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px dashed var(--line); font-size: 13px; }
+.sov-row:last-child { border-bottom: 0; }
+.sov-row .k { color: var(--muted); }
+.sov-row .v { font-weight: 600; font-family: "JetBrains Mono", monospace; font-size: 12px; }
+.sov-row .v.green { color: var(--dam); }
+
+/* ===== Services 2026 ===== */
+.svc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 1000px) { .svc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .svc-grid { grid-template-columns: 1fr; } }
+.svc {
+  border: 1px solid var(--line); border-radius: 12px; padding: 18px 19px; background: var(--surface);
+}
+.svc h4 { margin: 0; font-size: 13.5px; font-family: "Space Grotesk", sans-serif; display: flex; align-items: center; gap: 9px; }
+.svc h4 .em { font-size: 15px; }
+.svc p { margin: 7px 0 0; font-size: 12px; line-height: 1.55; color: var(--muted); }
+
+/* ===== Roadmap ===== */
+.phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+@media (max-width: 1000px) { .phases { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .phases { grid-template-columns: 1fr; } }
+.phase {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 24px; position: relative; overflow: hidden;
+}
+.phase::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--accent); opacity: .85; }
+.phase:nth-child(2)::before { background: var(--stock); }
+.phase:nth-child(3)::before { background: var(--dam); }
+.phase:nth-child(4)::before { background: var(--amber); }
+.phase .tid { font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: .07em; color: var(--muted); }
+.phase h3 { font-size: 16.5px; margin: 8px 0 0; }
+.phase ul { margin: 13px 0 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+.phase li { font-size: 12.5px; line-height: 1.5; color: var(--ink-2); display: flex; gap: 8px; }
+.phase li::before { content: "·"; font-weight: 800; color: var(--muted); }
+
+/* ===== Metrics ===== */
+.metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 900px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .metrics { grid-template-columns: 1fr; } }
+.metric { border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; background: var(--surface); }
+.metric .num { font-family: "Space Grotesk", sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -.03em; }
+.metric .num small { font-size: 14px; color: var(--muted); font-weight: 500; }
+.metric h4 { margin: 8px 0 0; font-size: 13.5px; }
+.metric p { margin: 6px 0 0; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ===== Risks ===== */
+.risk-table { border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); }
+.risk-row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px; padding: 18px 24px; }
+.risk-row + .risk-row { border-top: 1px solid var(--line); }
+.risk-row.head {
+  font-family: "JetBrains Mono", monospace; font-size: 10.5px; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--muted); background: var(--surface-2); padding-block: 12px;
+}
+.risk-row .r { font-size: 13.5px; font-weight: 600; }
+.risk-row .m { font-size: 13px; color: var(--ink-2); line-height: 1.55; }
+@media (max-width: 700px) { .risk-row { grid-template-columns: 1fr; gap: 6px; } }
+
+/* ===== CTA + footer ===== */
+.cta {
+  text-align: center; border-radius: 22px; padding: 72px 32px;
+  background: var(--ink); color: var(--bg); position: relative; overflow: hidden;
+}
+.cta::before {
+  content: ""; position: absolute; inset: 0; opacity: .25; pointer-events: none;
+  background:
+    radial-gradient(420px 260px at 20% 0%, var(--stock), transparent 70%),
+    radial-gradient(420px 260px at 80% 100%, var(--dam), transparent 70%);
+}
+.cta h2 { font-size: clamp(26px, 3.4vw, 38px); position: relative; }
+.cta p { position: relative; max-width: 540px; margin: 16px auto 0; font-size: 15px; line-height: 1.6; opacity: .82; }
+.cta .hero-cta { position: relative; }
+.cta .btn-primary { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+footer { border-top: 1px solid var(--line); padding: 40px 0 56px; font-size: 13px; color: var(--muted); }
+.foot-inner { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; align-items: center; }
+.foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+.foot-links a:hover { color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<header class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#top">
+      <span class="logo-mark"><span></span><span></span></span>
+      Spine <small>UDKAST · V1</small>
+    </a>
+    <nav class="nav-links">
+      <a href="#produkt">Produkt</a>
+      <a href="#broen">Broen</a>
+      <a href="#arkitektur">Arkitektur</a>
+      <a href="#ai">AI</a>
+      <a href="#compliance">Compliance</a>
+      <a href="#roadmap">Roadmap</a>
+    </nav>
+    <div class="nav-right">
+      <button class="theme-btn" id="themeToggle" aria-label="Skift tema">◐</button>
+      <a class="btn" href="#arkitektur">Se arkitekturen</a>
+      <a class="btn btn-primary" href="#produkt">Prøv demoen</a>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="top">
+  <div class="wrap hero-inner">
+    <span class="eyebrow"><b>●</b> Sammenkoblet Stock &amp; DAM · Designudkast 2026</span>
+    <h1>Én platform.<br /><span class="hl-stock">Stock</span> og <span class="hl-dam">DAM</span> på samme rygrad.</h1>
+    <p class="lead">
+      Det rigtige visuelle indhold, med de rigtige rettigheder, til den rigtige kanal — hurtigt og sikkert.
+      To skarpt differentierede produktoplevelser. Ét asset-objekt, én rights engine, én søgning.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-accent" href="#produkt">Udforsk de to surfaces</a>
+      <a class="btn" href="#broen">Sådan hænger de sammen →</a>
+    </div>
+    <div class="hero-meta">
+      <span><i class="dot"></i> 100&nbsp;% EU-hostet (Hetzner + Bunny)</span>
+      <span><i class="dot"></i> Rights-aware by default</span>
+      <span><i class="dot"></i> C2PA Content Credentials</span>
+      <span><i class="dot"></i> AI-native søgning &amp; metadata</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PRODUCT DEMO ===================== -->
+<section id="produkt">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="kicker">To surfaces · Fælles spine</span>
+      <h2>Samme asset. To oplevelser.</h2>
+      <p>Skift mellem Stock-surfacen (discovery-first) og DAM-surfacen (workspace-first). Bemærk: licensdata, provenance og AI-metadata følger med — uanset indgang.</p>
+    </div>
+
+    <div class="demo-shell">
+      <div class="demo-chrome">
+        <span class="traffic"><i></i><i></i><i></i></span>
+        <span class="urlbar" id="demoUrl">app.spine.eu/stock/søg?q=vinterbadning+aarhus</span>
+        <div class="surface-tabs" role="tablist">
+          <button data-s="stock" class="active" role="tab"><i></i> Stock</button>
+          <button data-s="dam" role="tab"><i></i> DAM</button>
+        </div>
+      </div>
+
+      <div class="demo-body">
+        <!-- ——— STOCK SURFACE ——— -->
+        <div class="demo-pane active" id="pane-stock">
+          <div class="stock-top">
+            <div class="searchbar">
+              <span class="icn">⌕</span>
+              <span class="q">vinterbadning i Aarhus, morgenlys, dokumentarisk <em>— søger semantisk…</em></span>
+              <span class="search-mode">HYBRID · SEMANTISK + KEYWORD</span>
+            </div>
+            <div class="chips">
+              <span class="chip on">Alle</span>
+              <span class="chip">Fotos</span>
+              <span class="chip">Video</span>
+              <span class="chip">Illustration</span>
+              <span class="chip">Med model release</span>
+              <span class="chip">Kommerciel licens</span>
+              <span class="chip" style="border-color: var(--dam); color: var(--dam);">✓ I jeres bibliotek (3)</span>
+            </div>
+          </div>
+          <div class="masonry" id="stockMasonry"></div>
+        </div>
+
+        <!-- ——— DAM SURFACE ——— -->
+        <div class="demo-pane" id="pane-dam">
+          <div class="dam-grid">
+            <aside class="dam-side">
+              <div class="lbl">Workspace</div>
+              <nav class="tree">
+                <a href="#produkt"><span class="ico">⌂</span> Overblik</a>
+                <a href="#produkt" class="on"><span class="ico">▦</span> Kampagner <span class="cnt">1.284</span></a>
+                <a href="#produkt"><span class="ico">◫</span> Brand-assets <span class="cnt">312</span></a>
+                <a href="#produkt"><span class="ico">⬡</span> Produktfotos <span class="cnt">5.420</span></a>
+                <a href="#produkt"><span class="ico">▶</span> Video <span class="cnt">96</span></a>
+              </nav>
+              <div class="lbl">Collections</div>
+              <nav class="tree">
+                <a href="#produkt"><span class="ico">✦</span> Forår 2026</a>
+                <a href="#produkt"><span class="ico">✦</span> Messestand Berlin</a>
+                <a href="#produkt"><span class="ico">✦</span> Web-relancering</a>
+              </nav>
+              <div class="lbl">Governance</div>
+              <nav class="tree">
+                <a href="#produkt"><span class="ico">◷</span> Til godkendelse <span class="cnt">7</span></a>
+                <a href="#produkt"><span class="ico">⚠</span> Licens udløber <span class="cnt">3</span></a>
+                <a href="#produkt"><span class="ico">⎘</span> Brand portals <span class="cnt">4</span></a>
+              </nav>
+            </aside>
+
+            <div class="dam-main">
+              <div class="dam-toolbar">
+                <span class="crumbs">Kampagner / <b>Forår 2026</b></span>
+                <span class="spacer"></span>
+                <button class="tool-btn">⌕ Søg i alt — også stock</button>
+                <button class="tool-btn">↑ Upload</button>
+                <button class="tool-btn brand">⎘ Del via brand portal</button>
+              </div>
+              <div class="asset-grid" id="damAssets"></div>
+            </div>
+
+            <aside class="dam-insp">
+              <div class="insp-thumb">
+                <svg viewBox="0 0 280 190" width="100%" style="display:block">
+                  <defs><linearGradient id="insp-g" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#9db8d8"/><stop offset=".55" stop-color="#5b7ea6"/><stop offset="1" stop-color="#2e4a66"/>
+                  </linearGradient></defs>
+                  <rect width="280" height="190" fill="url(#insp-g)"/>
+                  <circle cx="218" cy="44" r="22" fill="#f5e0b8" opacity=".85"/>
+                  <path d="M0 132 Q70 112 140 130 T280 126 V190 H0 Z" fill="#1d3349" opacity=".8"/>
+                  <path d="M0 150 Q90 136 170 150 T280 146 V190 H0 Z" fill="#142536"/>
+                </svg>
+              </div>
+              <div class="insp-name">vinterbad_aarhus_0142.jpg</div>
+              <div class="insp-sec">
+                <div class="lbl">Rettigheder · Rights Engine</div>
+                <div class="kv"><span class="k">Licens</span><span class="v">Kommerciel · Udvidet</span></div>
+                <div class="kv"><span class="k">Erhvervet via</span><span class="v">Stock · 12. maj 2026</span></div>
+                <div class="kv"><span class="k">Model release</span><span class="v ok">✓ 2 personer</span></div>
+                <div class="kv"><span class="k">Gyldig til</span><span class="v warn">11. maj 2027</span></div>
+                <div class="kv"><span class="k">Tilladt brug</span><span class="v">Web, SoMe, print &lt; 500K</span></div>
+                <div class="kv"><span class="k">Provenance</span><span class="v ok">C2PA ✓ · TrustMark ✓</span></div>
+              </div>
+              <div class="insp-sec">
+                <div class="lbl">AI-metadata (auto ved ingest)</div>
+                <div class="tagrow">
+                  <span class="tag ai">vinterbadning</span>
+                  <span class="tag ai">havnebad</span>
+                  <span class="tag ai">morgenlys</span>
+                  <span class="tag ai">fællesskab</span>
+                  <span class="tag">aarhus</span>
+                  <span class="tag">dokumentarisk</span>
+                </div>
+                <div class="consent-note">
+                  <b>Ansigtsdata:</b> 2 personer genkendt — begge med registreret samtykke. Sletteanmodninger håndhæves automatisk i hele korpus.
+                </div>
+              </div>
+              <div class="insp-sec">
+                <div class="lbl">Aktivitet</div>
+                <div class="kv"><span class="k">Downloads (30 dage)</span><span class="v">38</span></div>
+                <div class="kv"><span class="k">Brugt i</span><span class="v">4 kanaler</span></div>
+                <div class="kv"><span class="k">Version</span><span class="v">v3 (godkendt)</span></div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== BRIDGE ===================== -->
+<section class="alt" id="broen">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">Broen mellem de to verdener</span>
+      <h2>Køb → organisér → distribuér.<br />Uden at skifte system.</h2>
+      <p>Sammenkoblingen er ikke en integration — det er samme asset-objekt hele vejen. Licensen følger med fra checkout til brand portal, og freemium-deling er indgangen til hele funnel’en.</p>
+    </div>
+
+    <div class="bridge">
+      <div class="bridge-step">
+        <span class="step-num">01 · ACQUIRE TO LIBRARY</span>
+        <h3>Ét klik fra køb til bibliotek</h3>
+        <p>Stock-køb lander direkte i DAM-strukturen — med licenstype, udløb og releases som strukturerede metadata, ikke en PDF i en mappe.</p>
+        <div class="bridge-visual">
+          <div class="bv-row">
+            <span class="bv-sw" style="background: linear-gradient(135deg,#e8a87c,#b3563a)"></span>
+            <span class="grow"><span class="ttl">Checkout gennemført</span><br /><span class="sb">LICENS: KOMMERCIEL-UDVIDET</span></span>
+            <span class="pill lic">STOCK</span>
+          </div>
+          <div class="bv-row">
+            <span class="bv-sw" style="background: linear-gradient(135deg,#e8a87c,#b3563a)"></span>
+            <span class="grow"><span class="ttl">Placeret: Kampagner / Forår 2026</span><br /><span class="sb">RIGHTS-METADATA INTAKT</span></span>
+            <span class="pill own">DAM ✓</span>
+          </div>
+        </div>
+      </div>
+
+      <span class="bridge-arrow" style="left: calc(33.33% - 6px);">→</span>
+
+      <div class="bridge-step">
+        <span class="step-num">02 · LICENSED CONTENT IN CONTEXT</span>
+        <h3>Stock-søgning inde i DAM’en</h3>
+        <p>Mangler teamet et billede, søger de videre i hele stock-kataloget fra samme søgefelt — semantisk, på tværs af eget og licenserbart indhold.</p>
+        <div class="bridge-visual">
+          <div class="bv-row">
+            <span class="bv-sw" style="background: linear-gradient(135deg,#9db8d8,#2e4a66)"></span>
+            <span class="grow"><span class="ttl">3 resultater fra jeres bibliotek</span><br /><span class="sb">EJET + ALLEREDE LICENSERET</span></span>
+            <span class="pill own">GRATIS</span>
+          </div>
+          <div class="bv-row">
+            <span class="bv-sw" style="background: linear-gradient(135deg,#b9d8c8,#3e6e54)"></span>
+            <span class="grow"><span class="ttl">412 resultater fra stock</span><br /><span class="sb">LICENSÉR DIREKTE I FLOWET</span></span>
+            <span class="pill lic">FRA 49 KR</span>
+          </div>
+        </div>
+      </div>
+
+      <span class="bridge-arrow" style="left: calc(66.66% + 8px);">→</span>
+
+      <div class="bridge-step">
+        <span class="step-num">03 · SHARE FREEMIUM</span>
+        <h3>Deling som vækstmotor</h3>
+        <p>Gratis share-links med embedded licensinfo og provenance. Modtageren oplever værdien — og konverteres mod stock-køb og DAM-upgrade.</p>
+        <div class="bridge-visual">
+          <div class="bv-row">
+            <span class="bv-sw" style="background: linear-gradient(135deg,#d8b9cf,#6e3e60)"></span>
+            <span class="grow"><span class="ttl">spine.eu/s/x7Kq2 delt eksternt</span><br /><span class="sb">C2PA + LICENSVILKÅR EMBEDDED</span></span>
+            <span class="pill appr">FREEMIUM</span>
+          </div>
+          <div class="bv-row">
+            <span class="bv-sw" style="background: linear-gradient(135deg,#c9c4ec,#4e4690)"></span>
+            <span class="grow"><span class="ttl">Modtager opretter workspace</span><br /><span class="sb">KONVERTERING: SHARE → DAM</span></span>
+            <span class="pill own">UPGRADE</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ARCHITECTURE ===================== -->
+<section id="arkitektur">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="kicker">Arkitektur</span>
+      <h2>Fælles spine. Differentieret overflade.</h2>
+      <p>Syv delte core services bærer begge produkter. Surfaces ejes af dedikerede teams; spinen af ét platformsteam. Strangler fig-proxy foran legacy sikrer gradvis migrering uden big bang.</p>
+    </div>
+
+    <div class="spine">
+      <div class="spine-row">
+        <div class="spine-surface stock">
+          <h3><i></i> Stock Surface</h3>
+          <ul>
+            <li>Discovery-first UX: inspiration, kuraterede kategorier, trends</li>
+            <li>Checkout, licensvalg og kreditmodeller</li>
+            <li>Contributor-flow: upload, review, payout</li>
+          </ul>
+        </div>
+        <div class="spine-surface dam">
+          <h3><i></i> DAM Surface</h3>
+          <ul>
+            <li>Workspace-first UX: mapper, collections, godkendelsesflows</li>
+            <li>Brand portals og eksterne delinger</li>
+            <li>Admin, governance, audit, integrationer (CMS, Office, Adobe)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="spine-connector"><i></i><i></i><i></i><i></i></div>
+
+      <div class="spine-core">
+        <div class="spine-core-head">
+          <h3>Core Services — delt spine</h3>
+          <span>Én asset-model · API-first · event-drevet</span>
+        </div>
+        <div class="core-grid">
+          <div class="core-cell">
+            <span class="ico">▣</span>
+            <h4>Asset Service</h4>
+            <p>Unified asset-model: originals, renditions, versioner. Samme objekt uanset om det er købt, uploadet eller delt.</p>
+          </div>
+          <div class="core-cell">
+            <span class="ico">⚖</span>
+            <h4>Rights &amp; License Engine</h4>
+            <p>Licens-typer, brugsret, udløb og compliance-audit trail som førsteklasses metadata. Spec-først design.</p>
+          </div>
+          <div class="core-cell">
+            <span class="ico">⌕</span>
+            <h4>Search Service</h4>
+            <p>Hybrid søgning — semantisk + keyword + facetter — på tværs af eget og licenseret korpus.</p>
+          </div>
+          <div class="core-cell">
+            <span class="ico">✦</span>
+            <h4>Metadata &amp; Embeddings</h4>
+            <p>SteerViT/CLIP-embeddings, auto-tagging og ansigtsdetektion ved ingest. Genbruger eksisterende infrastruktur.</p>
+          </div>
+          <div class="core-cell">
+            <span class="ico">⛨</span>
+            <h4>Identity &amp; Access</h4>
+            <p>Organisationer, teams, roller, gæsteadgang, SSO/SAML/SCIM. Adgang evalueres pr. asset + kontekst.</p>
+          </div>
+          <div class="core-cell">
+            <span class="ico">⬡</span>
+            <h4>Provenance Layer</h4>
+            <p>Invisible watermarking (TrustMark), C2PA Content Credentials og fingerprinting på alle nye assets.</p>
+          </div>
+          <div class="core-cell">
+            <span class="ico">⇶</span>
+            <h4>Delivery / CDN</h4>
+            <p>Bunny-baseret levering med on-the-fly renditions, signerede URL’er og licens-aware caching.</p>
+          </div>
+          <div class="core-cell">
+            <span class="ico">⟲</span>
+            <h4>Strangler Fig Proxy</h4>
+            <p>Routing-lag foran legacy-systemer. Trafik flyttes service for service med målbare cutover-milepæle.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="spine-infra">
+        <span><i></i> Hetzner (EU compute)</span>
+        <span><i></i> Bunny Storage + CDN</span>
+        <span><i></i> ONNX / INT8 inferens on-prem</span>
+        <span><i></i> Event-bus + webhooks</span>
+        <span><i></i> IaC + GitOps</span>
+        <span><i></i> Observability: logs · traces · SLO’er</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RIGHTS ENGINE ===================== -->
+<section class="alt" id="rights">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">Rights &amp; License Engine</span>
+      <h2>Licensen følger asset’et.<br />Hele livet.</h2>
+      <p>Rettigheder er ikke en PDF i en mappe. De er strukturerede, maskinlæsbare metadata, der håndhæves i søgning, deling, download og distribution — med fuldt audit trail.</p>
+    </div>
+
+    <div class="rights-demo">
+      <div class="rt-track">
+        <div class="rt-node start">
+          <i></i>
+          <div class="box">
+            <h4>Erhvervelse</h4>
+            <p>Køb på stock eller upload med egne rettigheder</p>
+            <span class="badge-soft">LICENS REGISTRERET</span>
+          </div>
+        </div>
+        <div class="rt-node">
+          <i></i>
+          <div class="box">
+            <h4>Ingest</h4>
+            <p>Auto-metadata, releases knyttes, C2PA signeres</p>
+            <span class="badge-soft">PROVENANCE ✓</span>
+          </div>
+        </div>
+        <div class="rt-node">
+          <i></i>
+          <div class="box">
+            <h4>Brug internt</h4>
+            <p>Godkendelsesflow tjekker brugsret mod kanal</p>
+            <span class="badge-soft">POLICY HÅNDHÆVET</span>
+          </div>
+        </div>
+        <div class="rt-node">
+          <i></i>
+          <div class="box">
+            <h4>Distribution</h4>
+            <p>Brand portal &amp; share-links med embedded vilkår</p>
+            <span class="badge-soft">LICENS-AWARE DELING</span>
+          </div>
+        </div>
+        <div class="rt-node">
+          <i></i>
+          <div class="box">
+            <h4>Udløb / fornyelse</h4>
+            <p>Varsling før udløb, auto-karantæne, ét-kliks fornyelse</p>
+            <span class="badge-soft">AUDIT TRAIL KOMPLET</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AI ===================== -->
+<section id="ai">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">AI-laget · Kerneinfrastruktur</span>
+      <h2>AI-native. Ikke AI-tilføjet.</h2>
+      <p>Semantik, metadata og genkendelse er bygget ind i ingest- og søgevejen fra dag ét — kvantiseret (INT8/ONNX) og kørt i EU for omkostningseffektiv, suveræn drift.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="ico">⌕</span>
+        <h3>Semantisk søgning</h3>
+        <p>Naturligt sprog på tværs af eget og licenseret indhold i ét søgefelt. Eksisterende embedding-infrastruktur genbruges.</p>
+        <span class="foot">HYBRID: EMBEDDING + KEYWORD + FACET</span>
+      </div>
+      <div class="card">
+        <span class="ico">✦</span>
+        <h3>Auto-metadata ved ingest</h3>
+        <p>Tagging, beskrivelser og kategorisering genereres automatisk — redigerbart og sporbart, så mennesket altid har sidste ord.</p>
+        <span class="foot">STEERVIT / CLIP · DANSK + ENGELSK</span>
+      </div>
+      <div class="card">
+        <span class="ico">☺</span>
+        <h3>Ansigtsdetektion &amp; -genkendelse</h3>
+        <p>Opt-in og GDPR-compliant med eksplicit consent-håndtering, ret til sletning og fuldt audit trail. Bygger på eksisterende POC.</p>
+        <span class="foot">CONSENT-ARKITEKTUR FØR FEATURES</span>
+      </div>
+      <div class="card">
+        <span class="ico">⧉</span>
+        <h3>Duplicate detection</h3>
+        <p>Fingerprinting finder dubletter og near-duplicates på tværs af stock og DAM — før der købes det samme billede to gange.</p>
+        <span class="foot">PERCEPTUAL HASH + EMBEDDING-AFSTAND</span>
+      </div>
+      <div class="card">
+        <span class="ico">∿</span>
+        <h3>Usage intelligence</h3>
+        <p>Hvilke assets performer, hvor og hvorfor — og hvad mangler i biblioteket. Indsigt der driver både indkøb og contributor-briefs.</p>
+        <span class="foot">DASHBOARD · FASE 3</span>
+      </div>
+      <div class="card">
+        <span class="ico">⌁</span>
+        <h3>Agentic workflows</h3>
+        <p>Brief-til-asset: beskriv behovet, og platformen kuraterer kandidater fra eget bibliotek + stock med licens-check indbygget.</p>
+        <span class="foot">FASE 4 · API-FIRST FUNDAMENT</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMPLIANCE ===================== -->
+<section class="alt" id="compliance">
+  <div class="wrap">
+    <div class="sov">
+      <div>
+        <div class="sec-head" style="margin-bottom: 32px;">
+          <span class="kicker">Data sovereignty · Hårde krav</span>
+          <h2>Bygget i Europa.<br />Bevisligt.</h2>
+          <p>EU-suverænitet er ikke et marketingord her — det er et arkitektonisk invariant. Al storage, inferens og processering bliver i EU-jurisdiktion, og exit-garantien er en del af kontrakten.</p>
+        </div>
+        <div class="sov-list">
+          <div class="sov-item">
+            <span class="mk">⛨</span>
+            <div>
+              <h4>GDPR-compliant ansigtsdata</h4>
+              <p>Eksplicit consent, ret til sletning håndhævet på tværs af korpus, audit trail på hver inferens.</p>
+            </div>
+          </div>
+          <div class="sov-item">
+            <span class="mk">⬡</span>
+            <div>
+              <h4>C2PA som compliance-feature</h4>
+              <p>Content Credentials og provenance målrettet regulerede ICP’er (500+ brugere) — differentiator, ikke feature.</p>
+            </div>
+          </div>
+          <div class="sov-item">
+            <span class="mk">⇄</span>
+            <div>
+              <h4>Dataportabilitet &amp; exit-garanti</h4>
+              <p>Fuldt eksport af assets, metadata og audit-historik i åbne formater. Et salgsargument — ikke et forbehold.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sov-card">
+        <div class="hd">
+          <h3>Compliance-status · live</h3>
+          <span class="status-ok"><i></i> ALLE SYSTEMER I EU</span>
+        </div>
+        <div class="sov-rows">
+          <div class="sov-row"><span class="k">Object storage</span><span class="v green">Bunny · Falkenstein (DE)</span></div>
+          <div class="sov-row"><span class="k">Compute &amp; inferens</span><span class="v green">Hetzner · FSN1 + HEL1</span></div>
+          <div class="sov-row"><span class="k">Tredjepartsinferens uden for EU</span><span class="v green">0 kald / 30 dage</span></div>
+          <div class="sov-row"><span class="k">Consent-registreringer (ansigt)</span><span class="v">14.208 aktive</span></div>
+          <div class="sov-row"><span class="k">Sletteanmodninger (mdr.)</span><span class="v">12 · alle &lt; 72 t</span></div>
+          <div class="sov-row"><span class="k">C2PA-signerede assets</span><span class="v">100 % af nye</span></div>
+          <div class="sov-row"><span class="k">Audit-events (30 dage)</span><span class="v">2,4 mio. · uforanderlige</span></div>
+          <div class="sov-row"><span class="k">Seneste DPIA-review</span><span class="v">Q2 2026 ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PLATFORM SERVICES 2026 ===================== -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head center">
+      <span class="kicker">Platform services</span>
+      <h2>Alt det, et moderne system skylder sine brugere i 2026.</h2>
+      <p>Udover kerneproduktet: de services enterprise-kunder, partnere og udviklere forventer som standard.</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc"><h4><span class="em">⛨</span> SSO · SAML · SCIM</h4><p>Entra ID, Google Workspace og Okta. Automatisk provisionering og deprovisionering af brugere og teams.</p></div>
+      <div class="svc"><h4><span class="em">⌁</span> API-first + webhooks</h4><p>Alt UI’et kan, kan API’et. Versionerede endpoints, event-webhooks og SDK’er til de vigtigste sprog.</p></div>
+      <div class="svc"><h4><span class="em">⎘</span> Integrationer</h4><p>Adobe CC, Microsoft Office, Figma og headless CMS-connectors med licens-check direkte i værktøjet.</p></div>
+      <div class="svc"><h4><span class="em">◷</span> Audit &amp; aktivitetslog</h4><p>Uforanderlig hændelseslog på asset-, bruger- og org-niveau. Eksportérbar til SIEM.</p></div>
+      <div class="svc"><h4><span class="em">⬡</span> Roller &amp; granulær adgang</h4><p>Org → team → mappe → asset. Gæsteadgang med udløb, eksterne reviewers uden licens-spild.</p></div>
+      <div class="svc"><h4><span class="em">∿</span> Status &amp; SLO-transparens</h4><p>Offentlig statusside, definerede SLO’er og incident-historik. Tillid gennem synlighed.</p></div>
+      <div class="svc"><h4><span class="em">⇄</span> Import &amp; migrering</h4><p>Assisteret migrering fra legacy-DAM og mappestrukturer — metadata-mapping inkluderet.</p></div>
+      <div class="svc"><h4><span class="em">⚖</span> Fleksibel billing</h4><p>Transaktion, abonnement, kreditter og seats i én faktureringsmodel. EU-faktura, EUR/DKK.</p></div>
+      <div class="svc"><h4><span class="em">☷</span> Brand portals</h4><p>Kuraterede, licens-aware delingssider til pressen, partnere og bureauer — uden login-friktion.</p></div>
+      <div class="svc"><h4><span class="em">⌖</span> Søgeanalyse</h4><p>Hvad søger organisationen efter — og finder ikke? Direkte input til indkøb og contributor-briefs.</p></div>
+      <div class="svc"><h4><span class="em">✉</span> Notifikationer</h4><p>Godkendelser, licensudløb og delinger via e-mail, Slack og Teams. Digest eller realtid.</p></div>
+      <div class="svc"><h4><span class="em">☺</span> Support &amp; onboarding</h4><p>In-app guides, dansk/engelsk support og dedikeret CSM for 500+ brugere-segmentet.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ROADMAP ===================== -->
+<section class="alt" id="roadmap">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">Faseplan</span>
+      <h2>Fra fundament til skalering på 12+ måneder.</h2>
+    </div>
+    <div class="phases">
+      <div class="phase">
+        <span class="tid">FASE 1 · MDR. 1–4</span>
+        <h3>Fundament</h3>
+        <ul>
+          <li>Unified asset-model og Asset Service</li>
+          <li>Rights &amp; License Engine v1 — licens følger asset</li>
+          <li>Fælles søge-API på eksisterende embeddings</li>
+          <li>Strangler fig-proxy foran legacy-systemer</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <span class="tid">FASE 2 · MDR. 4–8</span>
+        <h3>Broen</h3>
+        <ul>
+          <li>“Acquire to Library”-flowet live</li>
+          <li>Stock-søgning embedded i DAM-surface</li>
+          <li>Share Freemium fase 1</li>
+          <li>Provenance/watermarking på alle nye assets</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <span class="tid">FASE 3 · MDR. 8–12</span>
+        <h3>Differentiering</h3>
+        <ul>
+          <li>Brand portals med licens-aware deling</li>
+          <li>Ansigtsgenkendelse GA (opt-in)</li>
+          <li>Usage intelligence dashboard</li>
+          <li>Integrationer: Office, Adobe, CMS</li>
+        </ul>
+      </div>
+      <div class="phase">
+        <span class="tid">FASE 4 · MDR. 12+</span>
+        <h3>Skalering</h3>
+        <ul>
+          <li>Tysk marked GTM — EU-suverænitet som spydspids</li>
+          <li>API-first platform for partnere</li>
+          <li>Agentic workflows: auto-kuratering, brief-til-asset</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== METRICS ===================== -->
+<section id="metrics">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">Succeskriterier</span>
+      <h2>Det, vi måler på.</h2>
+    </div>
+    <div class="metrics">
+      <div class="metric">
+        <div class="num">X<small> % / 90 dage</small></div>
+        <h4>Stock → DAM-konvertering</h4>
+        <p>Andel af stock-købere der aktiverer library-features inden 90 dage.</p>
+      </div>
+      <div class="metric">
+        <div class="num">↗<small> baseline fase 1</small></div>
+        <h4>Freemium → betalt</h4>
+        <p>Konverteringsrate på share-funnel, målt mod baseline fra fase 1.</p>
+      </div>
+      <div class="metric">
+        <div class="num">Top-5<small> hit rate</small></div>
+        <h4>Search relevance</h4>
+        <p>Semantisk søgning ≥ defineret benchmark på top-5 hit rate.</p>
+      </div>
+      <div class="metric">
+        <div class="num">−<small> målbar reduktion</small></div>
+        <h4>Time-to-asset</h4>
+        <p>Fra brief/søgning til distribueret asset — reduceret målbart per kvartal.</p>
+      </div>
+      <div class="metric">
+        <div class="num">NARR<small> · cross-sell</small></div>
+        <h4>Net ARR-vækst</h4>
+        <p>Vækst drevet af cross-sell mellem stock- og DAM-produktlinjerne.</p>
+      </div>
+      <div class="metric">
+        <div class="num">%<small> / kvartal</small></div>
+        <h4>Migreringsgrad</h4>
+        <p>Andel trafik flyttet bag strangler fig-proxy per kvartal.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RISKS ===================== -->
+<section class="alt" id="risici">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker">Risici &amp; mitigering</span>
+      <h2>Det, der kan gå galt — og planen for det.</h2>
+    </div>
+    <div class="risk-table">
+      <div class="risk-row head"><span>Risiko</span><span>Mitigering</span></div>
+      <div class="risk-row">
+        <span class="r">Legacy-migrering trækker ud</span>
+        <span class="m">Strangler fig med målbare cutover-milepæle per service — migreringsgrad rapporteres kvartalsvist.</span>
+      </div>
+      <div class="risk-row">
+        <span class="r">To surfaces udvander fokus</span>
+        <span class="m">Fælles spine-team + dedikerede surface-teams, med CPAO som samlende kontakt og prioriteringsejer.</span>
+      </div>
+      <div class="risk-row">
+        <span class="r">Licenskompleksitet i unified model</span>
+        <span class="m">Rights Engine designes spec-først (constitution.md-tilgang) — modellen fastlægges før koden.</span>
+      </div>
+      <div class="risk-row">
+        <span class="r">EU-infra umoden vs. hyperscalers</span>
+        <span class="m">TCO-modellen er valideret; fallback-plan på kritiske services holdes ajour.</span>
+      </div>
+      <div class="risk-row">
+        <span class="r">AI-features uden GDPR-styr</span>
+        <span class="m">Consent-arkitekturen bygges før features, ikke efter — ingen genkendelse uden registreret samtykke.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section>
+  <div class="wrap">
+    <div class="cta">
+      <h2>Stock og DAM er ikke to produkter.<br />Det er to indgange til samme løfte.</h2>
+      <p>Det rigtige visuelle indhold, med de rigtige rettigheder, til den rigtige kanal — hurtigt og sikkert. Bygget i Europa, på én fælles spine.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#produkt">Tilbage til demoen</a>
+        <a class="btn" style="border-color: color-mix(in srgb, var(--bg) 35%, transparent); color: var(--bg);" href="#arkitektur">Gennemgå arkitekturen</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot-inner">
+    <span>Spine · Designudkast v1 · Sammenkoblet Stock &amp; DAM Platform · Juni 2026</span>
+    <nav class="foot-links">
+      <a href="#produkt">Produkt</a>
+      <a href="#arkitektur">Arkitektur</a>
+      <a href="#compliance">Compliance</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="search-ui-prototype.html">Søge-prototype</a>
+      <a href="Colourbox.html">Stock-site</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* ---------- Tema ---------- */
+const themeBtn = document.getElementById("themeToggle");
+const root = document.documentElement;
+const saved = localStorage.getItem("spine-theme");
+if (saved) root.dataset.theme = saved;
+themeBtn.addEventListener("click", () => {
+  const next = root.dataset.theme === "dark" ? "light" : "dark";
+  root.dataset.theme = next;
+  localStorage.setItem("spine-theme", next);
+});
+
+/* ---------- Surface-skifter ---------- */
+const tabs = document.querySelectorAll(".surface-tabs button");
+const urls = {
+  stock: "app.spine.eu/stock/søg?q=vinterbadning+aarhus",
+  dam: "app.spine.eu/dam/kampagner/forår-2026"
+};
+tabs.forEach(btn => btn.addEventListener("click", () => {
+  tabs.forEach(b => b.classList.toggle("active", b === btn));
+  document.querySelectorAll(".demo-pane").forEach(p => p.classList.remove("active"));
+  document.getElementById("pane-" + btn.dataset.s).classList.add("active");
+  document.getElementById("demoUrl").textContent = urls[btn.dataset.s];
+}));
+
+/* ---------- Genereret billedmateriale (SVG-placeholders i nordiske paletter) ---------- */
+const palettes = [
+  ["#9db8d8", "#5b7ea6", "#2e4a66"], // havnebad, morgen
+  ["#e8d5b5", "#c9a36a", "#8a6a3e"], // sand, klit
+  ["#b9d8c8", "#6ea389", "#3e6e54"], // skov, mos
+  ["#d8c2b9", "#a87e6e", "#6e4a3e"], // tegl, by
+  ["#c4cbd8", "#8a93a6", "#4e5666"], // tåge, granit
+  ["#e8b9c4", "#c46e85", "#8a3e52"], // solnedgang
+  ["#c9c4ec", "#857ec0", "#4e4690"], // skumring
+  ["#d5e0c2", "#9bb076", "#5f7342"]  // eng
+];
+function svgScene(p, w, h, seed) {
+  const id = "g" + seed;
+  const sunX = 20 + (seed * 37) % 60, sunY = 14 + (seed * 23) % 26;
+  const y1 = h * (0.58 + ((seed * 13) % 20) / 100);
+  const y2 = h * (0.74 + ((seed * 7) % 14) / 100);
+  return `<svg class="m-img" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="${seed % 2 ? 1 : 0.2}" y2="1">
+      <stop offset="0" stop-color="${p[0]}"/><stop offset=".55" stop-color="${p[1]}"/><stop offset="1" stop-color="${p[2]}"/>
+    </linearGradient></defs>
+    <rect width="${w}" height="${h}" fill="url(#${id})"/>
+    ${seed % 3 === 0 ? `<circle cx="${w * sunX / 100}" cy="${h * sunY / 100}" r="${h * 0.11}" fill="#f5e0b8" opacity=".8"/>` : ""}
+    <path d="M0 ${y1} Q ${w * .3} ${y1 - h * .08} ${w * .55} ${y1} T ${w} ${y1 - h * .03} V ${h} H 0 Z" fill="${p[2]}" opacity=".55"/>
+    <path d="M0 ${y2} Q ${w * .4} ${y2 - h * .05} ${w * .7} ${y2} T ${w} ${y2} V ${h} H 0 Z" fill="${p[2]}" opacity=".85"/>
+  </svg>`;
+}
+
+/* ---------- Stock masonry ---------- */
+const stockData = [
+  { t: "Havnebad ved solopgang", h: 300, lic: "FRA 49 KR", owned: false },
+  { t: "Vinterbadere, Risskov", h: 210, lic: "EJET ✓", owned: true },
+  { t: "Morgendis over bugten", h: 260, lic: "FRA 49 KR", owned: false },
+  { t: "Badebro i januar", h: 320, lic: "FRA 49 KR", owned: false },
+  { t: "Sauna ved havnefronten", h: 230, lic: "EJET ✓", owned: true },
+  { t: "Fællesskab i kulden", h: 280, lic: "FRA 49 KR", owned: false },
+  { t: "Iskold dukkert, dokumentar", h: 240, lic: "FRA 49 KR", owned: false },
+  { t: "Aarhus Ø, vinterlys", h: 310, lic: "FRA 49 KR", owned: false },
+  { t: "Morgenritual, havbad", h: 220, lic: "EJET ✓", owned: true },
+  { t: "Frostklar himmel", h: 270, lic: "FRA 49 KR", owned: false },
+  { t: "Badehætter i rækker", h: 250, lic: "FRA 49 KR", owned: false },
+  { t: "Dampende kaffe efter dukkert", h: 290, lic: "FRA 49 KR", owned: false }
+];
+document.getElementById("stockMasonry").innerHTML = stockData.map((d, i) => `
+  <figure class="m-card">
+    ${svgScene(palettes[i % palettes.length], 400, d.h, i + 3)}
+    ${d.owned ? `<span class="badge owned">I BIBLIOTEK</span>` : `<span class="badge c2pa"><i></i>C2PA</span>`}
+    <figcaption class="m-meta">
+      <span class="t">${d.t}</span>
+      <span class="badge lic">${d.lic}</span>
+    </figcaption>
+  </figure>`).join("");
+
+/* ---------- DAM asset grid ---------- */
+const damData = [
+  { n: "vinterbad_aarhus_0142.jpg", s: "v3 · 6,2 MB", p: "lic", pt: "LICENSERET" },
+  { n: "kampagne_hero_final.psd", s: "v8 · 240 MB", p: "appr", pt: "GODKENDT" },
+  { n: "havnebad_drone_04.mp4", s: "4K · 1,2 GB", p: "own", pt: "EJET" },
+  { n: "soMe_story_pakke.zip", s: "12 filer", p: "appr", pt: "GODKENDT" },
+  { n: "stemning_morgen_22.jpg", s: "v1 · 4,8 MB", p: "exp", pt: "UDLØBER 14 D" },
+  { n: "logo_negativ_2026.svg", s: "vektor", p: "own", pt: "BRAND" },
+  { n: "pressefoto_cmo.jpg", s: "v2 · 8,1 MB", p: "own", pt: "EJET" },
+  { n: "outdoor_format_6x3.tif", s: "print · 410 MB", p: "lic", pt: "LICENSERET" }
+];
+document.getElementById("damAssets").innerHTML = damData.map((d, i) => `
+  <div class="a-card">
+    <div class="thumb">${svgScene(palettes[(i + 2) % palettes.length], 400, 300, i + 11)}</div>
+    <div class="info">
+      <div class="name">${d.n}</div>
+      <div class="sub"><span>${d.s}</span><span class="pill ${d.p}">${d.pt}</span></div>
+    </div>
+  </div>`).join("");
+</script>
+</body>
+</html>
